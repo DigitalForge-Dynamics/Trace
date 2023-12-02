@@ -1,3 +1,6 @@
+import { randomBytes } from 'node:crypto';
+import { checkNever } from '../index.ts';
+
 // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
 export type OidcDiscovery = {
 	issuer: URL;
@@ -37,16 +40,80 @@ export type OidcDiscovery = {
 	op_tos_uri?: URL;
 };
 
-
 export type OidcProvider =
-| {
-	state: 'URL'
-	discovery_uri: URL;
-}
-| ({ state: 'Loaded' } & OidcDiscovery);
+{
+	name: string;
+	client_id: string;
+} & (
+| { state: 'URL'; discovery_uri: URL; }
+| { state: 'Loaded'; loaded: OidcDiscovery; }
+);
 
+export type OidcResponse = { // typedef based on Google doc's
+	access_token: string;
+	expires_in: number; // remaining lifetime in seconds
+	id_token: string; // JWT
+	scope: string; // space separated
+	token_type: string; // Google only uses "Bearer"
+	refresh_token?: unknown; // For Google, only present if access_type parameter set to offline in authentication request
+};
 
+// TODO: Move to configuration file, which then allows for gitignore and storing of secrets
 export const OidcGoogle: OidcProvider = {
+	name: 'Google',
+	client_id: '', // TODO
 	state: 'URL',
 	discovery_uri: "https://accounts.google.com/.well-known/openid-configuration",
+};
+
+// TODO: URL fields in OidcDiscovery need to be converted from string to URL when reviving JSON
+export const getOidcDiscovery = async (provider: OidcProvider): Promise<OidcDiscovery> => {
+	if (provider.state === 'Loaded') {
+		return provider.loaded;
+	} else if (provider.state === 'URL') {
+		const { discovery_uri } = provider;
+		const response = await fetch(discovery_uri);
+		const dicovery: OidcDiscovery = await response.json();
+		return disovery;
+	} else {
+		checkNever(provider.state);
+	}
+};
+
+export const generateCryptoString = async (): Promise<string> => {
+	const bytes = await new Promise((resolve, reject) => {
+		randomBytes(256, (err, buff) => {
+			if (err) return reject(err);
+			resolve(buff);
+		});
+	});
+	return bytes.toString('hex');
+};
+
+export const initiateOidc = async (provider: OidcProvider): Promise<Response> => {
+	const discovery = await getOidcDiscovery(provider);
+	const csrf = await generateCryptoString();
+	const nonce = await generateCryptoString();
+	const state = `security_token%3D${csrf}%26provider%3D${provider.name}`;
+	const redirect_uri = ''; // TODO: Static
+	const url = `${discovery.authorization_endpoint}?response_type=code&client_id=${provider.client_id}&scope=openid%20email&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}`;
+	return fetch(url);
+};
+
+export const exchangeOidcCode = async (provider: OidcProvider, code: string): Promise<OidcResponse[]> => {
+	const discovery = await getOidcDiscovery(provider);
+	const body = {
+		code,
+		client_id: provider.client_id,
+		client_secret: '', // TODO
+		redirect_uri: '', // TODO
+		grant_typ: 'authorization_code',
+	};
+
+	const response = await fetch(discovery.token_endpoint, {
+		method: 'POST',
+		body: JSON.stringify(body),
+	});
+	const keys: OidcResponse[] = await response.json();
+	return keys;
 };
