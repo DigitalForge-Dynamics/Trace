@@ -1,11 +1,11 @@
 import { randomBytes } from 'node:crypto';
-import { checkNever } from '../index.ts';
+import { API_URL, checkNever } from '../index.ts';
 
 // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
 export type OidcDiscovery = {
 	issuer: URL;
 	authorization_endpoint: URL;
-	token_endpoint?: URL; // TODO: Required unless Implicit flow
+	token_endpoint: URL;
 	userinfo_endpoint?: URL;
 	jwks_uri: URL;
 	registration_endpoint?: URL;
@@ -44,6 +44,7 @@ export type OidcProvider =
 {
 	name: string;
 	client_id: string;
+	client_secret: string; // FIXME: MUST be moved to gitignored configuration file before setting static client_secret in src, or use env vars
 } & (
 | { state: 'URL'; discovery_uri: URL; }
 | { state: 'Loaded'; loaded: OidcDiscovery; }
@@ -62,6 +63,7 @@ export type OidcResponse = { // typedef based on Google doc's
 export const OidcGoogle: OidcProvider = {
 	name: 'Google',
 	client_id: '', // TODO
+	client_secret: '', // TODO
 	state: 'URL',
 	discovery_uri: "https://accounts.google.com/.well-known/openid-configuration",
 };
@@ -90,23 +92,26 @@ export const generateCryptoString = async (): Promise<string> => {
 	return bytes.toString('hex');
 };
 
-export const initiateOidc = async (provider: OidcProvider): Promise<Response> => {
+export const initiateOidc = async (provider: OidcProvider): Promise<void> => {
 	const discovery = await getOidcDiscovery(provider);
 	const csrf = await generateCryptoString();
 	const nonce = await generateCryptoString();
-	const state = `security_token%3D${csrf}%26provider%3D${provider.name}`;
-	const redirect_uri = ''; // TODO: Static
+	const state = csrf;
+	const redirect_uri = `${API_URL}/oidc/code/${provider.name}`;
 	const url = `${discovery.authorization_endpoint}?response_type=code&client_id=${provider.client_id}&scope=openid%20email&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}`;
-	return fetch(url);
+	const response = await fetch(url);
+	if (response.status !== 200) throw new Error(`Failed to initiate OIDC to provider: ${provider.name}`); // TODO: Error type
+	return;
 };
 
 export const exchangeOidcCode = async (provider: OidcProvider, code: string): Promise<OidcResponse[]> => {
 	const discovery = await getOidcDiscovery(provider);
+	const redirect_uri = `${API_URL}/oidc/code/${provider.name}`;
 	const body = {
 		code,
 		client_id: provider.client_id,
-		client_secret: '', // TODO
-		redirect_uri: '', // TODO
+		client_secret: provider.client_secret,
+		redirect_uri,
 		grant_typ: 'authorization_code',
 	};
 
@@ -117,3 +122,7 @@ export const exchangeOidcCode = async (provider: OidcProvider, code: string): Pr
 	const keys: OidcResponse[] = await response.json();
 	return keys;
 };
+
+export const lookupProvider = (name: string) => OidcProvider | undefined => ({
+	google: OidcGoogle,
+}[name]);
