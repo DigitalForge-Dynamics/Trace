@@ -16,4 +16,15 @@ const sequelize = new Sequelize(connectionUrl, {
   logging: (...msg) => console.log(`Database log: ${msg}`),
 });
 
-export { sequelize };
+type syncDatabaseProps = {
+  isDevelopment: boolean;
+};
+
+async function syncDatabase(props: syncDatabaseProps) {
+  if (props.isDevelopment === true) {
+    return sequelize.sync({ force: true });
+  }
+  return sequelize.sync();
+}
+
+export { sequelize, syncDatabase };
