@@ -1,4 +1,7 @@
 import { Sequelize } from "sequelize";
+import { initAsset } from "../models/asset.model";
+import { initUser } from "../models/user.model";
+import { SequelizeStorage, Umzug } from "umzug";
 
 const database = process.env.API_DATABASE_NAME;
 const username = process.env.API_DATABASE_USERNAME;
@@ -16,15 +19,28 @@ const sequelize = new Sequelize(connectionUrl, {
   logging: (...msg) => console.log(`Database log: ${msg}`),
 });
 
-type syncDatabaseProps = {
-  isDevelopment: boolean;
+const umzug = new Umzug({
+  migrations: {
+    glob: "./src/database/migrations/*.migrations.js",
+  },
+  context: sequelize.getQueryInterface(),
+  storage: new SequelizeStorage({ sequelize }),
+  logger: console,
+});
+
+async () => {
+  initAsset(sequelize);
+  initUser(sequelize);
+  await umzug.up();
 };
 
-async function syncDatabase(props: syncDatabaseProps) {
-  if (props.isDevelopment === true) {
-    return sequelize.sync({ force: true });
-  }
-  return sequelize.sync();
-}
+console.log(umzug);
 
-export { sequelize, syncDatabase };
+const db = {
+  sequelize,
+  Sequelize,
+  Asset: sequelize.models.Asset,
+  User: sequelize.models.User,
+};
+
+export { db };
