@@ -22,7 +22,7 @@ export function initAsset(sequelize: Sequelize): void {
   Asset.init(
     {
       id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
         autoIncrement: true,

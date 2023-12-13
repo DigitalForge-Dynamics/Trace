@@ -1,7 +1,14 @@
-import { Sequelize } from "sequelize";
+import { Model, ModelCtor, Sequelize } from "sequelize";
 import { initAsset } from "../models/asset.model";
 import { initUser } from "../models/user.model";
 import { SequelizeStorage, Umzug } from "umzug";
+import { exec } from "child_process";
+import path from "path";
+
+interface DatabaseClient {
+  sequelize: Sequelize;
+  Sequelize: typeof Sequelize; 
+}
 
 const database = process.env.API_DATABASE_NAME;
 const username = process.env.API_DATABASE_USERNAME;
@@ -19,28 +26,20 @@ const sequelize = new Sequelize(connectionUrl, {
   logging: (...msg) => console.log(`Database log: ${msg}`),
 });
 
-const umzug = new Umzug({
+export const db: DatabaseClient = {
+  sequelize,
+  Sequelize 
+};
+
+console.log(path.join(__dirname, '..', 'migrations'));
+
+export const migrator = new Umzug({
   migrations: {
-    glob: "./src/database/migrations/*.migrations.js",
+    glob: ["./*.migration.ts", { cwd: path.join(__dirname, '..', 'migrations') }],
   },
-  context: sequelize.getQueryInterface(),
-  storage: new SequelizeStorage({ sequelize }),
+  context: sequelize,
+  storage: new SequelizeStorage({ sequelize: db.sequelize }),
   logger: console,
 });
 
-async () => {
-  initAsset(sequelize);
-  initUser(sequelize);
-  await umzug.up();
-};
-
-console.log(umzug);
-
-const db = {
-  sequelize,
-  Sequelize,
-  Asset: sequelize.models.Asset,
-  User: sequelize.models.User,
-};
-
-export { db };
+export type Migration = typeof migrator._types.migration;
