@@ -1,20 +1,24 @@
-import express, { Router } from "express";
+import express, { Router, Request, Response } from "express";
 
 const router: Router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("NOT IMPLEMENTED: Asset GET Endpoint");
+router.get("/", (req: Request, res: Response) => {
+  res.send("NOT IMPLEMENTED: Asset GET ALL Endpoint");
 });
 
-router.post("/", (req, res) => {
+router.get("/:id", (req: Request, res: Response) => {
+    res.send("NOT IMPLEMENTED: Asset GET ONE Endpoint");
+})
+
+router.post("/", (req: Request, res: Response) => {
   res.send("NOT IMPLEMENTED: Asset POST Endpoint");
 });
 
-router.put("/", (req, res) => {
+router.put("/:id", (req: Request, res: Response) => {
   res.send("NOT IMPLEMENTED: Asset PUT Endpoint");
 });
 
-router.delete("/", (req, res) => {
+router.delete("/:id", (req: Request, res: Response) => {
   res.send("NOT IMPLEMENTED: Asset DELETE Endpoint");
 });
 
