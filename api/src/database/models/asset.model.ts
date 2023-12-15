@@ -4,8 +4,8 @@ import {
   InferAttributes,
   InferCreationAttributes,
   Model,
-  Sequelize,
 } from "sequelize";
+import { db } from "../config/databaseClient";
 
 class Asset extends Model<
   InferAttributes<Asset>,
@@ -18,35 +18,33 @@ class Asset extends Model<
   declare updatedAt: CreationOptional<Date>;
 }
 
-export function initAsset(sequelize: Sequelize): void {
-  Asset.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        allowNull: false,
-        autoIncrement: true,
-      },
-      assetTag: {
-        type: DataTypes.STRING(128),
-        allowNull: false,
-      },
-      name: {
-        type: DataTypes.STRING(128),
-        allowNull: false,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
+Asset.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true,
     },
-    {
-      tableName: "assets",
-      sequelize: sequelize,
-    }
-  );
-}
+    assetTag: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "assets",
+    sequelize: db.sequelize,
+  }
+);

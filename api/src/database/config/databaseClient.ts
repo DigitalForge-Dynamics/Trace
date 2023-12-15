@@ -1,13 +1,9 @@
-import { Model, ModelCtor, Sequelize } from "sequelize";
-import { initAsset } from "../models/asset.model";
-import { initUser } from "../models/user.model";
+import { Sequelize } from "sequelize";
 import { SequelizeStorage, Umzug } from "umzug";
-import { exec } from "child_process";
-import path from "path";
 
 interface DatabaseClient {
   sequelize: Sequelize;
-  Sequelize: typeof Sequelize; 
+  Sequelize: typeof Sequelize;
 }
 
 const database = process.env.API_DATABASE_NAME;
@@ -28,14 +24,12 @@ const sequelize = new Sequelize(connectionUrl, {
 
 export const db: DatabaseClient = {
   sequelize,
-  Sequelize 
+  Sequelize,
 };
-
-console.log(path.join(__dirname, '..', 'migrations'));
 
 export const migrator = new Umzug({
   migrations: {
-    glob: ["./*.migration.ts", { cwd: path.join(__dirname, '..', 'migrations') }],
+    glob: "src/database/migrations/*.ts",
   },
   context: sequelize,
   storage: new SequelizeStorage({ sequelize: db.sequelize }),

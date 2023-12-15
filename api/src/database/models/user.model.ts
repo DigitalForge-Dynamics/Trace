@@ -4,8 +4,8 @@ import {
   InferAttributes,
   InferCreationAttributes,
   Model,
-  Sequelize,
 } from "sequelize";
+import { db } from "../config/databaseClient";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
@@ -16,38 +16,36 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare updatedAt: CreationOptional<Date>;
 }
 
-export function initUser(sequelize: Sequelize): void {
-  User.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      username: {
-        type: DataTypes.STRING(128),
-        allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING(128),
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING(128),
-        allowNull: false,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    {
-      tableName: "users",
-      sequelize: sequelize,
-    }
-  );
-}
+    username: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "users",
+    sequelize: db.sequelize,
+  }
+);
