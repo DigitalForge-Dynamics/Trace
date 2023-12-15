@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize";
+import "ts-node/register";
 import { SequelizeStorage, Umzug } from "umzug";
 
 interface DatabaseClient {
