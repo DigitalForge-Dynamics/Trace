@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { API_URL, checkNever } from '../index.ts';
+import { API_URL, checkNever } from '../index';
 
 // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
 export type OidcDiscovery = {
@@ -65,7 +65,7 @@ export const OidcGoogle: OidcProvider = {
 	client_id: '', // TODO
 	client_secret: '', // TODO
 	state: 'URL',
-	discovery_uri: "https://accounts.google.com/.well-known/openid-configuration",
+	discovery_uri: new URL("https://accounts.google.com/.well-known/openid-configuration"),
 };
 
 // TODO: URL fields in OidcDiscovery need to be converted from string to URL when reviving JSON
@@ -75,15 +75,16 @@ export const getOidcDiscovery = async (provider: OidcProvider): Promise<OidcDisc
 	} else if (provider.state === 'URL') {
 		const { discovery_uri } = provider;
 		const response = await fetch(discovery_uri);
-		const dicovery: OidcDiscovery = await response.json();
-		return disovery;
+		const discovery: OidcDiscovery = await response.json();
+		return discovery;
 	} else {
-		checkNever(provider.state);
+		checkNever(provider);
+		throw new Error('Unexpected case caused from type assertion');
 	}
 };
 
 export const generateCryptoString = async (): Promise<string> => {
-	const bytes = await new Promise((resolve, reject) => {
+	const bytes = await new Promise<Buffer>((resolve, reject) => {
 		randomBytes(256, (err, buff) => {
 			if (err) return reject(err);
 			resolve(buff);
@@ -123,6 +124,6 @@ export const exchangeOidcCode = async (provider: OidcProvider, code: string): Pr
 	return keys;
 };
 
-export const lookupProvider = (name: string) => OidcProvider | undefined => ({
+export const lookupProvider = (name: string): OidcProvider | undefined => ({
 	google: OidcGoogle,
 }[name]);
