@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Google",
+    "client_id": "",
+    "client_secret": "",
+    "state": "URL",
+    "discovery_uri": "https://accounts.google.com/.well-known/openid-configuration"
+  }
+]

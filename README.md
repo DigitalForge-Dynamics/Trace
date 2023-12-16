@@ -17,4 +17,5 @@ API_DATABASE_HOST=""
 
 ## Application Variables
 API_PORT=
+API_URL=
 ```
