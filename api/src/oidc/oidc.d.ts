@@ -40,7 +40,7 @@ export type OidcDiscovery = {
 export type OidcProvider = {
   name: string;
   client_id: string;
-  client_secret: string; // FIXME: MUST be moved to gitignored configuration file before setting static client_secret in src, or use env vars
+  client_secret: string;
 } & (
   | { state: "URL"; discovery_uri: URL }
   | { state: "Loaded"; loaded: OidcDiscovery }
@@ -55,3 +55,11 @@ export type OidcResponse = {
   token_type: string; // Google only uses "Bearer"
   refresh_token?: unknown; // For Google, only present if access_type parameter set to offline in authentication request
 };
+
+type Network<T> = T extends URL
+  ? string
+  : T extends object
+  ? { [K in keyof T]: Network<T[K]> }
+  : T extends any[]
+  ? Network<T[0]>[]
+  : T;

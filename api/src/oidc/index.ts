@@ -1,25 +1,35 @@
 import { randomBytes } from "node:crypto";
 import { API_URL, checkNever } from "../index";
 import OIDC_PROVIDERS from "../../oidc_providers.json";
-import type { OidcDiscovery, OidcProvider, OidcResponse } from "./oidc";
+import type {
+  Network,
+  OidcDiscovery,
+  OidcProvider,
+  OidcResponse,
+} from "./oidc";
+import { reviveOidcDiscovery, reviveOidcProvider } from "./revivers";
+
+const loadOidcProviders = (): OidcProvider[] => {
+  const providers: OidcProvider[] = [];
+  for (const element of OIDC_PROVIDERS) {
+    const provider: Network<OidcProvider> = { state: "URL", ...element };
+    providers.push(reviveOidcProvider(provider));
+  }
+  return providers;
+};
+
+const providers: OidcProvider[] = loadOidcProviders();
 
 export const getOidcDiscovery = async (
   provider: OidcProvider
 ): Promise<OidcDiscovery> => {
   if (provider.state === "Loaded") {
-    return JSON.parse(JSON.stringify(provider.loaded), reviveOidcDiscovery);
+    return provider.loaded;
   } else if (provider.state === "URL") {
-    const { discovery_uri } = JSON.parse(
-      JSON.stringify(provider),
-      reviveOidcProviders
-    );
+    const { discovery_uri } = provider;
     const response = await fetch(discovery_uri);
-    const json = await response.json();
-    const discovery: OidcDiscovery = JSON.parse(
-      JSON.stringify(json),
-      reviveOidcDiscovery
-    );
-    return discovery;
+    const json: Network<OidcDiscovery> = await response.json();
+    return reviveOidcDiscovery(json);
   } else {
     checkNever(provider);
     throw new Error(
@@ -48,7 +58,6 @@ export const initiateOidc = async (provider: OidcProvider): Promise<void> => {
   const response = await fetch(url);
   if (response.status !== 200)
     throw new Error(`Failed to initiate OIDC to provider: ${provider.name}`); // TODO: Error type
-  return;
 };
 
 export const exchangeOidcCode = async (
@@ -75,23 +84,3 @@ export const exchangeOidcCode = async (
 
 export const lookupProvider = (name: string): OidcProvider | undefined =>
   providers.find((provider) => provider.name === name);
-
-const reviveOidcProviders = <T>(key: string, value: T): T | URL => {
-  if (key === "discovery_uri" && typeof value === "string") {
-    return new URL(value);
-  }
-  return value;
-};
-
-const reviveOidcDiscovery = <T>(key: string, value: T): T | URL => {
-  if (key == "issuer" || key.endsWith("_endpoint") || key.endsWith("_uri")) {
-    if (typeof value !== "string") return value;
-    return new URL(value);
-  }
-  return value;
-};
-
-const providers: OidcProvider[] = JSON.parse(
-  JSON.stringify(OIDC_PROVIDERS),
-  reviveOidcProviders
-);
