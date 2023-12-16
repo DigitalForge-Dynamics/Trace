@@ -2,13 +2,21 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 
 dotenv.config();
+import { migrator } from "./database/config/databaseClient";
+import { redisClient } from "./database/config/redisClient";
 
 const app: Express = express();
 const port = process.env.API_PORT;
 export const API_URL = process.env.API_URL;
 
+const startupConfiguration = async () => {
+  await migrator.up();
+  await redisClient.connect();
+};
+
 app.listen(port, () => {
-    console.log(`Server is running on port: ${port}`)
+  console.log(`Server is running on port: ${port}`);
+  startupConfiguration();
 });
 
 app.get('/oidc/init/:provider', async (req: Request, res: Response) => {

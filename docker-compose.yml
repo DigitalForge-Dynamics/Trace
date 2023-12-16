@@ -9,5 +9,13 @@ services:
       - ./.env.docker.development
     ports:
       - 5432:5432
+  redis:
+    image:  redis:latest
+    volumes:
+      - redis:/opt/trace
+    command: redis-server --requirepass test123
+    ports:
+      - 6379:6379
 volumes:
   db: {}
+  redis: {}
