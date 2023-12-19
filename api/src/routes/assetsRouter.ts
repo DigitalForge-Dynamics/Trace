@@ -1,8 +1,8 @@
 import express, { Router, Request, Response } from "express";
 import { ajv } from "../middlewares/validator";
 import AssetController from "../controllers/assetsController";
-import { EntityAsset } from "../utils/types/entityTypes";
 import { sanitize } from "../middlewares/sanitizer";
+import { AssetAttributes } from "../utils/types/attributeTypes";
 
 const router: Router = express.Router();
 
@@ -15,18 +15,21 @@ router.get("/:id", (req: Request, res: Response) => {
 });
 
 router.post("/", (req: Request, res: Response) => {
-  const requestData: EntityAsset = req.body;
+  const requestData: AssetAttributes = req.body;
 
-  const sanitisedData: EntityAsset = sanitize<EntityAsset>(requestData);
-  const isValid: boolean = ajv.validate<EntityAsset>("asset", sanitisedData);
+  const sanitisedData: AssetAttributes = sanitize<AssetAttributes>(requestData);
+  const isValid: boolean = ajv.validate<AssetAttributes>(
+    "asset",
+    sanitisedData
+  );
 
   if (isValid) {
-    const controller = new AssetController;
+    const controller = new AssetController();
     const isSuccessfull: Promise<Boolean> = controller.create(sanitisedData);
 
     if (!isSuccessfull) {
       res.status(500).send("Unable to create new asset").end();
-      console.log(`Unable to create new asset - Error Code 500`)
+      console.log(`Unable to create new asset - Error Code 500`);
     }
 
     res.status(204).end();
