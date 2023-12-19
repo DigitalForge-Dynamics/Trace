@@ -3,7 +3,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "description": "A representation of an asset",
     "type": "object",
-    "required": ["id", "assetTag", "name"],
+    "required": ["assetTag", "name"],
     "properties": {
         "id": {
             "type": "number"
@@ -21,23 +21,19 @@
             "type": "string"
         },
         "purchaseDate": {
-            "type": "string",
-            "format": "date"
+            "type": "string"
         },
         "purchaseCost": {
             "type": "number"
         },
         "nextAuditDate": {
-            "type": "string",
-            "format": "date"
+            "type": "string"
         },
         "createdAt": {
-            "type": "string",
-            "format": "date"
+            "type": "string"
         },
         "updatedAt": {
-            "type": "string",
-            "format": "date"
+            "type": "string"
         }
     }
 }

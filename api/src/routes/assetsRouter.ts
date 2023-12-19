@@ -1,8 +1,8 @@
 import express, { Router, Request, Response } from "express";
+import { ajv } from "../middlewares/validator";
 import AssetController from "../controllers/assetsController";
 import { EntityAsset } from "../utils/types/entityTypes";
-import { DomainAsset } from "../utils/types/domainTypes";
-import { ajv } from "../middlewares/validator";
+import { sanitize } from "../middlewares/sanitizer";
 
 const router: Router = express.Router();
 
@@ -11,32 +11,29 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.get("/:id", (req: Request, res: Response) => {
-    res.send("NOT IMPLEMENTED: Asset GET ONE Endpoint");
-})
+  res.send("NOT IMPLEMENTED: Asset GET ONE Endpoint");
+});
 
-// TODO:
-// 1. Build out request creation and return db response
-// 2. Add validation and sanitisation to request
-// 3. Add error handling
 router.post("/", (req: Request, res: Response) => {
+  const requestData: EntityAsset = req.body;
 
-  const requestData:  EntityAsset | null = req.body;
+  const sanitisedData: EntityAsset = sanitize<EntityAsset>(requestData);
+  const isValid: boolean = ajv.validate<EntityAsset>("asset", sanitisedData);
 
-  if (!requestData) {
-    res.send('Missing request data').send(400)
+  if (isValid) {
+    const controller = new AssetController;
+    const isSuccessfull: Promise<Boolean> = controller.create(sanitisedData);
+
+    if (!isSuccessfull) {
+      res.status(500).send("Unable to create new asset").end();
+      console.log(`Unable to create new asset - Error Code 500`)
+    }
+
+    res.status(204).end();
+  } else {
+    res.sendStatus(400).end();
+    console.log(`Invalid Request - Error Code 400`);
   }
-
-  const validData = ajv.validate<EntityAsset>();
-
-  if (!validData) {
-    res.send('Request contains invalid data').send(400)
-  }
-
-  const controller = new AssetController;
-
-  const returnedResponse = controller.create(validData);
-
-  res.send(returnedResponse).status(200);
 });
 
 router.put("/:id", (req: Request, res: Response) => {
