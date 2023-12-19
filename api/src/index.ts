@@ -7,6 +7,10 @@ import assetsRouter from './routes/assetsRouter';
 const app: Express = express();
 const port = process.env.API_PORT;
 
+app.use(express.json());
+
+
+// Asset Route
 app.use('/assets', assetsRouter);
 
 const startupConfiguration = async () => {

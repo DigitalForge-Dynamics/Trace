@@ -1,0 +1,43 @@
+{
+    "$id": "Asset Schema",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "A representation of an asset",
+    "type": "object",
+    "required": ["id", "assetTag", "name"],
+    "properties": {
+        "id": {
+            "type": "number"
+        },
+        "assetTag": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "serialNumber": {
+            "type": "string"
+        },
+        "modelNumber": {
+            "type": "string"
+        },
+        "purchaseDate": {
+            "type": "string",
+            "format": "date"
+        },
+        "purchaseCost": {
+            "type": "number"
+        },
+        "nextAuditDate": {
+            "type": "string",
+            "format": "date"
+        },
+        "createdAt": {
+            "type": "string",
+            "format": "date"
+        },
+        "updatedAt": {
+            "type": "string",
+            "format": "date"
+        }
+    }
+}

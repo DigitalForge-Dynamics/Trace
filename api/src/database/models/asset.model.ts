@@ -73,3 +73,5 @@ Asset.init(
     sequelize: db.sequelize,
   }
 );
+
+export default Asset;
