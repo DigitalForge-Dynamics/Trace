@@ -6,15 +6,35 @@ import { AssetAttributes } from "../utils/types/attributeTypes";
 
 const router: Router = express.Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.send("NOT IMPLEMENTED: Asset GET ALL Endpoint");
+router.get("/", async (req: Request, res: Response) => {
+  const controller = new AssetController();
+
+  const retrievedAssets: AssetAttributes[] = await controller.findAll();
+
+  if (retrievedAssets.length <= 0) {
+    res.status(404).send("No Assets found").end();
+    console.log(`No Assets found - Error Code 404`);
+  }
+
+  res.send(retrievedAssets).status(200).end();
 });
 
-router.get("/:id", (req: Request, res: Response) => {
-  res.send("NOT IMPLEMENTED: Asset GET ONE Endpoint");
+router.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
+  const requestId: string = req.params.id;
+  const controller = new AssetController();
+
+  const retrievedAsset: AssetAttributes | null = await controller.findOne(
+    parseInt(requestId)
+  );
+
+  if (!retrievedAsset) {
+    res.status(404).send("Asset not found").end();
+    console.log(`Asset not found - Error Code 404`);
+  }
+  res.send(retrievedAsset).status(200).end();
 });
 
-router.post("/", (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   const requestData: AssetAttributes = req.body;
 
   const sanitisedData: AssetAttributes = sanitize<AssetAttributes>(requestData);
@@ -25,7 +45,7 @@ router.post("/", (req: Request, res: Response) => {
 
   if (isValid) {
     const controller = new AssetController();
-    const isSuccessfull: Promise<Boolean> = controller.create(sanitisedData);
+    const isSuccessfull: Boolean = await controller.create(sanitisedData);
 
     if (!isSuccessfull) {
       res.status(500).send("Unable to create new asset").end();
