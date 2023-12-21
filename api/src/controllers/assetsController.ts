@@ -26,7 +26,14 @@ class AssetController {
     return returnedAsset;
   }
 
-  async update(req: Request, res: Response) {}
+  async update(assetId: number, data: AssetAttributes): Promise<boolean> {
+    const returnedValue = await Asset.update(data, { where: { id: assetId } });
+
+    if (returnedValue[0] <= 0) {
+      return false;
+    }
+    return true;
+  }
 
   async delete(req: Request, res: Response) {}
 }
