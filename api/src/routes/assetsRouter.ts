@@ -104,8 +104,20 @@ router.put("/:id", async (req: Request<{ id: string }>, res: Response) => {
   res.status(204).end();
 });
 
-router.delete("/:id", (req: Request, res: Response) => {
-  res.send("NOT IMPLEMENTED: Asset DELETE Endpoint");
+router.delete("/:id", async (req: Request<{ id: string }>, res: Response) => {
+  const requestId = req.params.id;
+
+  const controller = new AssetController();
+
+  const isDeleted: boolean = await controller.delete(parseInt(requestId));
+
+  if (!isDeleted) {
+    res.status(500).send("Unable to delete selected asset").end();
+    console.log(`Unable to deleted selected asset - Error Code 500`);
+    return;
+  }
+
+  res.status(204).end();
 });
 
 export default router;
