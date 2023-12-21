@@ -35,7 +35,16 @@ class AssetController {
     return true;
   }
 
-  async delete(req: Request, res: Response) {}
+  async delete(assetId: number): Promise<boolean> {
+    const isDeletedSuccessfully = await Asset.destroy({
+      where: { id: assetId },
+    });
+
+    if (isDeletedSuccessfully <= 0) {
+      return false;
+    }
+    return true;
+  }
 }
 
 export default AssetController;
