@@ -12,9 +12,19 @@ class AssetController {
     return true;
   }
 
-  async findAll(req: Request, res: Response) {}
+  async findAll(): Promise<Asset[]> {
+    const returnedAssets = await Asset.findAll();
+    return returnedAssets;
+  }
 
-  async findOne(req: Request, res: Response) {}
+  async findOne(assetId: number): Promise<Asset | null> {
+    const returnedAsset = await Asset.findByPk(assetId);
+
+    if (!returnedAsset) {
+      return null;
+    }
+    return returnedAsset;
+  }
 
   async update(req: Request, res: Response) {}
 
