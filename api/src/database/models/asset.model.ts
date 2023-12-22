@@ -14,6 +14,11 @@ class Asset extends Model<
   declare id: CreationOptional<number>;
   declare assetTag: string;
   declare name: string;
+  declare serialNumber: CreationOptional<string>;
+  declare modelNumber: CreationOptional<string>;
+  declare purchaseDate: CreationOptional<Date>;
+  declare purchaseCost: CreationOptional<Number>;
+  declare nextAuditDate: CreationOptional<Date>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -34,6 +39,26 @@ Asset.init(
       type: DataTypes.STRING(128),
       allowNull: false,
     },
+    serialNumber: {
+      type: DataTypes.STRING(128),
+      allowNull: true,
+    },
+    modelNumber: {
+      type: DataTypes.STRING(128),
+      allowNull: true
+    },
+    purchaseDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    purchaseCost: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    nextAuditDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
@@ -48,3 +73,5 @@ Asset.init(
     sequelize: db.sequelize,
   }
 );
+
+export default Asset;

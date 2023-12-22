@@ -17,6 +17,26 @@ export const up: Migration = async ({ context: sequelize }) => {
       type: DataTypes.STRING(128),
       allowNull: false,
     },
+    serialNumber: {
+      type: DataTypes.STRING(128),
+      allowNull: true,
+    },
+    modelNumber: {
+      type: DataTypes.STRING(128),
+      allowNull: true
+    },
+    purchaseDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    purchaseCost: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    nextAuditDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
