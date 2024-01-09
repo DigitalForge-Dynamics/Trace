@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import Asset from "../database/models/asset.model";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 
