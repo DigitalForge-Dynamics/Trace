@@ -53,3 +53,5 @@ Location.init(
     sequelize: db.sequelize,
   }
 );
+
+export default Location;
