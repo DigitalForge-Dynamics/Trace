@@ -17,11 +17,9 @@ class LocationController {
   }
 
   public async findOne(
-    requestedLocationName: string
+    requestedLocationId: number
   ): Promise<Location | null> {
-    const returnedLocation = await Location.findOne({
-      where: { locationName: requestedLocationName },
-    });
+    const returnedLocation = await Location.findByPk(requestedLocationId)
 
     if (!returnedLocation) {
       return null;
@@ -30,9 +28,25 @@ class LocationController {
     return returnedLocation;
   }
 
-  public async update() {}
+  public async update(requestedLocationId: number, data: LocationAttributes): Promise<boolean> {
+    const returnedValue = await Location.update(data, { where: { id: requestedLocationId } });
 
-  public async delete() {}
+    if (returnedValue[0] <= 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public async delete(requestedLocationId: number) {
+    const isDeletedSuccessfully = await Location.destroy({
+      where: { id: requestedLocationId },
+    });
+
+    if (isDeletedSuccessfully <= 0) {
+      return false;
+    }
+    return true;
+  }
 }
 
 export default LocationController;
