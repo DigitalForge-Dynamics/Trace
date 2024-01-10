@@ -1,0 +1,27 @@
+{
+  "$id": "Location Schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "A representation of a location",
+  "type": "object",
+  "required": ["locationName", "primaryLocation"],
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "locationName": {
+      "type": "string"
+    },
+    "geoLocation": {
+      "type": "object"
+    },
+    "primaryLocation": {
+      "type": "boolean"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    }
+  }
+}
