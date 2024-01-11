@@ -16,11 +16,6 @@ export const up: Migration = async ({ context: sequelize }) => {
       type: DataTypes.JSON,
       allowNull: false,
     },
-    initialSetup: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-    },
   });
 };
 

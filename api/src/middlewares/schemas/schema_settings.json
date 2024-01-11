@@ -1,0 +1,18 @@
+{
+  "$id": "Settings Schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "A representation of the application settings",
+  "type": "object",
+  "required": ["locationName", "primaryLocation"],
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "category": {
+      "type": "string"
+    },
+    "categoryData": {
+      "type": "object"
+    }
+  }
+}

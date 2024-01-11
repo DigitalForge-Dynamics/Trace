@@ -1,7 +1,6 @@
 import express, { Router, Request, Response } from "express";
 import LocationController from "../controllers/locationsController";
 import { LocationAttributes } from "../utils/types/attributeTypes";
-import { sanitize } from "../middlewares/sanitizer";
 import { ajv } from "../middlewares/validator";
 
 const router: Router = express.Router();
@@ -40,11 +39,9 @@ router.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
   const requestData: LocationAttributes = req.body;
 
-  const sanitisedData: LocationAttributes =
-    sanitize<LocationAttributes>(requestData);
   const isValidRequest: boolean = ajv.validate<LocationAttributes>(
     "location",
-    sanitisedData
+    requestData
   );
 
   if (!isValidRequest) {
@@ -54,7 +51,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 
   const controller = new LocationController();
-  const isSuccessfull: Boolean = await controller.create(sanitisedData);
+  const isSuccessfull: boolean = await controller.create(requestData);
 
   if (!isSuccessfull) {
     res.status(500).send("Unable to create new Location").end();
@@ -80,11 +77,9 @@ router.put("/:id", async (req: Request<{ id: string }>, res: Response) => {
     return;
   }
 
-  const sanitisedData: LocationAttributes =
-    sanitize<LocationAttributes>(requestData);
   const isValidRequest: boolean = ajv.validate<LocationAttributes>(
     "location",
-    sanitisedData
+    requestData
   );
 
   if (!isValidRequest) {
@@ -95,7 +90,7 @@ router.put("/:id", async (req: Request<{ id: string }>, res: Response) => {
 
   const isSuccessfull: boolean = await controller.update(
     parseInt(requestedLocationId),
-    sanitisedData
+    requestData
   );
 
   if (!isSuccessfull) {
@@ -107,23 +102,22 @@ router.put("/:id", async (req: Request<{ id: string }>, res: Response) => {
   res.status(204).end();
 });
 
-router.delete(
-  "/:id",
-  async (req: Request<{ id: string }>, res: Response) => {
-    const requestedLocationId: string = req.params.id;
+router.delete("/:id", async (req: Request<{ id: string }>, res: Response) => {
+  const requestedLocationId: string = req.params.id;
 
-    const controller = new LocationController();
+  const controller = new LocationController();
 
-    const isDeleted: boolean = await controller.delete(parseInt(requestedLocationId));
+  const isDeleted: boolean = await controller.delete(
+    parseInt(requestedLocationId)
+  );
 
-    if (!isDeleted) {
-      res.status(500).send("Unable to delete selected location").end();
-      console.log(`Unable to delete selected location - Error Code 500`);
-      return;
-    }
-
-    res.status(204).end();
+  if (!isDeleted) {
+    res.status(500).send("Unable to delete selected location").end();
+    console.log(`Unable to delete selected location - Error Code 500`);
+    return;
   }
-);
+
+  res.status(204).end();
+});
 
 export default router;

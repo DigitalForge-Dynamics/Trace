@@ -14,7 +14,6 @@ class Settings extends Model<
   declare id: CreationOptional<number>;
   declare category: string;
   declare categoryData: JSON;
-  declare initialSetup: boolean;
 }
 
 Settings.init(
@@ -31,11 +30,6 @@ Settings.init(
     categoryData: {
       type: DataTypes.JSON,
       allowNull: false,
-    },
-    initialSetup: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
     },
   },
   {
