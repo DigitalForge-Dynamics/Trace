@@ -2,7 +2,7 @@ import Location from "../database/models/location.model";
 import { LocationAttributes } from "../utils/types/attributeTypes";
 
 class LocationController {
-  public async create(data: LocationAttributes): Promise<Boolean> {
+  public async create(data: LocationAttributes): Promise<boolean> {
     const returnedValues = await Location.create(data);
 
     if (returnedValues.id <= 0) {

@@ -1,7 +1,6 @@
 import express, { Router, Request, Response } from "express";
 import { ajv } from "../middlewares/validator";
 import AssetController from "../controllers/assetsController";
-import { sanitize } from "../middlewares/sanitizer";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 
 const router: Router = express.Router();
@@ -39,27 +38,26 @@ router.get("/:id", async (req: Request<{ id: string }>, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
   const requestData: AssetAttributes = req.body;
 
-  const sanitisedData: AssetAttributes = sanitize<AssetAttributes>(requestData);
   const isValidRequest: boolean = ajv.validate<AssetAttributes>(
     "asset",
-    sanitisedData
+    requestData
   );
 
-  if (isValidRequest) {
-    const controller = new AssetController();
-    const isSuccessfull: Boolean = await controller.create(sanitisedData);
-
-    if (!isSuccessfull) {
-      res.status(500).send("Unable to create new asset").end();
-      console.log(`Unable to create new asset - Error Code 500`);
-      return;
-    }
-
-    res.status(204).end();
-  } else {
+  if (!isValidRequest) {
     res.sendStatus(400).end();
     console.log(`Invalid Request - Error Code 400`);
   }
+
+  const controller = new AssetController();
+  const isSuccessfull: boolean = await controller.create(requestData);
+
+  if (!isSuccessfull) {
+    res.status(500).send("Unable to create new asset").end();
+    console.log(`Unable to create new asset - Error Code 500`);
+    return;
+  }
+
+  res.status(204).end();
 });
 
 router.put("/:id", async (req: Request<{ id: string }>, res: Response) => {
@@ -78,10 +76,9 @@ router.put("/:id", async (req: Request<{ id: string }>, res: Response) => {
     return;
   }
 
-  const sanitisedData: AssetAttributes = sanitize<AssetAttributes>(requestData);
   const isValidRequest: boolean = ajv.validate<AssetAttributes>(
     "asset",
-    sanitisedData
+    requestData
   );
 
   if (!isValidRequest) {

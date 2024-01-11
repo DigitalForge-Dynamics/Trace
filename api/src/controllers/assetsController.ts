@@ -2,7 +2,7 @@ import Asset from "../database/models/asset.model";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 
 class AssetController {
-  async create(data: AssetAttributes): Promise<Boolean> {
+  async create(data: AssetAttributes): Promise<boolean> {
     const returnedValues = await Asset.create(data);
 
     if (returnedValues.id <= 0) {
