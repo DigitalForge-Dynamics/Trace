@@ -1,6 +1,6 @@
 import { InferAttributes } from "sequelize";
-import Asset from "../../database/models/asset.model";
-import Location from "../../database/models/location.model";
+import Asset from "../../database/models/Asset.model";
+import Location from "../../database/models/Location.model";
 
 export interface AssetAttributes {
     id?: number;

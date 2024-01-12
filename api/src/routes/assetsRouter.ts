@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from "express";
-import { ajv } from "../middlewares/validator";
-import AssetController from "../controllers/assetsController";
-import { AssetAttributes } from "../utils/types/attributeTypes";
+import { ajv } from "../middlewares/Validator";
+import AssetController from "../controllers/AssetsController";
+import { AssetAttributes } from "../utils/types/AttributeTypes";
 
 const router: Router = express.Router();
 

@@ -1,5 +1,5 @@
-import Asset from "../database/models/asset.model";
-import { AssetAttributes } from "../utils/types/attributeTypes";
+import Asset from "../database/models/Asset.model";
+import { AssetAttributes } from "../utils/types/AttributeTypes";
 
 class AssetController {
   async create(data: AssetAttributes): Promise<boolean> {

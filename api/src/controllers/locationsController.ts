@@ -1,5 +1,5 @@
-import Location from "../database/models/location.model";
-import { LocationAttributes } from "../utils/types/attributeTypes";
+import Location from "../database/models/Location.model";
+import { LocationAttributes } from "../utils/types/AttributeTypes";
 
 class LocationController {
   public async create(data: LocationAttributes): Promise<boolean> {

@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from "express";
-import LocationController from "../controllers/locationsController";
-import { LocationAttributes } from "../utils/types/attributeTypes";
-import { ajv } from "../middlewares/validator";
+import LocationController from "../controllers/LocationsController";
+import { LocationAttributes } from "../utils/types/AttributeTypes";
+import { ajv } from "../middlewares/Validator";
 
 const router: Router = express.Router();
 

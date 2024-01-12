@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { db } from "../config/DatabaseClient";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;

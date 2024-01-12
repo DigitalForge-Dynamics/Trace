@@ -1,4 +1,4 @@
-import Asset from "../../database/models/asset.model";
+import Asset from "../../database/models/Asset.model";
 
 export const testAsset = {
   id: 1,

@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import server from "../../index";
-import AssetController from "../../controllers/assetsController";
-import { testAsset } from "../helpers/testData";
+import AssetController from "../../controllers/AssetsController";
+import { testAsset } from "../helpers/TestData";
 
 const request = supertest(server);
 
