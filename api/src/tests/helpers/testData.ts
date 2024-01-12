@@ -1,5 +1,3 @@
-import Asset from "../../database/models/Asset.model";
-
 export const testAsset = {
   id: 1,
   assetTag: "testAssetTag",
