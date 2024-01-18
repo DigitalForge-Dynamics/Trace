@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from "express";
-import LocationController from "../controllers/LocationsController";
+import LocationController from "../controllers/locationsController";
 import { LocationAttributes } from "../utils/types/AttributeTypes";
 import { ajv } from "../middlewares/Validator";
 
