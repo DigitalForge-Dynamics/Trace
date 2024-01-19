@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import AssetService from "../services/AssetService";
-import { AssetAttributes } from "../utils/types/AttributeTypes";
+import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { ajv } from "../middlewares/Validator";
+import { ajv } from "../middlewares/validator";
 
 export default class AssetController extends ErrorController {
   private assetService = new AssetService();

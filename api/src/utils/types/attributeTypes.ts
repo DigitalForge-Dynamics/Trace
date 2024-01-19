@@ -1,7 +1,3 @@
-import { InferAttributes } from "sequelize";
-import Asset from "../../database/models/Asset.model";
-import Location from "../../database/models/Location.model";
-
 export interface AssetAttributes {
     id?: number;
     assetTag: string;
@@ -14,4 +10,12 @@ export interface AssetAttributes {
     createdAt?: Date;
     updatedAt?: Date;
 }
-export interface LocationAttributes extends InferAttributes<Location> {};
+
+export interface LocationAttributes {
+    id?: number;
+    locationName: string;
+    geoLocation?: JSON;
+    primaryLocation: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+}

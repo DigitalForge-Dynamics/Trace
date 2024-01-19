@@ -1,5 +1,5 @@
-import Asset from "../database/models/Asset.model";
-import { AssetAttributes } from "../utils/types/AttributeTypes";
+import Asset from "../database/models/asset.model";
+import { AssetAttributes } from "../utils/types/attributeTypes";
 import { BaseService } from "./BaseService";
 import { IService } from "./IService";
 

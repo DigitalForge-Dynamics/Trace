@@ -23,3 +23,5 @@ export abstract class BaseService<TEntity extends Model>
     return data;
   }
 }
+export { IService };
+
