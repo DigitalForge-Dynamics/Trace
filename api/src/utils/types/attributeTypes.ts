@@ -19,3 +19,16 @@ export interface LocationAttributes {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface UserAttributes {
+    id?: number;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    password: string;
+    email: string;
+    isActive: boolean;
+    scopes: [string];
+    createdAt?: Date;
+    updatedAt?: Date;
+}
