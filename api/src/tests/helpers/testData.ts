@@ -4,9 +4,9 @@ export const testAsset = {
   name: "testAsset",
   serialNumber: "testSerialNumber",
   modelNumber: "testModelNumber",
-  purchaseDate: new Date(),
+  purchaseDate: new Date().toISOString(),
   purchaseCost: 234,
-  nextAuditDate: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  nextAuditDate: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 };
