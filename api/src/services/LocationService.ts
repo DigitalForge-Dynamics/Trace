@@ -1,4 +1,4 @@
-import Location from "../database/models/location.model";
+import Location from "../database/models/Location.model";
 import { LocationAttributes } from "../utils/types/attributeTypes";
 import { BaseService, IService } from "./BaseService";
 

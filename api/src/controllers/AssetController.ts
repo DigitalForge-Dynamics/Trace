@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import AssetService from "../services/AssetService";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { ajv } from "../middlewares/validator";
+import { ajv } from "../middlewares/Validator";
 
 export default class AssetController extends ErrorController {
   private assetService = new AssetService();
@@ -55,7 +55,7 @@ export default class AssetController extends ErrorController {
         throw new Error(`Unable to create new asset - Error Code 500`);
       }
 
-      res.status(204);
+      res.status(204).end();
     } catch (err) {
       res.status(404).send(err);
     }
@@ -89,7 +89,7 @@ export default class AssetController extends ErrorController {
         throw new Error(`Unable to update selected asset - Error Code 500`);
       }
 
-      res.status(204);
+      res.status(204).end();
     } catch (err) {
       res.status(404).send(err);
     }
@@ -105,7 +105,7 @@ export default class AssetController extends ErrorController {
         throw new Error(`Unable to deleted selected asset - Error Code 500`);
       }
 
-      res.status(204);
+      res.status(204).end();
     } catch (err) {
       res.status(404).send(err);
     }

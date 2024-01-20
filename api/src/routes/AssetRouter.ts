@@ -12,7 +12,7 @@ router
 router
   .route("/:id")
   .get((req, res) => assetController.getAssetById(req, res))
-  .post((req, res) => assetController.createAsset(req, res))
+  .put((req, res) => assetController.updateAsset(req, res))
   .delete((req, res) => assetController.deleteAsset(req, res));
 
 export default router;

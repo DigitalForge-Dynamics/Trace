@@ -5,7 +5,7 @@ import {
   Model,
   DataTypes,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { db } from "../config/DatabaseClient";
 
 class Settings extends Model<
   InferAttributes<Settings>,

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import LocationService from "../services/LocationService";
 import { LocationAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { ajv } from "../middlewares/validator";
+import { ajv } from "../middlewares/Validator";
 
 export default class LocationController extends ErrorController {
   private locationService = new LocationService();
@@ -13,7 +13,7 @@ export default class LocationController extends ErrorController {
 
       if (retrievedLocations.length <= 0) {
         console.log(`No Locations found - Error Code 404`);
-        throw new Error(`No Locations found - Error Code 404`)
+        throw new Error(`No Locations found - Error Code 404`);
       }
 
       res.send(retrievedLocations).status(200);
@@ -30,7 +30,7 @@ export default class LocationController extends ErrorController {
 
       if (!retrievedLocation) {
         console.log(`No Locations found - Error Code 404`);
-        throw new Error(`No Locations found - Error Code 404`)
+        throw new Error(`No Locations found - Error Code 404`);
       }
 
       res.send(retrievedLocation).status(200);
@@ -55,7 +55,7 @@ export default class LocationController extends ErrorController {
         throw new Error(`Unable to create new location - Error Code 500`);
       }
 
-      res.status(204);
+      res.status(204).end();
     } catch (err) {
       res.status(404).send(err);
     }
@@ -68,7 +68,9 @@ export default class LocationController extends ErrorController {
 
       const isValidLocation = await this.locationService.findById(requestId);
       if (!isValidLocation) {
-        console.log(`Unable to find selected location to update - Error Code 404`);
+        console.log(
+          `Unable to find selected location to update - Error Code 404`
+        );
         throw new Error(
           `Unable to find selected location to update - Error Code 404`
         );
@@ -80,13 +82,16 @@ export default class LocationController extends ErrorController {
         throw new Error(`Invalid Request - Error Code 400`);
       }
 
-      const isSuccessfull = await this.locationService.update(requestId, requestData);
+      const isSuccessfull = await this.locationService.update(
+        requestId,
+        requestData
+      );
       if (!isSuccessfull) {
         console.log(`Unable to update selected location - Error Code 500`);
         throw new Error(`Unable to update selected location - Error Code 500`);
       }
 
-      res.status(204);
+      res.status(204).end();
     } catch (err) {
       res.status(404).send(err);
     }
@@ -102,7 +107,7 @@ export default class LocationController extends ErrorController {
         throw new Error(`Unable to deleted selected location - Error Code 500`);
       }
 
-      res.status(204);
+      res.status(204).end();
     } catch (err) {
       res.status(404).send(err);
     }

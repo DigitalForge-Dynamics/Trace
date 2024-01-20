@@ -24,4 +24,3 @@ export abstract class BaseService<TEntity extends Model>
   }
 }
 export { IService };
-
