@@ -1,18 +1,27 @@
 import express, { Router } from "express";
 import AssetController from "../controllers/AssetController";
+import { authenticateRequest } from "../middlewares/authenticateRequest";
 
 const router: Router = express.Router();
 const assetController = new AssetController();
 
 router
   .route("/")
-  .get((req, res) => assetController.getAllAssets(req, res))
-  .post((req, res) => assetController.createAsset(req, res));
+  .get(authenticateRequest, (res, req) =>
+    assetController.getAllAssets(res, req)
+  )
+  .post(authenticateRequest, (req, res) =>
+    assetController.createAsset(req, res)
+  );
 
 router
   .route("/:id")
-  .get((req, res) => assetController.getAssetById(req, res))
-  .put((req, res) => assetController.updateAsset(req, res))
-  .delete((req, res) => assetController.deleteAsset(req, res));
+  .get(authenticateRequest, (req, res) =>
+    assetController.getAssetById(req, res)
+  )
+  .put(authenticateRequest, (req, res) => assetController.updateAsset(req, res))
+  .delete(authenticateRequest, (req, res) =>
+    assetController.deleteAsset(req, res)
+  );
 
 export default router;
