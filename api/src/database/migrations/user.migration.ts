@@ -16,7 +16,7 @@ export const up: Migration = async ({ context: sequelize }) => {
       type: DataTypes.STRING(128),
       allowNull: false,
     },
-    userName: {
+    username: {
       type: DataTypes.STRING(128),
       allowNull: false,
     },

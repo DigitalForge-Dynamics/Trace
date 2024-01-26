@@ -13,14 +13,14 @@ export default class AuthController extends ErrorController {
       // 1. Check user exists and retrieve details
       const data: UserAttributes = req.body;
 
-      const userDetails = await this.authService.getUser(data.userName);
+      const userDetails = await this.authService.getUser(data.username);
 
       if (!userDetails) {
         console.log("User not found - Error 400");
         throw new Error("User not found - Error 400");
       }
       // 2. Compare passwords
-      const isValid = bcrypt.compareSync(data.password, userDetails.password);
+      const isValid = await bcrypt.compare(data.password, userDetails.password);
 
       if (!isValid) {
         console.log("Not valid password - Error 403");
@@ -52,7 +52,7 @@ export default class AuthController extends ErrorController {
       // Temp work around
       const userData: UserAttributes = {
         ...requestData,
-        password: bcrypt.hashSync(requestData.password, 10),
+        password: await bcrypt.hash(requestData.password, 10),
       };
 
       const user = await this.authService.createUser(userData);

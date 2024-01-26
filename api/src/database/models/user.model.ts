@@ -11,7 +11,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
   declare firstName: string;
   declare lastName: string;
-  declare userName: string;
+  declare username: string;
   declare password: string;
   declare email: string;
   declare isActive: boolean;
@@ -35,7 +35,7 @@ User.init(
       type: DataTypes.STRING(128),
       allowNull: false,
     },
-    userName: {
+    username: {
       type: DataTypes.STRING(128),
       allowNull: false,
     },

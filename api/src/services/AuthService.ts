@@ -3,7 +3,7 @@ import { UserAttributes } from "../utils/types/attributeTypes";
 
 class AuthService {
   public async getUser(requestedUser: string): Promise<UserAttributes | null> {
-    const user = await User.findOne({ where: { userName: requestedUser } });
+    const user = await User.findOne({ where: { username: requestedUser } });
 
     if (!user) {
         return null;

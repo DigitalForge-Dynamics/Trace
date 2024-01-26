@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import LocationService from "../services/LocationService";
 import { LocationAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { ajv } from "../middlewares/Validator";
+import { ajv } from "../utils/Validator";
 
 export default class LocationController extends ErrorController {
   private locationService = new LocationService();
