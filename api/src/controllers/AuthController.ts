@@ -4,13 +4,13 @@ import ErrorController from "./ErrorController";
 import { UserAttributes } from "../utils/types/attributeTypes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { generateJwt } from "../utils/tokenService";
 
 export default class AuthController extends ErrorController {
   private authService = new AuthService();
 
   public async signin(req: Request, res: Response) {
     try {
-      // 1. Check user exists and retrieve details
       const data: UserAttributes = req.body;
 
       const userDetails = await this.authService.getUser(data.username);
@@ -19,7 +19,6 @@ export default class AuthController extends ErrorController {
         console.log("User not found - Error 400");
         throw new Error("User not found - Error 400");
       }
-      // 2. Compare passwords
       const isValid = await bcrypt.compare(data.password, userDetails.password);
 
       if (!isValid) {
@@ -28,13 +27,7 @@ export default class AuthController extends ErrorController {
       }
       // 3. Generate JWT with details
       // Missing Private Key
-      const token = jwt.sign(
-        {
-          id: userDetails.id,
-        },
-        "123",
-        { expiresIn: 86400 }
-      );
+      const token = await generateJwt(1);
       // 4. Return token
       res.status(200).send({
         user: { id: userDetails.id, email: userDetails.email },
