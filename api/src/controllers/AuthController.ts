@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import AuthService from "../services/AuthService";
 import ErrorController from "./ErrorController";
 import { UserAttributes } from "../utils/types/attributeTypes";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { generateJwt } from "../utils/tokenService";
+import {
+  generateSignedJwt,
+  hashPassword,
+  verifyPassword,
+} from "../utils/tokenService";
 
 export default class AuthController extends ErrorController {
   private authService = new AuthService();
@@ -19,18 +21,14 @@ export default class AuthController extends ErrorController {
         console.log("User not found - Error 400");
         throw new Error("User not found - Error 400");
       }
-      const isValid = await bcrypt.compare(data.password, userDetails.password);
+      const isValid = await verifyPassword(userDetails.password, data.password);
 
       if (!isValid) {
         console.log("Not valid password - Error 403");
         throw new Error("Not valid password - Error 403");
       }
-      // 3. Generate JWT with details
-      // Missing Private Key
-      const token = await generateJwt(1);
-      // 4. Return token
+      const token = await generateSignedJwt(userDetails.id as number, userDetails.scopes);
       res.status(200).send({
-        user: { id: userDetails.id, email: userDetails.email },
         accessToken: token,
       });
     } catch (err) {
@@ -45,7 +43,7 @@ export default class AuthController extends ErrorController {
       // Temp work around
       const userData: UserAttributes = {
         ...requestData,
-        password: await bcrypt.hash(requestData.password, 10),
+        password: await hashPassword(requestData.password),
       };
 
       const user = await this.authService.createUser(userData);
