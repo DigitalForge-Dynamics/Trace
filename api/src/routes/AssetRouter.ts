@@ -7,12 +7,12 @@ const assetController = new AssetController();
 
 router
   .route("/")
-  .get(authenticateRequest, (res, req) =>
-    assetController.getAllAssets(res, req)
-  )
-  .post(authenticateRequest, (req, res) =>
-    assetController.createAsset(req, res)
-  );
+  .get(authenticateRequest, (req, res) => {
+    assetController.getAllAssets(req, res);
+  })
+  .post(authenticateRequest, (req, res) => {
+    assetController.createAsset(req, res);
+  });
 
 router
   .route("/:id")

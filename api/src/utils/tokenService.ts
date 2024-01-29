@@ -1,7 +1,7 @@
 import * as argon2 from "argon2";
 import crypto from "crypto";
 import fs from "fs";
-import { SignJWT } from "jose";
+import jwt from "jsonwebtoken";
 
 const publicKeyPath = __dirname + "/trace_rsa_public_key.pem";
 const privateKeyPath = __dirname + "/trace_rsa_private_key.pem";
@@ -24,21 +24,43 @@ const generateKeyPair = () => {
   fs.writeFileSync(privateKeyPath, privateKey);
 };
 
-export const generateSignedJwt = async (userId: number, userScopes: string[]) => {
+export const retrieveKeyPair = async (requiredKey: RequiredKeyType) => {
+  let key;
+
+  if (requiredKey === "public") {
+    key = fs.readFileSync(publicKeyPath);
+  } else {
+    key = fs.readFileSync(privateKeyPath);
+  }
+
+  return key;
+};
+
+export const generateSignedJwt = async (
+  userId: number,
+  userScopes: string[]
+) => {
   if (!fs.existsSync(privateKeyPath) || !fs.existsSync(publicKeyPath)) {
     generateKeyPair();
   }
 
   const signingKey = fs.readFileSync(privateKeyPath);
 
-  const token = await new SignJWT({ id: userId, scopes: userScopes })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setIssuer("urn:trace-api")
-    .setAudience("urn:trace-consumer")
-    .setExpirationTime("2hrs")
-    .setJti(crypto.randomUUID())
-    .sign(signingKey);
+  const token = jwt.sign(
+    {
+      id: userId,
+      scopes: userScopes,
+      iss: "urn:trace-api",
+      aud: "urn:trace-consumer",
+      iat: Date.now(),
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      jti: crypto.randomUUID(),
+    },
+    signingKey,
+    {
+      algorithm: "RS256",
+    }
+  );
 
   return token;
 };
@@ -58,3 +80,8 @@ export const verifyPassword = async (
   );
   return validPassword;
 };
+
+export enum RequiredKeyType {
+  publicKey = "public",
+  privateKey = "private",
+}
