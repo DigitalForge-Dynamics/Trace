@@ -8,6 +8,14 @@ export const up: Migration = async ({ context: sequelize }) => {
       autoIncrement: true,
       primaryKey: true,
     },
+    firstName: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING(128),
+      allowNull: false,
+    },
     username: {
       type: DataTypes.STRING(128),
       allowNull: false,
@@ -15,9 +23,17 @@ export const up: Migration = async ({ context: sequelize }) => {
     password: {
       type: DataTypes.STRING(128),
       allowNull: false,
-    },
+    },    
     email: {
       type: DataTypes.STRING(128),
+      allowNull: false,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
+    scopes: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
     createdAt: {

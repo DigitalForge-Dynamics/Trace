@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import AssetService from "../services/AssetService";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { ajv } from "../middlewares/Validator";
+import { ajv } from "../utils/Validator";
 
 export default class AssetController extends ErrorController {
   private assetService = new AssetService();
@@ -16,7 +16,8 @@ export default class AssetController extends ErrorController {
         throw new Error("No Assets found");
       }
 
-      res.send(retrievedAssets).status(200);
+      res.send(retrievedAssets).status(200).end();
+      return;
     } catch (err) {
       res.status(404).send(err);
     }
@@ -33,9 +34,10 @@ export default class AssetController extends ErrorController {
         throw new Error(`Asset not found - Error Code 404`);
       }
 
-      res.send(retrievedAsset).status(200);
+      res.send(retrievedAsset).status(200).end();
     } catch (err) {
-      res.status(404).send(err);
+      res.send(err).status(404).end();
+      return;
     }
   }
 
@@ -57,7 +59,8 @@ export default class AssetController extends ErrorController {
 
       res.status(204).end();
     } catch (err) {
-      res.status(404).send(err);
+      res.send(err).status(404).end();
+      return;
     }
   }
 
@@ -91,7 +94,8 @@ export default class AssetController extends ErrorController {
 
       res.status(204).end();
     } catch (err) {
-      res.status(404).send(err);
+      res.send(err).status(404).end();
+      return;
     }
   }
 
@@ -107,7 +111,8 @@ export default class AssetController extends ErrorController {
 
       res.status(204).end();
     } catch (err) {
-      res.status(404).send(err);
+      res.send(err).status(404).end();
+      return;
     }
   }
 }

@@ -5,6 +5,7 @@ import { redisClient } from "./database/config/RedisClient";
 import assetsRouter from "./routes/AssetRouter";
 import locationsRouter from "./routes/LocationRouter";
 import settingsRouter from "./routes/SettingsRouter";
+import authRouter from "./routes/AuthRouter";
 
 const app: Express = express();
 const port = process.env.API_PORT;
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use("/settings", settingsRouter);
 app.use("/assets", assetsRouter);
 app.use("/locations", locationsRouter);
+app.use("/auth", authRouter);
 
 const startupConfiguration = async () => {
   await migrator.up();
