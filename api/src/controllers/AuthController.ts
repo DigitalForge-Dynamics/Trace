@@ -27,9 +27,16 @@ export default class AuthController extends ErrorController {
         console.log("Not valid password - Error 403");
         throw new Error("Not valid password - Error 403");
       }
-      const token = await generateSignedJwt(userDetails.id as number, userDetails.scopes);
+      const token = await generateSignedJwt(
+        userDetails.id as number,
+        userDetails.scopes
+      );
       res.status(200).send({
         accessToken: token,
+        userId: userDetails.id,
+        email: userDetails.email,
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
       });
     } catch (err) {
       res.send(err);
