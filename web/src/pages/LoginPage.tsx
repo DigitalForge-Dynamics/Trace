@@ -1,9 +1,10 @@
 import React, { FormEvent, useContext, useEffect, useState } from "react";
-import { Box, Button, Container, TextField } from "@mui/material";
+import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import icon from "../assets/trace-icon.png";
 import { AuthData } from "../types/authTypes";
 import { AuthContext } from "../components/Auth/authProvider";
 import { fetchUserAuth } from "../components/api";
+import background from "../assets/login-background.jpg";
 
 function LoginPage() {
   const [authData, setAuthData] = useState<AuthData>();
@@ -29,47 +30,31 @@ function LoginPage() {
   };
 
   return (
-    <Container
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minWidth: "100vw",
-      }}
-    >
-      <Box
+    <Box sx={{ height: "100vh", display: "flex" }}>
+      <img style={{ width: "55vw", height: "100vh" }} src={background} />
+      <Paper
+        square
         sx={{
-          minHeight: "80vh",
-          minWidth: "30vw",
-          backgroundColor: "White",
-          borderRadius: "8px",
-          boxShadow: "2px 2px black",
+          height: "100vh",
+          width: "45vw",
+          display: "flex",
+          flexDirection: "column",
+          gap: 4,
+          py: 12,
+          alignItems: "center",
         }}
       >
-        <img src={icon} width="100px" height="100px" />
-        <h1>Trace</h1>
-        <h3>Welcome to Trace Asset Management</h3>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <TextField
-            variant="outlined"
-            label="Username"
-            onChange={(e) =>
-              setLoginData({ ...loginData, username: e.target.value })
-            }
-          />
-          <TextField
-            variant="outlined"
-            label="Password"
-            onChange={(e) =>
-              setLoginData({ ...loginData, password: e.target.value })
-            }
-          />
-          <Button variant="contained" onClick={(e) => submitForm(e)}>
-            Login
-          </Button>
-        </Box>
-      </Box>
-    </Container>
+        <img style={{ width: "175px", height: "175px" }} src={icon} />
+        <Typography variant="h4">Welcome to Trace</Typography>
+        <TextField label="Username" />
+        <TextField label="Password" />
+        <Button variant="contained">Login</Button>
+        <Typography sx={{ color: "#555555", pt: 8 }}>
+          {new Date().getFullYear()} &copy; Trace Asset Management -
+          DigitalForge Dynamics
+        </Typography>
+      </Paper>
+    </Box>
   );
 }
 
