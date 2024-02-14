@@ -34,23 +34,27 @@ function LoginPage() {
       <img style={{ width: "55vw", height: "100vh" }} src={background} />
       <Paper
         square
+        elevation={8}
         sx={{
-          height: "100vh",
+          maxHeight: "100vh",
           width: "45vw",
           display: "flex",
           flexDirection: "column",
           gap: 4,
-          py: 12,
           alignItems: "center",
+          pt: 10,
+          overflow: "hidden",
         }}
       >
         <img style={{ width: "175px", height: "175px" }} src={icon} />
         <Typography variant="h4">Welcome to Trace</Typography>
-        <TextField label="Username" />
-        <TextField label="Password" />
-        <Button variant="contained">Login</Button>
+        <Box sx={{ minWidth: '20vw', display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <TextField label="Username" />
+          <TextField label="Password" />
+          <Button variant="contained">Login</Button>
+        </Box>
         <Typography sx={{ color: "#555555", pt: 8 }}>
-          {new Date().getFullYear()} &copy; Trace Asset Management -
+          Trace Asset Management - {new Date().getFullYear()} &copy;
           DigitalForge Dynamics
         </Typography>
       </Paper>
