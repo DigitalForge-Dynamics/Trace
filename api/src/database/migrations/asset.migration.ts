@@ -1,4 +1,4 @@
-import { Migration } from "../config/DatabaseClient";
+import { Migration } from "../config/databaseClient";
 import { DataTypes } from "sequelize";
 
 export const up: Migration = async ({ context: sequelize }) => {
