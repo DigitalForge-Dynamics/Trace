@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express, { Express } from "express";
-import { migrator } from "./database/config/DatabaseClient";
-import { redisClient } from "./database/config/RedisClient";
+import { migrator } from "./database/config/databaseClient";
+import { redisClient } from "./database/config/redisClient";
 import assetsRouter from "./routes/AssetRouter";
 import locationsRouter from "./routes/LocationRouter";
 import settingsRouter from "./routes/SettingsRouter";
