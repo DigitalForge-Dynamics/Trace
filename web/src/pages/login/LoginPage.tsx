@@ -1,10 +1,11 @@
-import React, { FormEvent, useContext, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import icon from "../assets/trace-icon.png";
-import { AuthData } from "../types/authTypes";
-import { AuthContext } from "../components/Auth/authProvider";
-import { fetchUserAuth } from "../components/api";
-import background from "../assets/login-background.jpg";
+import icon from "../../assets/trace-icon.png";
+import { AuthData } from "../../utils/types/authTypes";
+import { AuthContext } from "../../context/auth.context";
+import { fetchUserAuth } from "../../data/api";
+import background from "../../assets/login-background.jpg";
+import LoginForm from "../../components/login/LoginForm.component";
 
 function LoginPage() {
   const [authData, setAuthData] = useState<AuthData>();
@@ -23,11 +24,9 @@ function LoginPage() {
     }
   }, [authData, login]);
 
-  const submitForm = async (event: FormEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const request = await fetchUserAuth(loginData);
-    setAuthData(request);
-  };
+  const formSubmission = (data: any) => {
+    console.log(data)
+  }
 
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
@@ -48,11 +47,7 @@ function LoginPage() {
       >
         <img style={{ width: "175px", height: "175px" }} src={icon} />
         <Typography variant="h4">Welcome to Trace</Typography>
-        <Box sx={{ minWidth: '20vw', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <TextField label="Username" />
-          <TextField label="Password" />
-          <Button variant="contained">Login</Button>
-        </Box>
+        <LoginForm loginData={formSubmission}/>
         <Typography sx={{ color: "#555555", pt: 8 }}>
           Trace Asset Management - {new Date().getFullYear()} &copy;
           DigitalForge Dynamics

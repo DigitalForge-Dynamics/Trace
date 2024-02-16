@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
-import PrivateRoutes from "./components/Auth/protectedRoutes";
-import AuthProvider from "./components/Auth/authProvider";
+import LoginPage from "./pages/login/LoginPage";
+import HomePage from "./pages/dashboard/Dashboard";
+import PrivateRoutes from "./components/auth/ProtectedRoute";
+import AuthProvider from "./context/auth.context";
 
 function App() {
   return (

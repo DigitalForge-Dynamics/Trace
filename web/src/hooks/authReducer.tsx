@@ -1,5 +1,5 @@
 import React from "react";
-import { AuthAction, AuthState } from "../../types/authTypes";
+import { AuthAction, AuthState } from "../utils/types/authTypes";
 
 export const defaultAuthState: AuthState = {
   isLoggedIn: false,

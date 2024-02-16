@@ -5,8 +5,8 @@ import React, {
   useCallback,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContextProps, AuthData, AuthOption } from "../../types/authTypes";
-import authStateReducer, { defaultAuthState } from "./authState";
+import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
+import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
 
 export const AuthContext = createContext<AuthContextProps>({
   authState: defaultAuthState,
