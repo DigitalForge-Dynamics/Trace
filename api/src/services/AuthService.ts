@@ -1,4 +1,4 @@
-import User from "../database/models/User.model";
+import User from "../database/models/user.model";
 import { UserAttributes } from "../utils/types/attributeTypes";
 
 class AuthService {
