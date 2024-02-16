@@ -11,8 +11,10 @@ type LoginFormProps = {
 };
 
 const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
-  const [loginInformation, setLoginInformation] =
-    useState<ILoginFormInput>({ username: "", password: "" });
+  const [loginInformation, setLoginInformation] = useState<ILoginFormInput>({
+    username: "",
+    password: "",
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +22,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", gap: 4, width: "15vw" }}
+    >
       <TextField
         id="usernameTextField"
         data-testid="testid-usernameTextField"
@@ -34,6 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
       />
       <TextField
         id="passwordTextField"
+        type="password"
         data-testid="testid-passwordTextField"
         label="Password"
         onChange={(e) =>
@@ -46,6 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
       <Button
         id="loginButton"
         data-testid="testid-loginButton"
+        variant="contained"
         onClick={handleSubmit}
       >
         Login

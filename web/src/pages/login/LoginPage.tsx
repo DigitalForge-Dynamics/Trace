@@ -1,5 +1,5 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+import { Box, Paper, Typography } from "@mui/material";
 import icon from "../../assets/trace-icon.png";
 import { AuthData } from "../../utils/types/authTypes";
 import { AuthContext } from "../../context/auth.context";
@@ -9,7 +9,6 @@ import LoginForm from "../../components/login/LoginForm.component";
 
 function LoginPage() {
   const [authData, setAuthData] = useState<AuthData>();
-  const [loginData, setLoginData] = useState({ username: "", password: "" });
   const { login } = useContext(AuthContext);
 
   useEffect(() => {
@@ -24,9 +23,10 @@ function LoginPage() {
     }
   }, [authData, login]);
 
-  const formSubmission = (data: any) => {
-    console.log(data)
-  }
+  const submitForm = async (data: any) => {
+    const response = await fetchUserAuth(data);
+    setAuthData(response);
+  };
 
   return (
     <Box sx={{ height: "100vh", display: "flex" }}>
@@ -47,7 +47,7 @@ function LoginPage() {
       >
         <img style={{ width: "175px", height: "175px" }} src={icon} />
         <Typography variant="h4">Welcome to Trace</Typography>
-        <LoginForm loginData={formSubmission}/>
+        <LoginForm loginData={submitForm} />
         <Typography sx={{ color: "#555555", pt: 8 }}>
           Trace Asset Management - {new Date().getFullYear()} &copy;
           DigitalForge Dynamics
