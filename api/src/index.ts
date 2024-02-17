@@ -2,6 +2,7 @@ import "dotenv/config";
 import express, { Express } from "express";
 import { migrator } from "./database/config/databaseClient";
 import { redisClient } from "./database/config/redisClient";
+import cors from 'cors';
 import assetsRouter from "./routes/AssetRouter";
 import locationsRouter from "./routes/LocationRouter";
 import settingsRouter from "./routes/SettingsRouter";
@@ -10,6 +11,7 @@ import authRouter from "./routes/AuthRouter";
 const app: Express = express();
 const port = process.env.API_PORT;
 
+app.use(cors())
 app.use(express.json());
 
 // Routes
