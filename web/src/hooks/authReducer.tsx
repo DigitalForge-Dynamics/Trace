@@ -10,7 +10,7 @@ const authStateReducer: React.Reducer<AuthState, AuthAction> = (
   action
 ) => {
   if (action.type === "LOGIN") {
-    localStorage.setItem("trace_user", JSON.stringify(action.payload));
+    sessionStorage.setItem("trace_user", JSON.stringify(action.payload));
     return {
       ...state,
       isLoggedIn: true,
@@ -22,7 +22,7 @@ const authStateReducer: React.Reducer<AuthState, AuthAction> = (
     };
   }
   if (action.type === "LOGOUT") {
-    localStorage.removeItem("trace_user");
+    sessionStorage.removeItem("trace_user");
     return defaultAuthState;
   }
 

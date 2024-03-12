@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import AuthService from "../services/AuthService";
 import ErrorController from "./ErrorController";
-import { UserAttributes } from "../utils/types/attributeTypes";
+import { UserAttributes, UserLoginAttributes } from "../utils/types/attributeTypes";
 import {
   generateSignedJwt,
   hashPassword,
@@ -13,7 +13,7 @@ export default class AuthController extends ErrorController {
 
   public async signin(req: Request, res: Response) {
     try {
-      const data: UserAttributes = req.body;
+      const data: UserLoginAttributes = req.body;
 
       const userDetails = await this.authService.getUser(data.username);
 
@@ -31,13 +31,15 @@ export default class AuthController extends ErrorController {
         userDetails.id as number,
         userDetails.scopes
       );
-      res.status(200).send({
-        accessToken: token,
-        userId: userDetails.id,
-        email: userDetails.email,
-        firstName: userDetails.firstName,
-        lastName: userDetails.lastName,
-      });
+      res
+        .send({
+          accessToken: token,
+          userId: userDetails.id,
+          email: userDetails.email,
+          firstName: userDetails.firstName,
+          lastName: userDetails.lastName,
+        })
+        .status(200);
     } catch (err) {
       res.send(err);
     }

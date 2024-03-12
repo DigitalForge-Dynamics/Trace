@@ -1,11 +1,9 @@
 import React from "react";
+import Layout from "../../components/layout/Layout";
 
 function HomePage() {
   return (
-    <div>
-      <input id="Username" />
-      <input id="Password" />
-    </div>
+    <Layout><p>Hello World</p></Layout>
   );
 }
 

@@ -22,7 +22,7 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem("trace_user");
+    const user = sessionStorage.getItem("trace_user");
 
     if (user) {
       const userData: AuthData = JSON.parse(user);

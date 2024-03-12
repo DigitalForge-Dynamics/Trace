@@ -4,7 +4,7 @@ interface UserloginData {
 }
 
 export const fetchUserAuth = async (userData: UserloginData) => {
-  const res = await fetch("http://localhost:3000/auth/login", {
+  const res = await fetch("https://ominous-waffle-qxvv4prj97g2x4v4-3000.app.github.dev/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
