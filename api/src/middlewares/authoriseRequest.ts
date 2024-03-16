@@ -17,7 +17,6 @@ export const authoriseRequest = async (
 		return;
 	}
 	const token = authHeader.split(" ")[1];
-	const path: string = req.path;
 	// & unknown to indicate possible presence of other data. Does not affect typing, only documentative.
 	const user: (UserAttributes & unknown) | undefined = res.locals.user;
 	if (!user) {
@@ -28,8 +27,9 @@ export const authoriseRequest = async (
 	}
 	const userScopes: Scope[] = user.scopes;
 
-	// TODO: Load dynamically, according to request pathname
-	const requiredScopes = [Scope.READ];
+	// TODO: Load dynamically, according to request pathname (req.path)
+	// To not block presently, set to not require any scopes
+	const requiredScopes: Scope[] = [];
 
 	for (const required of requiredScopes) {
 		if (!userScopes.includes(required)) {
