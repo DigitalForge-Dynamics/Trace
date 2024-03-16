@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import Box from "@mui/material/Box";
+import React, { ReactNode, useState } from "react";
+import { Box, Table, TableHead, TableBody, TablePagination, TableRow, TableCell, TableFooter } from "@mui/material";
 
 // Demonstration of what table needs
 interface TableData {
@@ -36,9 +36,11 @@ interface AssetsTableProps<T> {
 }
 
 function AssetsTable<T extends Record<string, ReactNode>>({ headers, data }: AssetsTableProps<T>) {
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
 	return (
 		<Box sx={{ overflow: "scroll" }}>
-		<table style={{
+		<Table sx={{
 			width: "90%",
 			height: "100%",
 			textAlign: "center",
@@ -48,17 +50,35 @@ function AssetsTable<T extends Record<string, ReactNode>>({ headers, data }: Ass
 			borderCollapse: "collapse",
 			overflow: "scroll"
 		}}>
-			<thead>
-			<tr>
+			<TableHead>
+			<TableRow>
 				{headers.map((header, idx) => <th key={idx} style={{ border: "1px solid white" }}>{header}</th>)}
-			</tr>
-			</thead>
-			<tbody>
-			{data.map((datum, idx) => (<tr key={idx}>
-				{headers.map((header, idx) => <td key={idx} style={{ border: "1px solid white" }}>{datum[header]}</td>)}
-			</tr>))}
-			</tbody>
-		</table>
+			</TableRow>
+			</TableHead>
+			<TableBody>
+			{data
+			.slice(page*rowsPerPage, (page+1)*rowsPerPage)
+			.map((datum, idx) => (
+				<TableRow key={idx}>
+					{headers.map((header, idx) => <TableCell key={idx} style={{ border: "1px solid white" }}>{datum[header]}</TableCell>)}
+				</TableRow>
+			))}
+			</TableBody>
+			<TableFooter>
+				<TablePagination
+					count={data.length}
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={(_, newPage: number) => setPage(newPage)}
+					onRowsPerPageChange={(event) => {
+						const startIndex = page * rowsPerPage;
+						setRowsPerPage(parseInt(event.target.value, 10));
+						const newPage = startIndex / rowsPerPage;
+						setPage(newPage);
+					}}
+				/>
+			</TableFooter>
+		</Table>
 		</Box>
 	);
 }
