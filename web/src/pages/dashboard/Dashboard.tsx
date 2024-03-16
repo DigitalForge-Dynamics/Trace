@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../../context/auth.context";
 
 function HomePage() {
-  return (
-    <div>
-      <input id="Username" />
-      <input id="Password" />
-    </div>
-  );
+	const { authState } = useContext(AuthContext);
+	if (!authState.isLoggedIn) return <Navigate to="/login" />
+	return `Welcome to your Dashboard, ${authState.firstName}`;
 }
 
 export default HomePage;
