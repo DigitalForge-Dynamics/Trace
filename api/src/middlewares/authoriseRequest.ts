@@ -1,6 +1,4 @@
-import { Response, Request, NextFunction, request } from "express";
-import { RequiredKeyType, retrieveKeyPair } from "../utils/tokenService";
-import jwt from "jsonwebtoken";
+import { Response, Request, NextFunction } from "express";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
 
 export const authoriseRequest = async (
@@ -16,7 +14,6 @@ export const authoriseRequest = async (
 		res.status(500).end();
 		return;
 	}
-	const token = authHeader.split(" ")[1];
 	// & unknown to indicate possible presence of other data. Does not affect typing, only documentative.
 	const user: (UserAttributes & unknown) | undefined = res.locals.user;
 	if (!user) {

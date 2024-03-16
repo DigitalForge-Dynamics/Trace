@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction, request } from "express";
+import { Response, Request, NextFunction } from "express";
 import { RequiredKeyType, retrieveKeyPair } from "../utils/tokenService";
 import jwt from "jsonwebtoken";
 
