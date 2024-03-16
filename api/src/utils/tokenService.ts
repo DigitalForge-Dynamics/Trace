@@ -24,19 +24,15 @@ const generateKeyPair = () => {
   fs.writeFileSync(privateKeyPath, privateKey);
 };
 
-export const retrieveKeyPair = async (requiredKey: RequiredKeyType) => {
-  let key;
-
-  if (requiredKey === "public") {
-    key = fs.readFileSync(publicKeyPath);
-  } else {
-    key = fs.readFileSync(privateKeyPath);
-  }
-
-  return key;
+export const retrieveKeyPair = (requiredKey: RequiredKeyType) => {
+	if (requiredKey === RequiredKeyType.privateKey) {
+		return fs.readFileSync(privateKeyPath);
+	} else {
+		return fs.readFileSync(publicKeyPath);
+	}
 };
 
-export const generateSignedJwt = async (
+export const generateSignedJwt = (
   userId: number,
   userScopes: string[]
 ) => {
@@ -58,7 +54,7 @@ export const generateSignedJwt = async (
     },
     signingKey,
     {
-      algorithm: "RS256",
+      algorithm: "RS512",
     }
   );
 

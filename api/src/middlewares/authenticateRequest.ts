@@ -13,12 +13,12 @@ export const authenticateRequest = async (
   if (authHeader) {
     const token = authHeader.split(" ")[1];
 
-    jwt.verify(token, requiredKey, (error, user) => {
+    jwt.verify(token, requiredKey, {audience: "urn:trace-consumer" }, (error, user) => {
       if (error) {
         res.status(403).end();
         return;
       }
-      req.query.user = user;
+      res.locals.user = user;
       next();
       return;
     });
