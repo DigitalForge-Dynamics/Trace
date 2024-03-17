@@ -2,7 +2,7 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/src/tests/**/*.test.ts?(x)"],
+  testMatch: ["**/src/tests/**/*.test.ts(x)?"],
   moduleNameMapper: {
     "^sequelize$": "<rootDir>/src/tests/TestHelpers.ts",
   },

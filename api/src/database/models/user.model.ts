@@ -6,6 +6,7 @@ import {
   Model,
 } from "sequelize";
 import { db } from "../config/databaseClient";
+import { Scope } from "../../utils/types/attributeTypes";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
@@ -15,7 +16,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare password: string;
   declare email: string;
   declare isActive: boolean;
-  declare scopes: string[];
+  declare scopes: Scope[];
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
