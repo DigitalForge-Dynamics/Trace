@@ -5,7 +5,7 @@ import ErrorController from "./ErrorController";
 import { ajv } from "../utils/Validator";
 
 export default class AssetController extends ErrorController {
-  private assetService = new AssetService();
+  private readonly assetService = new AssetService();
 
   public async getAllAssets(
     _: Request<{}>,
