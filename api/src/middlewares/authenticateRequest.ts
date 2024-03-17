@@ -1,14 +1,14 @@
 import { Response, Request, NextFunction, request } from "express";
-import { RequiredKeyType, retrieveKeyPair } from "../utils/tokenService";
 import jwt from "jsonwebtoken";
+import AuthService from "../services/AuthenticationService";
 
-export const authenticateRequest = async (
+export const authenticateRequest = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  const requiredKey = await retrieveKeyPair(RequiredKeyType.publicKey);
+  const requiredKey = new AuthService().getJWTSecretKey();
 
   if (authHeader) {
     const token = authHeader.split(" ")[1];

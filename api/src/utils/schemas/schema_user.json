@@ -1,0 +1,47 @@
+{
+  "$id": "User Schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "A representation of a user",
+  "type": "object",
+  "required": [
+    "firstName",
+    "lastName",
+    "username",
+    "password",
+    "email",
+    "isActive",
+    "scopes"
+  ],
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "isActive": {
+      "type": "boolean"
+    },
+    "scopes": {
+      "type": "array"
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    }
+  }
+}
