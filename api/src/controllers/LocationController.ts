@@ -8,7 +8,7 @@ import { ajv } from "../utils/Validator";
 export default class LocationController extends ErrorController {
   private locationService = new LocationService();
 
-  public async getAllLocations(req: Request<{}>, res: Response) {
+  public async getAllLocations(_: Request<{}>, res: Response) {
     try {
       const retrievedLocations: Location[] = await this.locationService.findAll();
 

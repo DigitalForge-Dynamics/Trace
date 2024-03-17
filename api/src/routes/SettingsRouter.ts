@@ -7,8 +7,8 @@ const router: Router = express.Router();
 router.use(authenticateRequest);
 router.use(authoriseRequest);
 
-router.route("/general").put((req, res) => {
-  res.send("NOT IMPLEMENTED - UPDATE GENERAL SETTINGS").end();
+router.route("/general").put((_, res) => {
+  res.status(501).send("NOT IMPLEMENTED - UPDATE GENERAL SETTINGS").end();
 });
 
 export default router;

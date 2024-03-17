@@ -7,7 +7,7 @@ import { ajv } from "../utils/Validator";
 export default class AssetController extends ErrorController {
   private assetService = new AssetService();
 
-  public async getAllAssets(req: Request<{}>, res: Response) {
+  public async getAllAssets(_: Request<{}>, res: Response) {
     try {
       const retrievedAssets = await this.assetService.findAll();
 
