@@ -1,39 +1,44 @@
 {
-    "$id": "Asset Schema",
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "description": "A representation of an asset",
-    "type": "object",
-    "required": ["assetTag", "name"],
-    "properties": {
-        "id": {
-            "type": "number"
-        },
-        "assetTag": {
-            "type": "string"
-        },
-        "name": {
-            "type": "string"
-        },
-        "serialNumber": {
-            "type": "string"
-        },
-        "modelNumber": {
-            "type": "string"
-        },
-        "purchaseDate": {
-            "type": "string"
-        },
-        "purchaseCost": {
-            "type": "number"
-        },
-        "nextAuditDate": {
-            "type": "string"
-        },
-        "createdAt": {
-            "type": "string"
-        },
-        "updatedAt": {
-            "type": "string"
-        }
+  "$id": "Asset Schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "A representation of an asset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assetTag", "name"],
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "assetTag": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "serialNumber": {
+      "type": "string"
+    },
+    "modelNumber": {
+      "type": "string"
+    },
+    "purchaseDate": {
+      "type": "string",
+      "format": "date-string"
+    },
+    "purchaseCost": {
+      "type": "number"
+    },
+    "nextAuditDate": {
+      "type": "string",
+       "format": "date-string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-string"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-string"
     }
+  }
 }

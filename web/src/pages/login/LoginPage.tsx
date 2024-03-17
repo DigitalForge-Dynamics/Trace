@@ -23,7 +23,7 @@ function LoginPage() {
     }
   }, [authData, login]);
 
-  const submitForm = async (data: any) => {
+  const submitForm = async (data: UserLoginData) => {
     const response = await fetchUserAuth(data);
     setAuthData(response);
   };

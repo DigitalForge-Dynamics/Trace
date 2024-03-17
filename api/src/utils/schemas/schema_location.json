@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "A representation of a location",
   "type": "object",
+  "additionalProperties": false,
   "required": ["locationName", "primaryLocation"],
   "properties": {
     "id": {
@@ -18,10 +19,12 @@
       "type": "boolean"
     },
     "createdAt": {
-      "type": "string"
+      "type": "string",
+      "format": "date-string"
     },
     "updatedAt": {
-      "type": "string"
+      "type": "string",
+      "format": "date-string"
     }
   }
 }

@@ -1,12 +1,14 @@
-export const testAsset = {
+import { AssetAttributes } from "../../utils/types/attributeTypes";
+
+export const testAsset: AssetAttributes = {
   id: 1,
   assetTag: "testAssetTag",
   name: "testAsset",
   serialNumber: "testSerialNumber",
   modelNumber: "testModelNumber",
-  purchaseDate: new Date().toISOString(),
+  purchaseDate: new Date(),
   purchaseCost: 234,
-  nextAuditDate: new Date().toISOString(),
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  nextAuditDate: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };

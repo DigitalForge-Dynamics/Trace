@@ -7,7 +7,11 @@ import { ajv } from "../utils/Validator";
 export default class AssetController extends ErrorController {
   private assetService = new AssetService();
 
-  public async getAllAssets(req: Request, res: Response, next: NextFunction) {
+  public async getAllAssets(
+    req: Request<{}>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const retrievedAssets = await this.assetService.findAll();
 
@@ -30,6 +34,9 @@ export default class AssetController extends ErrorController {
   ) {
     try {
       const requestId: number = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        throw ErrorController.BadRequestError();
+      }
 
       const retrievedAsset = await this.assetService.findById(requestId);
 
@@ -44,7 +51,11 @@ export default class AssetController extends ErrorController {
     }
   }
 
-  public async createAsset(req: Request, res: Response, next: NextFunction) {
+  public async createAsset(
+    req: Request<{}>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const requestData: AssetAttributes = req.body;
 
@@ -74,6 +85,14 @@ export default class AssetController extends ErrorController {
     try {
       const requestId: number = parseInt(req.params.id);
       const requestData: AssetAttributes = req.body;
+      if (isNaN(requestId)) {
+        throw ErrorController.BadRequestError();
+      }
+      const isValidRequest = ajv.validate("asset", requestData);
+      if (!isValidRequest) {
+        console.log(`Invalid Request - Error Code 400`);
+        throw ErrorController.BadRequestError("Invalid Request");
+      }
 
       const isValidAsset = await this.assetService.findById(requestId);
       if (!isValidAsset) {
@@ -83,19 +102,15 @@ export default class AssetController extends ErrorController {
         );
       }
 
-      const isValidRequest = ajv.validate("asset", requestData);
-      if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
-        throw ErrorController.BadRequestError("Invalid Request");
-      }
-
       const isSuccessfull = await this.assetService.update(
         requestId,
         requestData
       );
       if (!isSuccessfull) {
         console.log(`Unable to update selected asset - Error Code 500`);
-        throw ErrorController.InternalServerError("Unable to update selected asset");
+        throw ErrorController.InternalServerError(
+          "Unable to update selected asset"
+        );
       }
 
       res.status(204).end();
@@ -111,11 +126,16 @@ export default class AssetController extends ErrorController {
   ) {
     try {
       const requestId: number = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        throw ErrorController.BadRequestError();
+      }
 
       const isDeleted = await this.assetService.delete(requestId);
       if (!isDeleted) {
         console.log(`Unable to deleted selected asset - Error Code 500`);
-        throw ErrorController.InternalServerError("Unable to deleted selected asset");
+        throw ErrorController.InternalServerError(
+          "Unable to deleted selected asset"
+        );
       }
 
       res.status(204).end();

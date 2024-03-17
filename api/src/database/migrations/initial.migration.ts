@@ -1,5 +1,5 @@
 import { Migration } from "../config/databaseClient";
-import { DataTypes, QueryInterface } from "sequelize";
+import { DataTypes } from "sequelize";
 
 export const up: Migration = async ({ context: queryInterface }) => {
   await queryInterface.createTable("assets", {

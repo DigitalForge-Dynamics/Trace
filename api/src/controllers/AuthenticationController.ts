@@ -2,15 +2,23 @@ import { NextFunction, Request, Response } from "express";
 import { UserAttributes } from "../utils/types/attributeTypes";
 import AuthService from "../services/AuthenticationService";
 import { ajv } from "../utils/Validator";
-import { UserLogin } from "../utils/types/authenticationTypes";
 import ErrorController from "./ErrorController";
 
 export default class AuthenticationContoller extends ErrorController {
   private authService = new AuthService();
 
-  public async signIn(req: Request, res: Response, next: NextFunction) {
+  public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
     try {
-      const data: UserLogin = req.body;
+      const data: unknown = req.body; // UserLogin
+      if (
+        typeof data !== 'object' ||
+        data === null
+        || !('username' in data && typeof data.username === 'string')
+        || !('password' in data && typeof data.password === 'string')
+      ) {
+        throw ErrorController.BadRequestError();
+      }
+
       const userDetails = await this.authService.getUser(data.username);
       if (!userDetails) {
         console.log("User not found - Error 400");
@@ -36,7 +44,7 @@ export default class AuthenticationContoller extends ErrorController {
     }
   }
 
-  public async signUp(req: Request, res: Response, next: NextFunction) {
+  public async signUp(req: Request<{}>, res: Response, next: NextFunction) {
     try {
       const data: UserAttributes = req.body;
 
