@@ -7,21 +7,23 @@ const assetController = new AssetController();
 
 router
   .route("/")
-  .get(authenticateRequest, (req, res) => {
-    assetController.getAllAssets(req, res);
+  .get(authenticateRequest, (req, res, next) => {
+    assetController.getAllAssets(req, res, next);
   })
-  .post(authenticateRequest, (req, res) => {
-    assetController.createAsset(req, res);
+  .post(authenticateRequest, (req, res, next) => {
+    assetController.createAsset(req, res, next);
   });
 
 router
   .route("/:id")
-  .get(authenticateRequest, (req, res) =>
-    assetController.getAssetById(req, res)
+  .get(authenticateRequest, (req, res, next) =>
+    assetController.getAssetById(req, res, next)
   )
-  .put(authenticateRequest, (req, res) => assetController.updateAsset(req, res))
-  .delete(authenticateRequest, (req, res) =>
-    assetController.deleteAsset(req, res)
+  .put(authenticateRequest, (req, res, next) =>
+    assetController.updateAsset(req, res, next)
+  )
+  .delete(authenticateRequest, (req, res, next) =>
+    assetController.deleteAsset(req, res, next)
   );
 
 export default router;

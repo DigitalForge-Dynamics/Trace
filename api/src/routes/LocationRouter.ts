@@ -7,23 +7,23 @@ const locationController = new LocationController();
 
 router
   .route("/")
-  .get(authenticateRequest, (req, res) =>
-    locationController.getAllLocations(req, res)
+  .get(authenticateRequest, (req, res, next) =>
+    locationController.getAllLocations(req, res, next)
   )
-  .post(authenticateRequest, (req, res) =>
-    locationController.createLocation(req, res)
+  .post(authenticateRequest, (req, res, next) =>
+    locationController.createLocation(req, res, next)
   );
 
 router
   .route("/:id")
-  .get(authenticateRequest, (req, res) =>
-    locationController.getLocationById(req, res)
+  .get(authenticateRequest, (req, res, next) =>
+    locationController.getLocationById(req, res, next)
   )
-  .put(authenticateRequest, (req, res) =>
-    locationController.updateLocation(req, res)
+  .put(authenticateRequest, (req, res, next) =>
+    locationController.updateLocation(req, res, next)
   )
-  .delete(authenticateRequest, (req, res) =>
-    locationController.deleteLocation(req, res)
+  .delete(authenticateRequest, (req, res, next) =>
+    locationController.deleteLocation(req, res, next)
   );
 
 export default router;
