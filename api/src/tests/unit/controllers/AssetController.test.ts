@@ -11,7 +11,7 @@ jest.mock("../../../services/AssetService");
 jest.mock("../../../services/BaseService");
 jest.mock("../../../services/IService");
 
-describe.skip('getAllAssets', () => {
+describe('getAllAssets', () => {
   const assetController: AssetController = new AssetController();
   let request: Request;
   let response: Response;
@@ -45,12 +45,12 @@ describe.skip('getAllAssets', () => {
 
     // Then
     expect(mockStatus).toHaveBeenCalledWith(200);
-    expect(mockSend).toHaveBeenCalledWith(testAsset);
+    expect(mockSend).toHaveBeenCalledWith([testAsset]);
     expect(mockEnd).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
   });
 
-  it('Returns a 404 status with message when no assets are found', async () => {
+  it('Calls next middleware with an NotFoundError with message when no assets are found', async () => {
     // Given
     findAllMock.mockResolvedValue([]);
 
@@ -58,14 +58,14 @@ describe.skip('getAllAssets', () => {
     await assetController.getAllAssets(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(404);
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("No Assets Found"));
+    expect(mockStatus).not.toHaveBeenCalled();
     expect(mockSend).not.toHaveBeenCalled();
-    expect(mockEnd).toHaveBeenCalled();
+    expect(mockEnd).not.toHaveBeenCalled();
   });
 });
 
-describe.skip('getAssetById', () => {
+describe('getAssetById', () => {
   const assetController: AssetController = new AssetController();
   let request: Request<{ id: string }>;
   let response: Response;
@@ -85,13 +85,14 @@ describe.skip('getAssetById', () => {
     next = mockNext();
     // TODO: Once fix mocking: AssetService.prototype.findById rather than jest.fn
     findByIdMock = jest.fn() as jest.MockedFunction<typeof AssetService.prototype.findById>;
+    console.log = jest.fn();
   });
 
   afterAll(() => {
     jest.restoreAllMocks();
   });
 
-  it('Returns a 400 status when the params is missing id', async () => {
+  it('Calls the next middleware with a BadRequestError when the params is missing id', async () => {
     // Given
     request.params = {} as { id: string };
 
@@ -99,14 +100,15 @@ describe.skip('getAssetById', () => {
     await assetController.getAssetById(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(400);
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(mockStatus).not.toHaveBeenCalled();
     expect(mockEnd).not.toHaveBeenCalled();
     expect(mockSend).not.toHaveBeenCalled();
     expect(findByIdMock).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
   });
 
-  it('Returns a 400 status when the params.id is not an integer', async () => {
+  it('Calls the next middleware with a BadRequestError when the params.id is not an integer', async () => {
     // Given
     request.params = { id: "NonStringValue" };
 
@@ -114,14 +116,15 @@ describe.skip('getAssetById', () => {
     await assetController.getAssetById(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(400);
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(mockStatus).not.toHaveBeenCalled();
     expect(mockEnd).not.toHaveBeenCalled();
     expect(mockSend).not.toHaveBeenCalled();
     expect(findByIdMock).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
   });
 
-  it('Returns a 404 status when an asset with the id cannot be found', async () => {
+  it('Calls the next middleware with a BadRequestError when an asset with the id cannot be found', async () => {
     // Given
     findByIdMock.mockResolvedValue(null);
 
@@ -129,10 +132,11 @@ describe.skip('getAssetById', () => {
     await assetController.getAssetById(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(404);
-    expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("Asset not found"));
+    expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("Asset not Found"));
+    expect(mockStatus).not.toHaveBeenCalled();
     expect(mockEnd).not.toHaveBeenCalled();
     expect(mockSend).not.toHaveBeenCalled();
-    expect(findByIdMock).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith("Asset not found - Error Code 404");
+    //expect(findByIdMock).toHaveBeenCalled(); // TODO: FIXME once fix mocking, and findByIdMock refers to the called function
   });
 });
