@@ -3,14 +3,17 @@ export enum AuthOption {
   LOGOUT = "LOGOUT",
 }
 
-export interface AuthState {
-  isLoggedIn: boolean;
-  authToken?: string;
-  userId?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-}
+export type AuthState =
+	| { isLoggedIn: false }
+	| {
+		isLoggedIn: true;
+		authToken: string;
+		userId: string;
+		email: string;
+		firstName: string;
+		lastName: string;
+	};
+
 
 export interface AuthContextProps {
   authState: AuthState;
