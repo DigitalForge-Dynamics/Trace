@@ -3,7 +3,7 @@ import LoginForm from './LoginForm.component';
 
 describe('Tests Login Form Component', () => {
     it('Checks Inputs & button render on page', () => {
-        render(<LoginForm loginData={jest.fn()}/>);
+        render(<LoginForm loginData={vi.fn()}/>);
 
         expect(screen.getByTestId('testid-usernameTextField')).toBeTruthy();
         expect(screen.getByTestId("testid-passwordTextField")).toBeTruthy();

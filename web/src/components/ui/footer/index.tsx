@@ -7,17 +7,21 @@ const Footer: React.FC = () => {
       sx={{
         display: "flex",
         justifyContent: "space-between",
-        width: "100vw",
         backgroundColor: "white",
-        py: 1,
+        px: 2,
+        py: 0.5,
+        boxShadow: 8,
+        border: "1px solid #e0e0e0",
       }}
     >
-      <Typography sx={{ color: "black" }}>
+      <Typography variant="body2" sx={{ color: "black" }}>
         Trace Asset Management - {new Date().getFullYear()} &copy; DigitalForge
         Dynamics
       </Typography>
 
-      <Typography sx={{ color: "black" }}>Privacy Policy</Typography>
+      <Typography variant="body2" sx={{ color: "black" }}>
+        Privacy Policy
+      </Typography>
     </Box>
   );
 };
