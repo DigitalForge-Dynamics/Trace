@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { getRequiredScopes, authoriseRequest } from "../../../middlewares/authoriseRequest";
+import { authoriseRequest } from "../../../middlewares/authoriseRequest";
 import { Scope } from "../../../utils/types/attributeTypes";
+import { getRequiredScopes } from "../../../utils/RBAC";
 
-jest.mock("../../../middlewares/authoriseRequest", () => ({
-	...jest.requireActual("../../../middlewares/authoriseRequest"),
+jest.mock("../../../utils/RBAC", () => ({
 	getRequiredScopes: jest.fn(),
 }));
 
@@ -51,13 +51,9 @@ describe('authoriseRequest', () => {
 		expect(console.log).toHaveBeenCalledWith("authoriseRequest middleware called before authenticateRequest middleware");
 	});
 
-	it.only('Returns a 403 error response if no required scopes are defined for a path', async () => {
+	it('Returns a 403 error response if no required scopes are defined for a path', async () => {
 		// Given
-
-		getRequiredScopesMock.mockImplementation(() => {
-			console.debug("Called mocked fn");
-			return null;
-		});
+		getRequiredScopesMock.mockReturnValue(null);
 
 		// When
 		await authoriseRequest(request, response, next);
@@ -65,13 +61,13 @@ describe('authoriseRequest', () => {
 		// Then
 		expect(mockStatus).toHaveBeenCalledWith(403);
 		expect(next).not.toHaveBeenCalled();
-		expect(console.log).toHaveBeenCalledWith("");
+		expect(console.log).toHaveBeenCalledWith("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
 	});
 
-	xit('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
+	it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
 		// Given
 		response.locals.user.scopes = [];
-		//getRequiredScopesMock.mockReturnValue([Scope.READ]);
+		getRequiredScopesMock.mockReturnValue([Scope.READ]);
 
 		// When
 		await authoriseRequest(request, response, next);
@@ -79,12 +75,13 @@ describe('authoriseRequest', () => {
 		// Then
 		expect(mockStatus).toHaveBeenCalledWith(403);
 		expect(next).not.toHaveBeenCalled();
+		expect(console.log).not.toHaveBeenCalled();
 	});
 
-	xit('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
+	it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
 		// Given
 		response.locals.user.scopes = [Scope.READ, Scope.ASSET_CREATE];
-		//getRequiredScopesMock.mockReturnValue([Scope.READ]);
+		getRequiredScopesMock.mockReturnValue([Scope.READ]);
 
 		// When
 		await authoriseRequest(request, response, next);
@@ -92,5 +89,6 @@ describe('authoriseRequest', () => {
 		// Then
 		expect(mockStatus).not.toHaveBeenCalled();
 		expect(next).toHaveBeenCalled();
+		expect(console.log).not.toHaveBeenCalled();
 	});
 });

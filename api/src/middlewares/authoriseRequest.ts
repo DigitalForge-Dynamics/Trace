@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
+import { getRequiredScopes } from "../utils/RBAC";
 
 export const authoriseRequest = async (
   req: Request,
@@ -17,7 +18,6 @@ export const authoriseRequest = async (
 	const userScopes: Scope[] = user.scopes;
 
 	const requiredScopes: Scope[] | null = getRequiredScopes(req.path);
-	console.debug("Got requiredScopes", requiredScopes);
 
 	if (requiredScopes === null) {
 		console.log("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
@@ -33,12 +33,4 @@ export const authoriseRequest = async (
 	}
 
 	next();
-	console.debug("Reached end");
-};
-
-// TODO: Load dynamically, according to request pathname
-// To not block presently, set to not require any scopes
-export const getRequiredScopes = (requestPath: string): Scope[] | null => {
-	console.debug("Not mocking out getRequiredScopes");
-	return [];
 };
