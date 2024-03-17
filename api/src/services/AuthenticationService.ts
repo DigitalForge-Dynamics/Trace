@@ -34,7 +34,7 @@ class AuthService {
         email: user.email,
       },
       this.getJWTSecretKey(),
-      { algorithm: "HS256" }
+      { algorithm: "HS512" }
     );
   }
 
@@ -46,7 +46,7 @@ class AuthService {
         scope: scopes,
       },
       this.getJWTSecretKey(),
-      { algorithm: "HS256" }
+      { algorithm: "HS512" }
     );
   }
 

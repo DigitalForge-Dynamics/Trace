@@ -1,19 +1,8 @@
 import { Request, Response } from "express";
 import { UserAttributes } from "../utils/types/attributeTypes";
 import AuthService from "../services/AuthenticationService";
-
-type GenericClaimStructure = {
-  iss: string;
-  sub: string;
-  aud: string;
-  exp: number;
-  iat: number;
-};
-
-interface UserLogin {
-  username: string;
-  password: string;
-}
+import { ajv } from "../utils/Validator";
+import { UserLogin } from "../utils/types/authenticationTypes";
 
 export default class AuthenticationContoller {
   private authService = new AuthService();
@@ -50,6 +39,18 @@ export default class AuthenticationContoller {
     try {
       const data: UserAttributes = req.body;
 
+      const isValidRequest = ajv.validate("user", data);
+      if (!isValidRequest) {
+        console.log(`Invalid Request - Error Code 400`);
+        throw new Error(`Invalid Request - Error Code 400`);
+      }
+
+      const ensureUniqueUser = this.authService.getUser(data.username);
+      if(ensureUniqueUser !== null) {
+        console.log(`User Already Exists - Error Code 404`);
+        throw new Error(`User Already Exists - Error Code 404`);
+      }
+
       const userData: UserAttributes = {
         ...data,
         password: await this.authService.hashPassword(data.password),
@@ -64,7 +65,7 @@ export default class AuthenticationContoller {
 
       res.status(204).end();
     } catch (err) {
-      res.send(err);
+      res.status(404).send(err);
     }
   }
 }
