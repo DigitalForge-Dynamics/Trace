@@ -11,21 +11,21 @@ router.use(authoriseRequest);
 
 router
   .route("/")
-  .get((req, res) => {
-    assetController.getAllAssets(req, res);
+  .get((req, res, next) => {
+    assetController.getAllAssets(req, res, next);
   })
-  .post((req, res) => {
-    assetController.createAsset(req, res);
+  .post((req, res, next) => {
+    assetController.createAsset(req, res, next);
   });
 
 router
   .route("/:id")
-  .get((req, res) =>
-    assetController.getAssetById(req, res)
+  .get((req, res, next) =>
+    assetController.getAssetById(req, res, next)
   )
-  .put((req, res) => assetController.updateAsset(req, res))
-  .delete((req, res) =>
-    assetController.deleteAsset(req, res)
+  .put((req, res, next) => assetController.updateAsset(req, res, next))
+  .delete((req, res, next) =>
+    assetController.deleteAsset(req, res, next)
   );
 
 export default router;

@@ -11,23 +11,15 @@ router.use(authoriseRequest);
 
 router
   .route("/")
-  .get((req, res) =>
-    locationController.getAllLocations(req, res)
-  )
-  .post((req, res) =>
-    locationController.createLocation(req, res)
-  );
+  .get((req, res, next) => locationController.getAllLocations(req, res, next))
+  .post((req, res, next) => locationController.createLocation(req, res, next));
 
 router
   .route("/:id")
-  .get((req, res) =>
-    locationController.getLocationById(req, res)
-  )
-  .put((req, res) =>
-    locationController.updateLocation(req, res)
-  )
-  .delete((req, res) =>
-    locationController.deleteLocation(req, res)
+  .get((req, res, next) => locationController.getLocationById(req, res, next))
+  .put((req, res, next) => locationController.updateLocation(req, res, next))
+  .delete((req, res, next) =>
+    locationController.deleteLocation(req, res, next)
   );
 
 export default router;
