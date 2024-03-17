@@ -15,7 +15,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare password: string;
   declare email: string;
   declare isActive: boolean;
-  declare scopes: [string];
+  declare scopes: string[];
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
