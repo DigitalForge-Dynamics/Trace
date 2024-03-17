@@ -51,3 +51,9 @@ export const enum Scope {
 	LOCATION_DELETE = "TRACE_LOCATION_DELETE",
 	LOCATION_AUDIT = "TRACE_LOCATION_AUDIT",
 }
+
+export interface UserLoginAttributes {
+    username: string;
+    password: string;
+}
+
