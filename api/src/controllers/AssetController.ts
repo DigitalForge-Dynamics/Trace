@@ -7,7 +7,7 @@ import { ajv } from "../utils/Validator";
 export default class AssetController extends ErrorController {
   private assetService = new AssetService();
 
-  public async getAllAssets(req: Request, res: Response) {
+  public async getAllAssets(req: Request<{}>, res: Response) {
     try {
       const retrievedAssets = await this.assetService.findAll();
 
@@ -26,6 +26,10 @@ export default class AssetController extends ErrorController {
   public async getAssetById(req: Request<{ id: string }>, res: Response) {
     try {
       const requestId: number = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        res.status(400).end();
+        return;
+      }
 
       const retrievedAsset = await this.assetService.findById(requestId);
 
@@ -41,7 +45,7 @@ export default class AssetController extends ErrorController {
     }
   }
 
-  public async createAsset(req: Request, res: Response) {
+  public async createAsset(req: Request<{}>, res: Response) {
     try {
       const requestData: AssetAttributes = req.body;
 
@@ -68,6 +72,15 @@ export default class AssetController extends ErrorController {
     try {
       const requestId: number = parseInt(req.params.id);
       const requestData: AssetAttributes = req.body;
+      if (isNaN(requestId)) {
+        res.status(400).end();
+        return;
+      }
+      const isValidRequest = ajv.validate("asset", requestData);
+      if (!isValidRequest) {
+        console.log(`Invalid Request - Error Code 400`);
+        throw new Error(`Invalid Request - Error Code 400`);
+      }
 
       const isValidAsset = await this.assetService.findById(requestId);
       if (!isValidAsset) {
@@ -75,12 +88,6 @@ export default class AssetController extends ErrorController {
         throw new Error(
           `Unable to find selected Asset to update - Error Code 404`
         );
-      }
-
-      const isValidRequest = ajv.validate("asset", requestData);
-      if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
-        throw new Error(`Invalid Request - Error Code 400`);
       }
 
       const isSuccessfull = await this.assetService.update(
@@ -102,6 +109,10 @@ export default class AssetController extends ErrorController {
   public async deleteAsset(req: Request<{ id: string }>, res: Response) {
     try {
       const requestId: number = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        res.status(400).end();
+        return;
+      }
 
       const isDeleted = await this.assetService.delete(requestId);
       if (!isDeleted) {

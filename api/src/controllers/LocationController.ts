@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 import LocationService from "../services/LocationService";
 import { LocationAttributes } from "../utils/types/attributeTypes";
+import Location from "../database/models/location.model";
 import ErrorController from "./ErrorController";
 import { ajv } from "../utils/Validator";
 
 export default class LocationController extends ErrorController {
   private locationService = new LocationService();
 
-  public async getAllLocations(req: Request, res: Response) {
+  public async getAllLocations(req: Request<{}>, res: Response) {
     try {
-      const retrievedLocations = await this.locationService.findAll();
+      const retrievedLocations: Location[] = await this.locationService.findAll();
 
-      if (retrievedLocations.length <= 0) {
+      if (retrievedLocations.length === 0) {
         console.log(`No Locations found - Error Code 404`);
         throw new Error(`No Locations found - Error Code 404`);
       }
@@ -25,6 +26,10 @@ export default class LocationController extends ErrorController {
   public async getLocationById(req: Request<{ id: string }>, res: Response) {
     try {
       const requestId: number = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        res.status(400).end();
+        return;
+      }
 
       const retrievedLocation = await this.locationService.findById(requestId);
 
@@ -39,7 +44,7 @@ export default class LocationController extends ErrorController {
     }
   }
 
-  public async createLocation(req: Request, res: Response) {
+  public async createLocation(req: Request<{}>, res: Response) {
     try {
       const requestData: LocationAttributes = req.body;
 
@@ -66,6 +71,17 @@ export default class LocationController extends ErrorController {
       const requestId: number = parseInt(req.params.id);
       const requestData: LocationAttributes = req.body;
 
+      if (isNaN(requestId)) {
+        res.status(400).end();
+        return;
+      }
+
+      const isValidRequest = ajv.validate("location", requestData);
+      if (!isValidRequest) {
+        console.log(`Invalid Request - Error Code 400`);
+        throw new Error(`Invalid Request - Error Code 400`);
+      }
+
       const isValidLocation = await this.locationService.findById(requestId);
       if (!isValidLocation) {
         console.log(
@@ -74,12 +90,6 @@ export default class LocationController extends ErrorController {
         throw new Error(
           `Unable to find selected location to update - Error Code 404`
         );
-      }
-
-      const isValidRequest = ajv.validate("location", requestData);
-      if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
-        throw new Error(`Invalid Request - Error Code 400`);
       }
 
       const isSuccessfull = await this.locationService.update(
@@ -100,6 +110,10 @@ export default class LocationController extends ErrorController {
   public async deleteLocation(req: Request<{ id: string }>, res: Response) {
     try {
       const requestId: number = parseInt(req.params.id);
+      if (isNaN(requestId)) {
+        res.status(400).end();
+        return;
+      }
 
       const isDeleted = await this.locationService.delete(requestId);
       if (!isDeleted) {
