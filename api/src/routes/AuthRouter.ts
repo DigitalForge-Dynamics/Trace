@@ -6,10 +6,16 @@ import { authoriseRequest } from "../middlewares/authoriseRequest";
 const router: Router = express.Router();
 const authController = new AuthenticationController();
 
-router.route("/login").post((req, res) => authController.signIn(req, res));
+router
+  .route("/login")
+  .post((req, res, next) => authController.signIn(req, res, next));
 
 router.route("/logout").post(authenticateRequest);
 
-router.route("/register").post(authenticateRequest, authoriseRequest, (req, res) => authController.signUp(req, res));
+router
+  .route("/register")
+  .post(authenticateRequest, authoriseRequest, (req, res, next) =>
+    authController.signUp(req, res, next)
+  );
 
 export default router;
