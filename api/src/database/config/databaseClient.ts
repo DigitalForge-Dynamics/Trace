@@ -32,7 +32,7 @@ export const migrator = new Umzug({
   migrations: {
     glob: "src/database/migrations/*.ts",
   },
-  context: sequelize,
+  context: sequelize.getQueryInterface(),
   storage: new SequelizeStorage({ sequelize: db.sequelize }),
   logger: console,
 });
