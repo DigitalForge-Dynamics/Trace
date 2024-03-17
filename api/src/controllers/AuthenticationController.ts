@@ -2,14 +2,23 @@ import { Request, Response } from "express";
 import { UserAttributes } from "../utils/types/attributeTypes";
 import AuthService from "../services/AuthenticationService";
 import { ajv } from "../utils/Validator";
-import { UserLogin } from "../utils/types/authenticationTypes";
 
 export default class AuthenticationContoller {
   private authService = new AuthService();
 
-  public async signIn(req: Request, res: Response) {
+  public async signIn(req: Request<{}>, res: Response) {
     try {
-      const data: UserLogin = req.body;
+      const data: unknown = req.body; // UserLogin
+      if (
+        typeof data !== 'object' ||
+        data === null
+        || !('username' in data && typeof data.username === 'string')
+        || !('password' in data && typeof data.password === 'string')
+      ) {
+        res.status(400).end();
+        return;
+      }
+
       const userDetails = await this.authService.getUser(data.username);
       if (!userDetails) {
         console.log("User not found - Error 400");
@@ -35,7 +44,7 @@ export default class AuthenticationContoller {
     }
   }
 
-  public async signUp(req: Request, res: Response) {
+  public async signUp(req: Request<{}>, res: Response) {
     try {
       const data: UserAttributes = req.body;
 

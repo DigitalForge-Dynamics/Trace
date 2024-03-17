@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "A representation of a user",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "firstName",
     "lastName",
@@ -29,7 +30,8 @@
       "type": "string"
     },
     "email": {
-      "type": "string"
+      "type": "string",
+      "format": "email"
     },
     "isActive": {
       "type": "boolean"
@@ -38,10 +40,12 @@
       "type": "array"
     },
     "createdAt": {
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     },
     "updatedAt": {
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     }
   }
 }
