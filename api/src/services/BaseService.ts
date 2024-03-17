@@ -4,7 +4,7 @@ import { IService } from "./IService";
 export abstract class BaseService<TEntity extends Model>
   implements IService<TEntity>
 {
-  protected Model: ModelStatic<TEntity>;
+  protected readonly Model: ModelStatic<TEntity>;
   constructor(Model: ModelStatic<TEntity>) {
     this.Model = Model;
   }

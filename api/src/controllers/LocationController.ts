@@ -6,7 +6,7 @@ import ErrorController from "./ErrorController";
 import { ajv } from "../utils/Validator";
 
 export default class LocationController extends ErrorController {
-  private locationService = new LocationService();
+  private readonly locationService = new LocationService();
 
   public async getAllLocations(
     _: Request<{}>,
