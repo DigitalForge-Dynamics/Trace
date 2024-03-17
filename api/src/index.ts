@@ -9,7 +9,7 @@ import locationsRouter from "./routes/LocationRouter";
 import settingsRouter from "./routes/SettingsRouter";
 import authRouter from "./routes/AuthRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
-import ErrorController from "./controllers/ErrorController";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app: Express = express();
 const port = process.env.API_PORT;
@@ -25,7 +25,7 @@ app.use("/settings", settingsRouter);
 app.use("/assets", assetsRouter);
 app.use("/locations", locationsRouter);
 app.use("/auth", authRouter);
-app.use(ErrorController.errorHandler);
+app.use(errorHandler);
 
 const startupConfiguration = async () => {
   await migrator.up();
