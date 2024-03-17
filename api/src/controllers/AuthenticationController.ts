@@ -45,11 +45,12 @@ export default class AuthenticationContoller {
         throw new Error(`Invalid Request - Error Code 400`);
       }
 
-      const ensureUniqueUser = this.authService.getUser(data.username);
-      if(ensureUniqueUser !== null) {
-        console.log(`User Already Exists - Error Code 404`);
-        throw new Error(`User Already Exists - Error Code 404`);
-      }
+      // Seeing some weird behaviour
+      // const ensureUniqueUser = this.authService.getUser(data.username);
+      // if(ensureUniqueUser !== null) {
+      //   console.log(`User Already Exists - Error Code 404`);
+      //   throw new Error(`User Already Exists - Error Code 404`);
+      // }
 
       const userData: UserAttributes = {
         ...data,
