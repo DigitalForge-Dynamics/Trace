@@ -26,7 +26,7 @@ const Header: React.FC = () => {
           />
         </Box>
         <Box>
-          <Avatar>WW</Avatar>
+          <Avatar>UD</Avatar>
         </Box>
       </Toolbar>
     </AppBar>
