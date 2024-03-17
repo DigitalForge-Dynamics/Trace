@@ -20,7 +20,8 @@ describe('authoriseRequest', () => {
   beforeEach(() => {
     // Express
     request = mockRequest();
-    const mockedResponse = mockResponse();
+    const locals = { user: { scopes: [] } };
+    const mockedResponse = mockResponse({ locals });
     response = mockedResponse.response;
     mockStatus = mockedResponse.status;
     mockSend = mockedResponse.send;

@@ -23,7 +23,7 @@ describe.skip('getAllAssets', () => {
 
   beforeEach(() => {
     request = mockRequest();
-    const mockedResponse = mockResponse();
+    const mockedResponse = mockResponse({});
     response = mockedResponse.response;
     mockStatus = mockedResponse.status;
     mockSend = mockedResponse.send;
@@ -77,7 +77,7 @@ describe.skip('getAssetById', () => {
 
   beforeEach(() => {
     request = mockRequest({ id: "0" });
-    const mockedResponse = mockResponse();
+    const mockedResponse = mockResponse({});
     response = mockedResponse.response;
     mockStatus = mockedResponse.status;
     mockSend = mockedResponse.send;
