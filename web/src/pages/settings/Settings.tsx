@@ -6,7 +6,7 @@ import Layout from "../../components/layout/Layout";
 function Settings() {
   return (
     <Layout>
-      <Box style={{ width: "100vw", height: "95vh" }}>
+      <Box style={{ width: "100vw", height: "85vh" }}>
         <h1 style={{ marginLeft: "5%" }}>Settings</h1>
         <Box style={{ height: "80%" }}>
           <SettingsGrid />
