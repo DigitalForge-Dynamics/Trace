@@ -13,14 +13,7 @@ export interface MockResponseParams {
   readonly locals?: Record<string, any>;
 }
 
-export interface MockResponseReturn {
-  readonly response: Response;
-  readonly status: jest.MockedFunction<any>;
-  readonly send: jest.MockedFunction<any>;
-  readonly end: jest.MockedFunction<any>;
-}
-
-export const mockResponse = ({ locals }: MockResponseParams): MockResponseReturn => {
+export const mockResponse = ({ locals }: MockResponseParams): Response => {
   const status = jest.fn();
   const end = jest.fn();
   const send = jest.fn();
@@ -32,7 +25,7 @@ export const mockResponse = ({ locals }: MockResponseParams): MockResponseReturn
   } as unknown as Response;
   status.mockReturnValue(response);
   send.mockReturnValue(response);
-  return { response, status, send, end };
+  return response;
 };
 
 export const mockNext = (): jest.MockedFunction<NextFunction> => {

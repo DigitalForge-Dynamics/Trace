@@ -11,21 +11,14 @@ jest.mock("../../../utils/RBAC", () => ({
 describe('authoriseRequest', () => {
   let request: Request;
   let response: Response;
-  let mockStatus: jest.MockedFunction<typeof response.status>;
   let next: jest.MockedFunction<NextFunction>;
-  let mockSend: jest.MockedFunction<typeof response.send>;
-  let mockEnd: jest.MockedFunction<typeof response.end>;
   let getRequiredScopesMock: jest.MockedFunction<typeof getRequiredScopes>;
 
   beforeEach(() => {
     // Express
     request = mockRequest();
     const locals = { user: { scopes: [] } };
-    const mockedResponse = mockResponse({ locals });
-    response = mockedResponse.response;
-    mockStatus = mockedResponse.status;
-    mockSend = mockedResponse.send;
-    mockEnd = mockedResponse.end;
+    response = mockResponse({ locals });
     next = mockNext();
     // Misc
     next = jest.fn();
@@ -45,10 +38,10 @@ describe('authoriseRequest', () => {
     await authoriseRequest(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(500);
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
-    expect(mockEnd).toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("authoriseRequest middleware called before authenticateRequest middleware");
   });
 
@@ -60,10 +53,10 @@ describe('authoriseRequest', () => {
     await authoriseRequest(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(403);
+    expect(response.status).toHaveBeenCalledWith(403);
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
-    expect(mockEnd).toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
   });
 
@@ -76,10 +69,10 @@ describe('authoriseRequest', () => {
     await authoriseRequest(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(403);
+    expect(response.status).toHaveBeenCalledWith(403);
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
-    expect(mockEnd).toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
 
@@ -92,10 +85,10 @@ describe('authoriseRequest', () => {
     await authoriseRequest(request, response, next);
 
     // Then
-    expect(mockStatus).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
-    expect(mockEnd).not.toHaveBeenCalled();
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
 });

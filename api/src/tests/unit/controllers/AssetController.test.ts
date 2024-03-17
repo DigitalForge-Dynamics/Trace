@@ -7,29 +7,23 @@ import { AssetAttributes } from "../../../utils/types/attributeTypes";
 import AssetService from "../../../services/AssetService";
 
 // FIXME: How to mock the functions desired
-jest.mock("../../../services/AssetService");
-jest.mock("../../../services/BaseService");
-jest.mock("../../../services/IService");
+jest.mock("../../../services/AssetService.ts");
+jest.mock("../../../services/BaseService.ts");
+jest.mock("../../../services/IService.ts");
 
 describe('getAllAssets', () => {
   const assetController: AssetController = new AssetController();
   let request: Request;
   let response: Response;
-  let mockStatus: jest.MockedFunction<typeof response.status>;
   let next: NextFunction;
-  let mockSend: jest.MockedFunction<typeof response.send>;
-  let mockEnd: jest.MockedFunction<typeof response.end>;
   let findAllMock: jest.MockedFunction<() => Promise<AssetAttributes[]>>;
 
   beforeEach(() => {
     request = mockRequest();
-    const mockedResponse = mockResponse({});
-    response = mockedResponse.response;
-    mockStatus = mockedResponse.status;
-    mockSend = mockedResponse.send;
-    mockEnd = mockedResponse.end;
+    response = mockResponse({});
     next = mockNext();
     findAllMock = AssetService.prototype.findAll as jest.MockedFunction<typeof AssetService.prototype.findAll>;
+    console.log = jest.fn();
   });
 
   afterAll(() => {
@@ -44,10 +38,11 @@ describe('getAllAssets', () => {
     await assetController.getAllAssets(request, response, next);
 
     // Then
-    expect(mockStatus).toHaveBeenCalledWith(200);
-    expect(mockSend).toHaveBeenCalledWith([testAsset]);
-    expect(mockEnd).toHaveBeenCalled();
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledWith([testAsset]);
+    expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
   });
 
   it('Calls next middleware with an NotFoundError with message when no assets are found', async () => {
@@ -59,9 +54,10 @@ describe('getAllAssets', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("No Assets Found"));
-    expect(mockStatus).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
-    expect(mockEnd).not.toHaveBeenCalled();
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith("No Assets found - Error Code 404");
   });
 });
 
@@ -69,22 +65,14 @@ describe('getAssetById', () => {
   const assetController: AssetController = new AssetController();
   let request: Request<{ id: string }>;
   let response: Response;
-  let mockStatus: jest.MockedFunction<typeof response.status>;
   let next: NextFunction;
-  let mockSend: jest.MockedFunction<typeof response.send>;
-  let mockEnd: jest.MockedFunction<typeof response.end>;
   let findByIdMock: jest.MockedFunction<typeof AssetService.prototype.findById>;
 
   beforeEach(() => {
     request = mockRequest({ id: "0" });
-    const mockedResponse = mockResponse({});
-    response = mockedResponse.response;
-    mockStatus = mockedResponse.status;
-    mockSend = mockedResponse.send;
-    mockEnd = mockedResponse.end;
+    response = mockResponse({});;
     next = mockNext();
-    // TODO: Once fix mocking: AssetService.prototype.findById rather than jest.fn
-    findByIdMock = jest.fn() as jest.MockedFunction<typeof AssetService.prototype.findById>;
+    findByIdMock = AssetService.prototype.findById as jest.MockedFunction<typeof AssetService.prototype.findById>;
     console.log = jest.fn();
   });
 
@@ -101,9 +89,9 @@ describe('getAssetById', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(mockStatus).not.toHaveBeenCalled();
-    expect(mockEnd).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
@@ -117,9 +105,9 @@ describe('getAssetById', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(mockStatus).not.toHaveBeenCalled();
-    expect(mockEnd).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
@@ -133,10 +121,10 @@ describe('getAssetById', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("Asset not Found"));
-    expect(mockStatus).not.toHaveBeenCalled();
-    expect(mockEnd).not.toHaveBeenCalled();
-    expect(mockSend).not.toHaveBeenCalled();
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
+    expect(findByIdMock).toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("Asset not found - Error Code 404");
-    //expect(findByIdMock).toHaveBeenCalled(); // TODO: FIXME once fix mocking, and findByIdMock refers to the called function
   });
 });
