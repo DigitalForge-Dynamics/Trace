@@ -70,7 +70,7 @@ describe('getAssetById', () => {
 
   beforeEach(() => {
     request = mockRequest({ id: "0" });
-    response = mockResponse({});;
+    response = mockResponse({});
     next = mockNext();
     findByIdMock = AssetService.prototype.findById as jest.MockedFunction<typeof AssetService.prototype.findById>;
     console.log = jest.fn();
@@ -112,7 +112,7 @@ describe('getAssetById', () => {
     expect(console.log).not.toHaveBeenCalled();
   });
 
-  it('Calls the next middleware with a BadRequestError when an asset with the id cannot be found', async () => {
+  it('Calls the next middleware with a NotFoundError when an asset with the id cannot be found', async () => {
     // Given
     findByIdMock.mockResolvedValue(null);
 
