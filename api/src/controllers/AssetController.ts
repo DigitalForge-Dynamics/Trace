@@ -83,9 +83,6 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
-	  if (!('id' in req.params)) {
-	    throw ErrorController.BadRequestError();
-	  }
       const requestId: number = parseInt(req.params.id);
       const requestData: AssetAttributes = req.body;
       if (isNaN(requestId)) {
@@ -135,9 +132,9 @@ export default class AssetController extends ErrorController {
 
       const isDeleted = await this.assetService.delete(requestId);
       if (!isDeleted) {
-        console.log(`Unable to deleted selected asset - Error Code 500`);
+        console.log(`Unable to delete selected asset - Error Code 500`);
         throw ErrorController.InternalServerError(
-          "Unable to deleted selected asset"
+          "Unable to delete selected asset"
         );
       }
 

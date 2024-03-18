@@ -333,3 +333,90 @@ describe('updateAsset', () => {
     expect(console.log).not.toHaveBeenCalled();
   });
 });
+
+describe('deleteAsset', () => {
+  const assetController: AssetController = new AssetController();
+  let request: Request<{ id: string }>;
+  let response: Response;
+  let next: NextFunction;
+  let deleteMock: jest.MockedFunction<typeof AssetService.prototype.delete>;
+
+  beforeEach(() => {
+    request = mockRequest({ id: "2" });
+    response = mockResponse({});
+    next = mockNext();
+    deleteMock = AssetService.prototype.delete as jest.MockedFunction<typeof AssetService.prototype.delete>;
+    console.log = jest.fn();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+    deleteMock.mockRestore();
+  });
+
+  it('Calls the next middleware with a BadRequestError when the request is missing the id parameter', async () => {
+    // Given
+    request.params = {} as { id: string };
+
+    // When
+    await assetController.deleteAsset(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
+    expect(deleteMock).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
+  it('Calls the next middleware with a BadRequestError when the request id parameter is not an integer', async () => {
+    // Given
+    request.params = { id: "NotAnInteger" };
+
+    // When
+    await assetController.deleteAsset(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
+    expect(deleteMock).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
+  it('Calls the next middleware with an InternalServerError when unable to delete the asset', async () => {
+    // Given
+    request.params = { id: "2" };
+    deleteMock.mockResolvedValue(false);
+
+    // When
+    await assetController.deleteAsset(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to delete selected asset"));
+    expect(response.status).not.toHaveBeenCalled();
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).not.toHaveBeenCalled();
+    expect(deleteMock).toHaveBeenCalledWith(2);
+    expect(console.log).toHaveBeenCalledWith("Unable to delete selected asset - Error Code 500");
+  });
+
+  it('Sets a 204 status when successfully able to delete the asset', async () => {
+    // Given
+    request.params = { id: "3" };
+    deleteMock.mockResolvedValue(true);
+
+    // When
+    await assetController.deleteAsset(request, response, next);
+
+    // Then
+    expect(response.status).toHaveBeenCalledWith(204);
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    expect(deleteMock).toHaveBeenCalledWith(3);
+    expect(console.log).not.toHaveBeenCalled();
+  });
+});
