@@ -129,6 +129,23 @@ describe('getAssetById', () => {
     expect(findByIdMock).toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("Asset not found - Error Code 404");
   });
+
+  it('Sets a 200 status with the asset data when the asset is able to be found', async () => {
+    // Given
+    request.params = { id: "3" };
+    findByIdMock.mockResolvedValue(testAsset as Asset);
+
+    // When
+    await assetController.getAssetById(request, response, next);
+
+    // Then
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledWith(testAsset);
+    expect(response.end).toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    expect(findByIdMock).toHaveBeenCalledWith(3);
+    expect(console.log).not.toHaveBeenCalled();
+  });
 });
 
 describe('createAsset', () => {
