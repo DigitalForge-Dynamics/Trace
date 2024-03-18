@@ -83,6 +83,9 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
+	  if (!('id' in req.params)) {
+	    throw ErrorController.BadRequestError();
+	  }
       const requestId: number = parseInt(req.params.id);
       const requestData: AssetAttributes = req.body;
       if (isNaN(requestId)) {
