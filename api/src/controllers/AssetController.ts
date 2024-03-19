@@ -5,10 +5,10 @@ import ErrorController from "./ErrorController";
 import { ajv } from "../utils/Validator";
 
 export default class AssetController extends ErrorController {
-  private assetService = new AssetService();
+  private readonly assetService = new AssetService();
 
   public async getAllAssets(
-    req: Request<{}>,
+    _: Request<{}>,
     res: Response,
     next: NextFunction
   ) {
@@ -132,9 +132,9 @@ export default class AssetController extends ErrorController {
 
       const isDeleted = await this.assetService.delete(requestId);
       if (!isDeleted) {
-        console.log(`Unable to deleted selected asset - Error Code 500`);
+        console.log(`Unable to delete selected asset - Error Code 500`);
         throw ErrorController.InternalServerError(
-          "Unable to deleted selected asset"
+          "Unable to delete selected asset"
         );
       }
 

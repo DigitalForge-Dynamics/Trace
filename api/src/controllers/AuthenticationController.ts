@@ -5,7 +5,7 @@ import { ajv } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 
 export default class AuthenticationContoller extends ErrorController {
-  private authService = new AuthService();
+  private readonly authService = new AuthService();
 
   public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
     try {
