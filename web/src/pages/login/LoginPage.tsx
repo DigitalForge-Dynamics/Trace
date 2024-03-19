@@ -3,7 +3,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import icon from "../../assets/trace-icon.png";
 import { AuthData } from "../../utils/types/authTypes";
 import { AuthContext } from "../../context/auth.context";
-import { fetchUserAuth } from "../../data/api";
+import { UserLoginData, fetchUserAuth } from "../../data/api";
 import background from "../../assets/login-background.jpg";
 import LoginForm from "../../components/login/LoginForm.component";
 
