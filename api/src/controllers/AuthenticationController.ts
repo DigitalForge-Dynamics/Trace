@@ -3,7 +3,6 @@ import { UserAttributes } from "../utils/types/attributeTypes";
 import AuthService from "../services/AuthenticationService";
 import { ajv } from "../utils/Validator";
 import ErrorController from "./ErrorController";
-import Logger from "../utils/Logger";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly authService = new AuthService();
