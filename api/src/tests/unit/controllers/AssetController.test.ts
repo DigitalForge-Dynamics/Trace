@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import AssetController from "../../../controllers/AssetController";
-import { mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
+import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
 import ErrorController from "../../../controllers/ErrorController";
 import { testAsset } from "../../helpers/testData";
 import { AssetAttributes } from "../../../utils/types/attributeTypes";
@@ -55,9 +55,7 @@ describe('getAllAssets', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("No Assets Found"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(console.log).toHaveBeenCalledWith("No Assets found - Error Code 404");
   });
 });
@@ -91,9 +89,7 @@ describe('getAssetById', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
@@ -107,9 +103,7 @@ describe('getAssetById', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
@@ -123,9 +117,7 @@ describe('getAssetById', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("Asset not Found"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("Asset not found - Error Code 404");
   });
@@ -178,9 +170,7 @@ describe('createAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(createMock).not.toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("Invalid Request - Error Code 400");
   });
@@ -195,9 +185,7 @@ describe('createAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to create new asset"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(createMock).toHaveBeenCalledWith(request.body);
     expect(console.log).toHaveBeenCalledWith("Unable to create new asset - Error Code 500");
   });
@@ -252,9 +240,7 @@ describe('updateAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
@@ -269,9 +255,7 @@ describe('updateAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
@@ -286,9 +270,7 @@ describe('updateAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("Invalid Request - Error Code 400");
@@ -304,9 +286,7 @@ describe('updateAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("Unable to find selected Asset to update"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalledWith(2);
     expect(updateMock).not.toHaveBeenCalled();
     expect(console.log).toHaveBeenCalledWith("Unable to find selected Asset to update - Error Code 404");
@@ -323,9 +303,7 @@ describe('updateAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to update selected asset"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalledWith(3);
     expect(updateMock).toHaveBeenCalledWith(3, request.body);
     expect(console.log).toHaveBeenCalledWith("Unable to update selected asset - Error Code 500");
@@ -380,9 +358,7 @@ describe('deleteAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(deleteMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
@@ -396,9 +372,7 @@ describe('deleteAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(deleteMock).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
   });
@@ -413,9 +387,7 @@ describe('deleteAsset', () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to delete selected asset"));
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+    expectNonFinal(response);
     expect(deleteMock).toHaveBeenCalledWith(2);
     expect(console.log).toHaveBeenCalledWith("Unable to delete selected asset - Error Code 500");
   });

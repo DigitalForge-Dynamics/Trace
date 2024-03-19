@@ -31,3 +31,9 @@ export const mockResponse = ({ locals }: MockResponseParams): Response => {
 export const mockNext = (): jest.MockedFunction<NextFunction> => {
   return jest.fn();
 };
+
+export const expectNonFinal = (response: Response) => {
+  expect(response.status).not.toHaveBeenCalled();
+  expect(response.send).not.toHaveBeenCalled();
+  expect(response.end).not.toHaveBeenCalled();
+};
