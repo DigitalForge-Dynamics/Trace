@@ -6,7 +6,7 @@ on:
     - main
 
 jobs:
-  API Testing:
+  API-Testing:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
       run: npm test
       working-directory: api
 
-  Web Testing:
+  Web-Testing:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
