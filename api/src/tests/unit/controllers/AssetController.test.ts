@@ -6,9 +6,16 @@ import { testAsset } from "../../helpers/testData";
 import { AssetAttributes } from "../../../utils/types/attributeTypes";
 import AssetService from "../../../services/AssetService";
 import Asset from "../../../database/models/asset.model";
+import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
+import Logger from "../../../utils/Logger";
 
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");
+jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
+  info: jest.fn(),
+  error: jest.fn(),
+}));
+
 
 describe('getAllAssets', () => {
   const assetController: AssetController = new AssetController();
@@ -16,18 +23,19 @@ describe('getAllAssets', () => {
   let response: Response;
   let next: NextFunction;
   let findAllMock: jest.MockedFunction<() => Promise<AssetAttributes[]>>;
+  const logger: MockedLogger = Logger as unknown as MockedLogger;
 
   beforeEach(() => {
     request = mockRequest();
     response = mockResponse({});
     next = mockNext();
     findAllMock = AssetService.prototype.findAll as jest.MockedFunction<typeof AssetService.prototype.findAll>;
-    console.log = jest.fn();
   });
 
   afterEach(() => {
     jest.resetAllMocks();
     findAllMock.mockReset();
+    resetMockLogger(logger);
   });
 
   it('Returns found asssets with a status code of 200', async () => {
@@ -42,7 +50,7 @@ describe('getAllAssets', () => {
     expect(response.send).toHaveBeenCalledWith([testAsset]);
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.info).toHaveBeenCalledWith("Successfully retrieved Assets");
   });
 
   it('Calls next middleware with an NotFoundError with message when no assets are found', async () => {
@@ -55,7 +63,7 @@ describe('getAllAssets', () => {
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("No Assets Found"));
     expectNonFinal(response);
-    expect(console.log).toHaveBeenCalledWith("No Assets found - Error Code 404");
+    expect(logger.error).toHaveBeenCalledWith("404 - No Assets Found");
   });
 });
 
