@@ -10,6 +10,9 @@ import settingsRouter from "./routes/SettingsRouter";
 import authRouter from "./routes/AuthRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
+import { httpRequestLogger } from "./middlewares/httpRequestLogger";
+
+export const environment = process.env.NODE_ENV || 'development';
 
 const app: Express = express();
 const port = process.env.API_PORT;
@@ -17,6 +20,7 @@ const port = process.env.API_PORT;
 app.use(cors());
 app.use(express.json());
 app.use(helmet());
+app.use(httpRequestLogger);
 app.use(rateLimiterMiddleware);
 app.disable("x-powered-by");
 
