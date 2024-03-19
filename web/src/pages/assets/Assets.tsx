@@ -15,7 +15,8 @@ const sampleData: AssetData[] = [
 
 function Assets() {
   for (let i = 0; i < 30; i++) {
-    const data = { ...sampleData[1], id: i + 3 };
+    // Sample code, so is fine to have a non-null assertion, since array is defined above
+    const data = { ...sampleData[1]!, id: i + 3 };
     sampleData.push(data);
   }
   return (
