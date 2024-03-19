@@ -7,7 +7,6 @@ import { AssetAttributes } from "../../../utils/types/attributeTypes";
 import AssetService from "../../../services/AssetService";
 import Asset from "../../../database/models/asset.model";
 
-// FIXME: How to mock the functions desired
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");
 
@@ -26,9 +25,9 @@ describe('getAllAssets', () => {
     console.log = jest.fn();
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
-    findAllMock.mockRestore();
+  afterEach(() => {
+    jest.resetAllMocks();
+    findAllMock.mockReset();
   });
 
   it('Returns found asssets with a status code of 200', async () => {
@@ -75,9 +74,9 @@ describe('getAssetById', () => {
     console.log = jest.fn();
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
-    findByIdMock.mockRestore();
+  afterEach(() => {
+    jest.resetAllMocks();
+    findByIdMock.mockReset();
   });
 
   it('Calls the next middleware with a BadRequestError when the params is missing id', async () => {
@@ -156,9 +155,9 @@ describe('createAsset', () => {
   });
 
 
-  afterAll(() => {
-    jest.restoreAllMocks();
-    createMock.mockRestore();
+  afterEach(() => {
+    jest.resetAllMocks();
+    createMock.mockReset();
   });
 
   it('Calls the next middleware with a BadRequestError when the request body does not match the asset schema', async () => {
@@ -225,10 +224,10 @@ describe('updateAsset', () => {
     console.log = jest.fn();
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
-    findByIdMock.mockRestore();
-    updateMock.mockRestore();
+  afterEach(() => {
+    jest.resetAllMocks();
+    findByIdMock.mockReset();
+    updateMock.mockReset();
   });
 
   it('Calls the next middleware with a BadRequestError if the params.id is not present', async () => {
@@ -344,9 +343,9 @@ describe('deleteAsset', () => {
     console.log = jest.fn();
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
-    deleteMock.mockRestore();
+  afterEach(() => {
+    jest.resetAllMocks();
+    deleteMock.mockReset();
   });
 
   it('Calls the next middleware with a BadRequestError when the request is missing the id parameter', async () => {

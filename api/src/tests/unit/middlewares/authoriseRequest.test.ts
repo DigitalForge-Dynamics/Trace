@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { authoriseRequest } from "../../../middlewares/authoriseRequest";
 import { Scope } from "../../../utils/types/attributeTypes";
 import { getRequiredScopes } from "../../../utils/RBAC";
-import { mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
+import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
 
 jest.mock("../../../utils/RBAC", () => ({
   getRequiredScopes: jest.fn(),
@@ -26,8 +26,8 @@ describe('authoriseRequest', () => {
     getRequiredScopesMock = getRequiredScopes as jest.MockedFunction<typeof getRequiredScopes>;
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('Returns a 500 error response, logging the cause if the user is not present from authenticateRequest', async () => {
@@ -86,9 +86,7 @@ describe('authoriseRequest', () => {
 
     // Then
     expect(next).toHaveBeenCalled();
-    expect(response.status).not.toHaveBeenCalled();
-    expect(response.send).not.toHaveBeenCalled();
-    expect(response.end).not.toHaveBeenCalled();
+	expectNonFinal(response);
     expect(console.log).not.toHaveBeenCalled();
   });
 });
