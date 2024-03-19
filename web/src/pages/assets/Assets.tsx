@@ -1,4 +1,3 @@
-import React, { ReactNode, useState } from "react";
 import { Box, TableRow, TableCell } from "@mui/material";
 import PaginatedTable from "../../components/table/PaginatedTable.component";
 import Layout from "../../components/layout/Layout";
@@ -16,7 +15,8 @@ const sampleData: AssetData[] = [
 
 function Assets() {
   for (let i = 0; i < 30; i++) {
-    const data = { ...sampleData[1], id: i + 3 };
+    // Sample code, so is fine to have a non-null assertion, since array is defined above
+    const data = { ...sampleData[1]!, id: i + 3 };
     sampleData.push(data);
   }
   return (

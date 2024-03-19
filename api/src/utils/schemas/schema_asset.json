@@ -21,17 +21,20 @@
     "modelNumber": {
       "type": "string"
     },
+    "purchaseDate": {
+      "type": "string"
+    },
+    "purchaseCost": {
+      "type": "number"
+    },
     "nextAuditDate": {
-      "type": "string",
-       "format": "date-string"
+      "type": "string"
     },
     "createdAt": {
-      "type": "string",
-      "format": "date-string"
+      "type": "string"
     },
     "updatedAt": {
-      "type": "string",
-      "format": "date-string"
+      "type": "string"
     }
   }
 }

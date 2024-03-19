@@ -1,9 +1,9 @@
-interface UserloginData {
+export interface UserLoginData {
   username: string;
   password: string;
 }
 
-export const fetchUserAuth = async (userData: UserloginData) => {
+export const fetchUserAuth = async (userData: UserLoginData) => {
   const res = await fetch("http://localhost:3000/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

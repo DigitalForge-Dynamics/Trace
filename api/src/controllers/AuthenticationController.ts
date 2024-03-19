@@ -6,7 +6,7 @@ import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 
 export default class AuthenticationContoller extends ErrorController {
-  private authService = new AuthService();
+  private readonly authService = new AuthService();
 
   public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
     try {
