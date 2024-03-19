@@ -1,0 +1,45 @@
+name: Push Main
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  API Testing:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: api
+
+    - name: Typescript Check
+      run: npx tsc
+      working-directory: api
+
+    - name: Unit Test
+      run: npm test
+      working-directory: api
+
+  Web Testing:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: web
+
+    - name: Typescript Check
+      run: npx tsc
+      working-directory: web
+
+    - name: Lint
+      run: npm run lint
+      working-directory: web
+
+    - name: Unit Test
+      run: npm test
+      working-directory: web
