@@ -3,7 +3,6 @@ import AssetService from "../services/AssetService";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
 import { ajv } from "../utils/Validator";
-import Logger from "../utils/Logger";
 
 export default class AssetController extends ErrorController {
   private assetService = new AssetService();
@@ -20,7 +19,6 @@ export default class AssetController extends ErrorController {
         throw ErrorController.NotFoundError("No Assets Found");
       }
 
-      Logger.info('Successfully retrieved Assets');
       res.send(retrievedAssets).status(200).end();
       return;
     } catch (err) {
@@ -42,7 +40,6 @@ export default class AssetController extends ErrorController {
       const retrievedAsset = await this.assetService.findById(requestId);
 
       if (!retrievedAsset) {
-        console.log(`Asset not found - Error Code 404`);
         throw ErrorController.NotFoundError("Asset not Found");
       }
 
@@ -62,13 +59,11 @@ export default class AssetController extends ErrorController {
 
       const isValidRequest = ajv.validate("asset", requestData);
       if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
         throw ErrorController.BadRequestError("Invalid Request");
       }
 
       const isSuccessfull = await this.assetService.create(requestData);
       if (!isSuccessfull) {
-        console.log(`Unable to create new asset - Error Code 500`);
         throw ErrorController.InternalServerError("Unable to create new asset");
       }
 
@@ -91,13 +86,11 @@ export default class AssetController extends ErrorController {
       }
       const isValidRequest = ajv.validate("asset", requestData);
       if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
         throw ErrorController.BadRequestError("Invalid Request");
       }
 
       const isValidAsset = await this.assetService.findById(requestId);
       if (!isValidAsset) {
-        console.log(`Unable to find selected Asset to update - Error Code 404`);
         throw ErrorController.NotFoundError(
           "Unable to find selected Asset to update"
         );
@@ -108,7 +101,6 @@ export default class AssetController extends ErrorController {
         requestData
       );
       if (!isSuccessfull) {
-        console.log(`Unable to update selected asset - Error Code 500`);
         throw ErrorController.InternalServerError(
           "Unable to update selected asset"
         );
@@ -133,7 +125,6 @@ export default class AssetController extends ErrorController {
 
       const isDeleted = await this.assetService.delete(requestId);
       if (!isDeleted) {
-        console.log(`Unable to deleted selected asset - Error Code 500`);
         throw ErrorController.InternalServerError(
           "Unable to deleted selected asset"
         );

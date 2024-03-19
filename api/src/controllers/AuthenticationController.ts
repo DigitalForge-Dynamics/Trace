@@ -36,7 +36,6 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.ForbiddenError("Not valid password")
       }
 
-      Logger.info('User signed in successfully');
       res.status(200).send({
         idToken: this.authService.generateIdToken(userDetails),
         accessToken: this.authService.generateAccessToken(userDetails.scopes),
