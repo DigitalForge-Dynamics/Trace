@@ -4,7 +4,7 @@ import { environment } from "..";
 const Logger = winston.createLogger({
   level: environment === "development" ? "debug" : "warn",
   format: winston.format.combine(
-    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
+    winston.format.timestamp(),
     winston.format.json(),
     winston.format.colorize({ all: true })
   ),
