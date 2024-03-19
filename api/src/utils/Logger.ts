@@ -1,28 +1,12 @@
 import winston from "winston";
-
-winston.addColors({
-    error: 'red',
-    warn: 'yellow',
-    info: 'green',
-    http: 'white',
-    debug: 'magenta',
-});
+import { environment } from "..";
 
 const Logger = winston.createLogger({
-  level: "info",
-  levels: {
-    error: 0,
-    warn: 1,
-    info: 2,
-    http: 3,
-    debug: 4,
-  },
+  level: environment === "development" ? "debug" : "warn",
   format: winston.format.combine(
     winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
-    winston.format.colorize({ all: true }),
-    winston.format.printf(
-      (info) => `${info.timestamp} ${info.level}: ${info.message}`
-    )
+    winston.format.json(),
+    winston.format.colorize({ all: true })
   ),
   transports: [
     new winston.transports.Console(),
