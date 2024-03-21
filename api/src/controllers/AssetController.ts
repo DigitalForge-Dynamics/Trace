@@ -3,6 +3,7 @@ import AssetService from "../services/AssetService";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
 import { ajv } from "../utils/Validator";
+import Logger from "../utils/Logger";
 
 export default class AssetController extends ErrorController {
   private readonly assetService = new AssetService();
@@ -19,6 +20,7 @@ export default class AssetController extends ErrorController {
         throw ErrorController.NotFoundError("No Assets Found");
       }
 
+      Logger.info('Successfully retrieved Assets');
       res.send(retrievedAssets).status(200).end();
       return;
     } catch (err) {

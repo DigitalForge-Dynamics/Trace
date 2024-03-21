@@ -21,12 +21,6 @@
     "modelNumber": {
       "type": "string"
     },
-    "purchaseDate": {
-      "type": "string"
-    },
-    "purchaseCost": {
-      "type": "number"
-    },
     "nextAuditDate": {
       "type": "string"
     },
