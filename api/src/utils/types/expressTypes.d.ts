@@ -1,5 +1,5 @@
 import type { Scope, UserAttributes } from "../attributeTypes.ts";
-import type { GenericTypeStructure } from "../authenticationTypes.ts";
+import type { GenericClaimStructure } from "../authenticationTypes.ts";
 
 declare global {
   namespace Express {
