@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import AssetService from "../services/AssetService";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { ajv } from "../utils/Validator";
+import { getId, validateAsset } from "../utils/Validator";
 import Logger from "../utils/Logger";
 
 export default class AssetController extends ErrorController {
@@ -34,10 +34,7 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestId: number = parseInt(req.params.id);
-      if (isNaN(requestId)) {
-        throw ErrorController.BadRequestError();
-      }
+      const requestId: number = getId(req);
 
       const retrievedAsset = await this.assetService.findById(requestId);
 
@@ -57,12 +54,7 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestData: AssetAttributes = req.body;
-
-      const isValidRequest = ajv.validate("asset", requestData);
-      if (!isValidRequest) {
-        throw ErrorController.BadRequestError("Invalid Request");
-      }
+      const requestData: AssetAttributes = validateAsset(req.body);
 
       const isSuccessfull = await this.assetService.create(requestData);
       if (!isSuccessfull) {
@@ -81,15 +73,8 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestId: number = parseInt(req.params.id);
-      const requestData: AssetAttributes = req.body;
-      if (isNaN(requestId)) {
-        throw ErrorController.BadRequestError();
-      }
-      const isValidRequest = ajv.validate("asset", requestData);
-      if (!isValidRequest) {
-        throw ErrorController.BadRequestError("Invalid Request");
-      }
+      const requestId = getId(req);
+      const requestData: AssetAttributes = validateAsset(req.body);
 
       const isValidAsset = await this.assetService.findById(requestId);
       if (!isValidAsset) {
@@ -120,10 +105,7 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestId: number = parseInt(req.params.id);
-      if (isNaN(requestId)) {
-        throw ErrorController.BadRequestError();
-      }
+      const requestId = getId(req);
 
       const isDeleted = await this.assetService.delete(requestId);
       if (!isDeleted) {
