@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
+import Logger from "../utils/Logger";
 
 export const authoriseRequest = async (
   _: Request,
@@ -10,7 +11,7 @@ export const authoriseRequest = async (
   const user: (UserAttributes & unknown) | undefined = res.locals.user;
   if (!user) {
     // Set within authenticateRequest middleware
-    console.log("authoriseRequest middleware called before authenticateRequest middleware");
+    Logger.error("Missing user within authoriseRequest from authenticateRequest.");
     res.status(500).end();
     return;
   }
@@ -18,7 +19,7 @@ export const authoriseRequest = async (
   const userScopes: Scope[] = user.scopes;
 
   if (requiredScopes === undefined) {
-    console.log("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
+    Logger.error("No required_scopes defined for route.");
     res.status(500).end();
     return;
   }

@@ -2,6 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { authoriseRequest } from "../../../middlewares/authoriseRequest";
 import { Scope } from "../../../utils/types/attributeTypes";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
+import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
+import Logger from "../../../utils/Logger";
+
+jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
+  info: jest.fn(),
+  error: jest.fn(),
+}));
+
+const logger: MockedLogger = Logger as unknown as MockedLogger;
 
 describe('authoriseRequest', () => {
   let request: Request;
@@ -16,11 +25,11 @@ describe('authoriseRequest', () => {
     next = mockNext();
     // Misc
     next = jest.fn();
-    console.log = jest.fn();
   });
 
   afterEach(() => {
     jest.resetAllMocks();
+    resetMockLogger(logger);
   });
 
   it('Returns a 500 error response, logging the cause if the user is not present from authenticateRequest', async () => {
@@ -35,7 +44,7 @@ describe('authoriseRequest', () => {
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("authoriseRequest middleware called before authenticateRequest middleware");
+    expect(logger.error).toHaveBeenCalledWith("Missing user within authoriseRequest from authenticateRequest.");
   });
 
   it('Returns a 500 error response if no required scopes are defined for a path', async () => {
@@ -50,7 +59,7 @@ describe('authoriseRequest', () => {
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
+    expect(logger.error).toHaveBeenCalledWith("No required_scopes defined for route.");
   });
 
   it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
@@ -66,7 +75,7 @@ describe('authoriseRequest', () => {
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
@@ -80,6 +89,5 @@ describe('authoriseRequest', () => {
     // Then
     expect(next).toHaveBeenCalled();
     expectNonFinal(response);
-    expect(console.log).not.toHaveBeenCalled();
   });
 });
