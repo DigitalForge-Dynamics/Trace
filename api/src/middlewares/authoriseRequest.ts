@@ -1,9 +1,8 @@
 import { Response, Request, NextFunction } from "express";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
-import { getRequiredScopes } from "../utils/RBAC";
 
 export const authoriseRequest = async (
-  req: Request,
+  _: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -15,13 +14,12 @@ export const authoriseRequest = async (
     res.status(500).end();
     return;
   }
+  const requiredScopes: Scope[] | undefined = res.locals.required_scopes;
   const userScopes: Scope[] = user.scopes;
 
-  const requiredScopes: Scope[] | null = getRequiredScopes(req.path);
-
-  if (requiredScopes === null) {
+  if (requiredScopes === undefined) {
     console.log("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
-    res.status(403).end();
+    res.status(500).end();
     return;
   }
 

@@ -14,7 +14,10 @@ router.route("/logout").post(authenticateRequest);
 
 router
   .route("/register")
-  .post(authenticateRequest, authoriseRequest, (req, res, next) =>
+  .post(authenticateRequest, (req, res, next) => {
+    res.locals.required_scopes = [];
+    authoriseRequest(req, res, next);
+  }, (req, res, next) =>
     authController.signUp(req, res, next)
   );
 

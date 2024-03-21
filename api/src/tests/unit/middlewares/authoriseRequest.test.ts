@@ -1,29 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 import { authoriseRequest } from "../../../middlewares/authoriseRequest";
 import { Scope } from "../../../utils/types/attributeTypes";
-import { getRequiredScopes } from "../../../utils/RBAC";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
-
-jest.mock("../../../utils/RBAC", () => ({
-  getRequiredScopes: jest.fn(),
-}));
 
 describe('authoriseRequest', () => {
   let request: Request;
   let response: Response;
   let next: jest.MockedFunction<NextFunction>;
-  let getRequiredScopesMock: jest.MockedFunction<typeof getRequiredScopes>;
 
   beforeEach(() => {
     // Express
     request = mockRequest();
-    const locals = { user: { scopes: [] } };
+    const locals = { user: { scopes: [] }, required_scopes: [Scope.READ] };
     response = mockResponse({ locals });
     next = mockNext();
     // Misc
     next = jest.fn();
     console.log = jest.fn();
-    getRequiredScopesMock = getRequiredScopes as jest.MockedFunction<typeof getRequiredScopes>;
   });
 
   afterEach(() => {
@@ -45,15 +38,15 @@ describe('authoriseRequest', () => {
     expect(console.log).toHaveBeenCalledWith("authoriseRequest middleware called before authenticateRequest middleware");
   });
 
-  it('Returns a 403 error response if no required scopes are defined for a path', async () => {
+  it('Returns a 500 error response if no required scopes are defined for a path', async () => {
     // Given
-    getRequiredScopesMock.mockReturnValue(null);
+    delete response.locals.required_scopes;
 
     // When
     await authoriseRequest(request, response, next);
 
     // Then
-    expect(response.status).toHaveBeenCalledWith(403);
+    expect(response.status).toHaveBeenCalledWith(500);
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
@@ -63,7 +56,7 @@ describe('authoriseRequest', () => {
   it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
     // Given
     response.locals.user.scopes = [];
-    getRequiredScopesMock.mockReturnValue([Scope.READ]);
+    response.locals.required_scopes = [Scope.READ];
 
     // When
     await authoriseRequest(request, response, next);
@@ -79,14 +72,14 @@ describe('authoriseRequest', () => {
   it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
     // Given
     response.locals.user.scopes = [Scope.READ, Scope.ASSET_CREATE];
-    getRequiredScopesMock.mockReturnValue([Scope.READ]);
+    response.locals.required_scopes = [Scope.READ];
 
     // When
     await authoriseRequest(request, response, next);
 
     // Then
     expect(next).toHaveBeenCalled();
-	expectNonFinal(response);
+    expectNonFinal(response);
     expect(console.log).not.toHaveBeenCalled();
   });
 });

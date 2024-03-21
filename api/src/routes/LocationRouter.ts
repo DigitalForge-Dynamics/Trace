@@ -7,18 +7,32 @@ const router: Router = express.Router();
 const locationController = new LocationController();
 
 router.use(authenticateRequest);
-router.use(authoriseRequest);
 
 router
   .route("/")
-  .get((req, res, next) => locationController.getAllLocations(req, res, next))
-  .post((req, res, next) => locationController.createLocation(req, res, next));
+  .get((req, res, next) => {
+    res.locals.required_scopes = [];
+    authoriseRequest(req, res, next);
+  }, (req, res, next) => locationController.getAllLocations(req, res, next))
+  .post((req, res, next) => {
+    res.locals.required_scopes = [];
+    authoriseRequest(req, res, next);
+  }, (req, res, next) => locationController.createLocation(req, res, next));
 
 router
   .route("/:id")
-  .get((req, res, next) => locationController.getLocationById(req, res, next))
-  .put((req, res, next) => locationController.updateLocation(req, res, next))
-  .delete((req, res, next) =>
+  .get((req, res, next) => {
+    res.locals.required_scopes = [];
+    authoriseRequest(req, res, next);
+  }, (req, res, next) => locationController.getLocationById(req, res, next))
+  .put((req, res, next) => {
+    res.locals.required_scopes = [];
+    authoriseRequest(req, res, next);
+  }, (req, res, next) => locationController.updateLocation(req, res, next))
+  .delete((req, res, next) => {
+    res.locals.required_scopes = [];
+    authoriseRequest(req, res, next);
+  }, (req, res, next) =>
     locationController.deleteLocation(req, res, next)
   );
 
