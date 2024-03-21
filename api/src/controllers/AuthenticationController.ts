@@ -4,15 +4,16 @@ import AuthService from "../services/AuthenticationService";
 import { validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
+import { UserLogin } from "../utils/types/authenticationTypes";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly authService = new AuthService();
 
   public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
     try {
-      const { username, password } = validateUserLogin(req.body);
+      const data: UserLogin = validateUserLogin(req.body);
 
-      const userDetails = await this.authService.getUser(username);
+      const userDetails = await this.authService.getUser(data.username);
       if (!userDetails) {
         console.log("User not found - Error 400");
         throw ErrorController.BadRequestError("User not found");
@@ -20,7 +21,7 @@ export default class AuthenticationContoller extends ErrorController {
 
       const isValid = await this.authService.passwordVerification(
         userDetails.password,
-        password
+        data.password
       );
 
       if (!isValid) {

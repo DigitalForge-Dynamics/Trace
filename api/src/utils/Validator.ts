@@ -52,15 +52,16 @@ export const validateLocation = (data: unknown): LocationAttributes => {
   return data;
 };
 
-const isUserLogin = (data: unknown): data is UserLogin => {
-  return typeof data === 'object' && data !== null
-    && ("username" in data && typeof data.username === "string")
-    && ("password" in data && typeof data.password === "string");
-};
-
 export const validateUserLogin = (data: unknown): UserLogin => {
-  if (!isUserLogin(data)) {
+  if (typeof data !== 'object' || data === null) {
     throw ErrorController.BadRequestError();
   }
-  return data;
+  if (!("username" in data) || typeof data.username !== "string") {
+    throw ErrorController.BadRequestError();
+  }
+  if (!("password" in data) || typeof data.password !== "string") {
+    throw ErrorController.BadRequestError();
+  }
+  const { username, password } = data;
+  return { username, password };
 }
