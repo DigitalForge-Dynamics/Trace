@@ -5,7 +5,7 @@ import * as schema_settings from "./schemas/schema_settings.json";
 import * as schema_user from "./schemas/schema_user.json";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
-import { AssetAttributes } from "./types/attributeTypes";
+import { AssetAttributes, LocationAttributes, UserAttributes } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 
 export const ajv = new Ajv2020();
@@ -28,9 +28,25 @@ export const getId = (request: Request): number => {
 };
 
 const isAsset = (data: unknown): data is AssetAttributes => ajv.validate("asset", data);
+const isUser = (data: unknown): data is UserAttributes => ajv.validate("user", data);
+const isLocation = (data: unknown): data is LocationAttributes => ajv.validate("location", data);
 
 export const validateAsset = (data: unknown): AssetAttributes => {
   if (!isAsset(data)) {
+    throw ErrorController.BadRequestError("Invalid Request");
+  }
+  return data;
+};
+
+export const validateUser = (data: unknown): UserAttributes => {
+  if (!isUser(data)) {
+    throw ErrorController.BadRequestError("Invalid Request");
+  }
+  return data;
+};
+
+export const validateLocation = (data: unknown): LocationAttributes => {
+  if (!isLocation(data)) {
     throw ErrorController.BadRequestError("Invalid Request");
   }
   return data;

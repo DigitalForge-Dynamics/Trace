@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UserAttributes } from "../utils/types/attributeTypes";
 import AuthService from "../services/AuthenticationService";
-import { ajv } from "../utils/Validator";
+import { validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 
@@ -10,17 +10,9 @@ export default class AuthenticationContoller extends ErrorController {
 
   public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
     try {
-      const data: unknown = req.body; // UserLogin
-      if (
-        typeof data !== 'object' ||
-        data === null
-        || !('username' in data && typeof data.username === 'string')
-        || !('password' in data && typeof data.password === 'string')
-      ) {
-        throw ErrorController.BadRequestError();
-      }
+      const { username, password } = validateUserLogin(req.body);
 
-      const userDetails = await this.authService.getUser(data.username);
+      const userDetails = await this.authService.getUser(username);
       if (!userDetails) {
         console.log("User not found - Error 400");
         throw ErrorController.BadRequestError("User not found");
@@ -28,7 +20,7 @@ export default class AuthenticationContoller extends ErrorController {
 
       const isValid = await this.authService.passwordVerification(
         userDetails.password,
-        data.password
+        password
       );
 
       if (!isValid) {
@@ -48,13 +40,7 @@ export default class AuthenticationContoller extends ErrorController {
 
   public async signUp(req: Request<{}>, res: Response, next: NextFunction) {
     try {
-      const data: UserAttributes = req.body;
-
-      const isValidRequest = ajv.validate("user", data);
-      if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
-        throw ErrorController.BadRequestError("Invalid Request");
-      }
+      const data: UserAttributes = validateUser(req.body);
 
       const ensureUniqueUser = await this.authService.getUser(data.username);
       if(ensureUniqueUser !== null) {

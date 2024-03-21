@@ -3,7 +3,7 @@ import LocationService from "../services/LocationService";
 import { LocationAttributes } from "../utils/types/attributeTypes";
 import Location from "../database/models/location.model";
 import ErrorController from "./ErrorController";
-import { ajv } from "../utils/Validator";
+import { getId, validateLocation } from "../utils/Validator";
 
 export default class LocationController extends ErrorController {
   private readonly locationService = new LocationService();
@@ -34,10 +34,7 @@ export default class LocationController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestId: number = parseInt(req.params.id);
-      if (isNaN(requestId)) {
-        throw ErrorController.BadRequestError();
-      }
+      const requestId: number = getId(req);
 
       const retrievedLocation = await this.locationService.findById(requestId);
 
@@ -58,13 +55,7 @@ export default class LocationController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestData: LocationAttributes = req.body;
-
-      const isValidRequest = ajv.validate("location", requestData);
-      if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
-        throw ErrorController.BadRequestError("Invalid Request");
-      }
+      const requestData: LocationAttributes = validateLocation(req.body);
 
       const isSuccessfull = await this.locationService.create(requestData);
       if (!isSuccessfull) {
@@ -86,18 +77,8 @@ export default class LocationController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestId: number = parseInt(req.params.id);
-      const requestData: LocationAttributes = req.body;
-
-      if (isNaN(requestId)) {
-        throw ErrorController.BadRequestError();
-      }
-
-      const isValidRequest = ajv.validate("location", requestData);
-      if (!isValidRequest) {
-        console.log(`Invalid Request - Error Code 400`);
-        throw ErrorController.BadRequestError("Invalid Request");
-      }
+      const requestId: number = getId(req);
+      const requestData: LocationAttributes = validateLocation(req.body);
 
       const isValidLocation = await this.locationService.findById(requestId);
       if (!isValidLocation) {
@@ -132,10 +113,7 @@ export default class LocationController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestId: number = parseInt(req.params.id);
-      if (isNaN(requestId)) {
-        throw ErrorController.BadRequestError();
-      }
+      const requestId: number = getId(req);
 
       const isDeleted = await this.locationService.delete(requestId);
       if (!isDeleted) {
