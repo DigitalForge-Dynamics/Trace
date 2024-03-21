@@ -34,7 +34,7 @@ describe('authoriseRequest', () => {
 
   it('Returns a 500 error response, logging the cause if the user is not present from authenticateRequest', async () => {
     // Given
-    response.locals = {};
+    response.locals = {} as any;
 
     // When
     await authoriseRequest(request, response, next);
