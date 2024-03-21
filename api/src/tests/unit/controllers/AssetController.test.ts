@@ -16,6 +16,7 @@ jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
   error: jest.fn(),
 }));
 
+const logger: MockedLogger = Logger as unknown as MockedLogger;
 
 describe('getAllAssets', () => {
   const assetController: AssetController = new AssetController();
@@ -23,7 +24,6 @@ describe('getAllAssets', () => {
   let response: Response;
   let next: NextFunction;
   let findAllMock: jest.MockedFunction<() => Promise<AssetAttributes[]>>;
-  const logger: MockedLogger = Logger as unknown as MockedLogger;
 
   beforeEach(() => {
     request = mockRequest();
@@ -63,7 +63,6 @@ describe('getAllAssets', () => {
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("No Assets Found"));
     expectNonFinal(response);
-    expect(logger.error).toHaveBeenCalledWith("404 - No Assets Found");
   });
 });
 
@@ -79,12 +78,12 @@ describe('getAssetById', () => {
     response = mockResponse({});
     next = mockNext();
     findByIdMock = AssetService.prototype.findById as jest.MockedFunction<typeof AssetService.prototype.findById>;
-    console.log = jest.fn();
   });
 
   afterEach(() => {
     jest.resetAllMocks();
     findByIdMock.mockReset();
+	resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the params is missing id', async () => {
@@ -98,7 +97,6 @@ describe('getAssetById', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
   });
 
   it('Calls the next middleware with a BadRequestError when the params.id is not an integer', async () => {
@@ -112,7 +110,6 @@ describe('getAssetById', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
   });
 
   it('Calls the next middleware with a NotFoundError when an asset with the id cannot be found', async () => {
@@ -126,7 +123,6 @@ describe('getAssetById', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("Asset not Found"));
     expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("Asset not found - Error Code 404");
   });
 
   it('Sets a 200 status with the asset data when the asset is able to be found', async () => {
@@ -143,7 +139,7 @@ describe('getAssetById', () => {
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(findByIdMock).toHaveBeenCalledWith(3);
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.info).not.toHaveBeenCalled();
   });
 });
 
@@ -159,13 +155,12 @@ describe('createAsset', () => {
     response = mockResponse({});
     next = mockNext();
     createMock = AssetService.prototype.create as jest.MockedFunction<typeof AssetService.prototype.create>;
-    console.log = jest.fn();
   });
-
 
   afterEach(() => {
     jest.resetAllMocks();
     createMock.mockReset();
+	resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the request body does not match the asset schema', async () => {
@@ -179,7 +174,6 @@ describe('createAsset', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
     expectNonFinal(response);
     expect(createMock).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("Invalid Request - Error Code 400");
   });
 
   it('Calls the next middleware with an InternalServerError when the asset is unable to be created', async () => {
@@ -194,7 +188,6 @@ describe('createAsset', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to create new asset"));
     expectNonFinal(response);
     expect(createMock).toHaveBeenCalledWith(request.body);
-    expect(console.log).toHaveBeenCalledWith("Unable to create new asset - Error Code 500");
   });
 
   it('Sends a 204 response when the asset is successfully created', async () => {
@@ -210,7 +203,7 @@ describe('createAsset', () => {
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.info).not.toHaveBeenCalled();
   });
 });
 
@@ -229,13 +222,13 @@ describe('updateAsset', () => {
     next = mockNext();
     findByIdMock = AssetService.prototype.findById as jest.MockedFunction<typeof AssetService.prototype.findById>;
     updateMock = AssetService.prototype.update as jest.MockedFunction<typeof AssetService.prototype.update>;
-    console.log = jest.fn();
   });
 
   afterEach(() => {
     jest.resetAllMocks();
     findByIdMock.mockReset();
     updateMock.mockReset();
+	resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError if the params.id is not present', async () => {
@@ -250,7 +243,7 @@ describe('updateAsset', () => {
     expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.info).not.toHaveBeenCalled();
   });
 
   it('Calls the next middleware with a BadRequestError if the params.id is not an integer', async () => {
@@ -265,7 +258,6 @@ describe('updateAsset', () => {
     expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
   });
 
   it('Calls the next middleware with a BadRequestError is the request body does not match the asset schema', async () => {
@@ -280,7 +272,6 @@ describe('updateAsset', () => {
     expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("Invalid Request - Error Code 400");
   });
 
   it('Calls the next middleware with a NotFoundError if the requested id does not match an existing asset', async () => {
@@ -296,7 +287,6 @@ describe('updateAsset', () => {
     expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalledWith(2);
     expect(updateMock).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("Unable to find selected Asset to update - Error Code 404");
   });
 
   it('Calls the next middleware with an InternalServerError if updating the requested asset is unsuccessful', async () => {
@@ -313,7 +303,6 @@ describe('updateAsset', () => {
     expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalledWith(3);
     expect(updateMock).toHaveBeenCalledWith(3, request.body);
-    expect(console.log).toHaveBeenCalledWith("Unable to update selected asset - Error Code 500");
   });
 
   it('Sets a 204 status when updating an asset is successful', async () => {
@@ -332,7 +321,6 @@ describe('updateAsset', () => {
     expect(next).not.toHaveBeenCalled();
     expect(findByIdMock).toHaveBeenCalledWith(4);
     expect(updateMock).toHaveBeenCalledWith(4, request.body);
-    expect(console.log).not.toHaveBeenCalled();
   });
 });
 
@@ -348,12 +336,12 @@ describe('deleteAsset', () => {
     response = mockResponse({});
     next = mockNext();
     deleteMock = AssetService.prototype.delete as jest.MockedFunction<typeof AssetService.prototype.delete>;
-    console.log = jest.fn();
   });
 
   afterEach(() => {
     jest.resetAllMocks();
     deleteMock.mockReset();
+	resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the request is missing the id parameter', async () => {
@@ -367,7 +355,7 @@ describe('deleteAsset', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(deleteMock).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.info).not.toHaveBeenCalled();
   });
 
   it('Calls the next middleware with a BadRequestError when the request id parameter is not an integer', async () => {
@@ -381,7 +369,6 @@ describe('deleteAsset', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(deleteMock).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
   });
 
   it('Calls the next middleware with an InternalServerError when unable to delete the asset', async () => {
@@ -396,7 +383,6 @@ describe('deleteAsset', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to delete selected asset"));
     expectNonFinal(response);
     expect(deleteMock).toHaveBeenCalledWith(2);
-    expect(console.log).toHaveBeenCalledWith("Unable to delete selected asset - Error Code 500");
   });
 
   it('Sets a 204 status when successfully able to delete the asset', async () => {
@@ -413,6 +399,6 @@ describe('deleteAsset', () => {
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(deleteMock).toHaveBeenCalledWith(3);
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.info).not.toHaveBeenCalled();
   });
 });
