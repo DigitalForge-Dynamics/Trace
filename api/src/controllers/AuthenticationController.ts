@@ -3,6 +3,7 @@ import { UserAttributes } from "../utils/types/attributeTypes";
 import AuthService from "../services/AuthenticationService";
 import { ajv } from "../utils/Validator";
 import ErrorController from "./ErrorController";
+import Logger from "../utils/Logger";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly authService = new AuthService();
@@ -35,6 +36,7 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.ForbiddenError("Not valid password")
       }
 
+      Logger.info('User signed in successfully');
       res.status(200).send({
         idToken: this.authService.generateIdToken(userDetails),
         accessToken: this.authService.generateAccessToken(userDetails.scopes),

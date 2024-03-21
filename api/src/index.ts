@@ -12,8 +12,6 @@ import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
 
-export const environment = process.env.NODE_ENV || 'development';
-
 const app: Express = express();
 const port = process.env.API_PORT;
 

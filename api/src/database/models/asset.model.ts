@@ -16,8 +16,6 @@ class Asset extends Model<
   declare name: string;
   declare serialNumber: CreationOptional<string>;
   declare modelNumber: CreationOptional<string>;
-  declare purchaseDate: CreationOptional<Date>;
-  declare purchaseCost: CreationOptional<Number>;
   declare nextAuditDate: CreationOptional<Date>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -46,14 +44,6 @@ Asset.init(
     modelNumber: {
       type: DataTypes.STRING(128),
       allowNull: true
-    },
-    purchaseDate: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    purchaseCost: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
     },
     nextAuditDate: {
       type: DataTypes.DATE,
