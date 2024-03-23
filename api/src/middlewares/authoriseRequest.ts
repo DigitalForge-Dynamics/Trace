@@ -1,9 +1,9 @@
 import { Response, Request, NextFunction } from "express";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
-import { getRequiredScopes } from "../utils/RBAC";
+import Logger from "../utils/Logger";
 
 export const authoriseRequest = async (
-  req: Request,
+  _: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -11,17 +11,16 @@ export const authoriseRequest = async (
   const user: (UserAttributes & unknown) | undefined = res.locals.user;
   if (!user) {
     // Set within authenticateRequest middleware
-    console.log("authoriseRequest middleware called before authenticateRequest middleware");
+    Logger.error("Missing user within authoriseRequest from authenticateRequest.");
     res.status(500).end();
     return;
   }
+  const requiredScopes: Scope[] | undefined = res.locals.required_scopes;
   const userScopes: Scope[] = user.scopes;
 
-  const requiredScopes: Scope[] | null = getRequiredScopes(req.path);
-
-  if (requiredScopes === null) {
-    console.log("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
-    res.status(403).end();
+  if (requiredScopes === undefined) {
+    Logger.error("No required_scopes defined for route.");
+    res.status(500).end();
     return;
   }
 

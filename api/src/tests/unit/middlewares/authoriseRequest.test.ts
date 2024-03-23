@@ -1,38 +1,40 @@
 import { NextFunction, Request, Response } from "express";
 import { authoriseRequest } from "../../../middlewares/authoriseRequest";
 import { Scope } from "../../../utils/types/attributeTypes";
-import { getRequiredScopes } from "../../../utils/RBAC";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
+import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
+import Logger from "../../../utils/Logger";
 
-jest.mock("../../../utils/RBAC", () => ({
-  getRequiredScopes: jest.fn(),
+jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
+  info: jest.fn(),
+  error: jest.fn(),
 }));
+
+const logger: MockedLogger = Logger as unknown as MockedLogger;
 
 describe('authoriseRequest', () => {
   let request: Request;
   let response: Response;
   let next: jest.MockedFunction<NextFunction>;
-  let getRequiredScopesMock: jest.MockedFunction<typeof getRequiredScopes>;
 
   beforeEach(() => {
     // Express
     request = mockRequest();
-    const locals = { user: { scopes: [] } };
+    const locals = { user: { scopes: [] }, required_scopes: [Scope.READ] };
     response = mockResponse({ locals });
     next = mockNext();
     // Misc
     next = jest.fn();
-    console.log = jest.fn();
-    getRequiredScopesMock = getRequiredScopes as jest.MockedFunction<typeof getRequiredScopes>;
   });
 
   afterEach(() => {
     jest.resetAllMocks();
+    resetMockLogger(logger);
   });
 
   it('Returns a 500 error response, logging the cause if the user is not present from authenticateRequest', async () => {
     // Given
-    response.locals = {};
+    response.locals = {} as any;
 
     // When
     await authoriseRequest(request, response, next);
@@ -42,28 +44,28 @@ describe('authoriseRequest', () => {
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("authoriseRequest middleware called before authenticateRequest middleware");
+    expect(logger.error).toHaveBeenCalledWith("Missing user within authoriseRequest from authenticateRequest.");
   });
 
-  it('Returns a 403 error response if no required scopes are defined for a path', async () => {
+  it('Returns a 500 error response if no required scopes are defined for a path', async () => {
     // Given
-    getRequiredScopesMock.mockReturnValue(null);
+    delete response.locals.required_scopes;
 
     // When
     await authoriseRequest(request, response, next);
 
     // Then
-    expect(response.status).toHaveBeenCalledWith(403);
+    expect(response.status).toHaveBeenCalledWith(500);
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith("Path does not have any required scopes defined. If no scopes are required, explicitly require an empty array.");
+    expect(logger.error).toHaveBeenCalledWith("No required_scopes defined for route.");
   });
 
   it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
     // Given
     response.locals.user.scopes = [];
-    getRequiredScopesMock.mockReturnValue([Scope.READ]);
+    response.locals.required_scopes = [Scope.READ];
 
     // When
     await authoriseRequest(request, response, next);
@@ -73,20 +75,19 @@ describe('authoriseRequest', () => {
     expect(response.send).not.toHaveBeenCalled();
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
-    expect(console.log).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
     // Given
     response.locals.user.scopes = [Scope.READ, Scope.ASSET_CREATE];
-    getRequiredScopesMock.mockReturnValue([Scope.READ]);
+    response.locals.required_scopes = [Scope.READ];
 
     // When
     await authoriseRequest(request, response, next);
 
     // Then
     expect(next).toHaveBeenCalled();
-	expectNonFinal(response);
-    expect(console.log).not.toHaveBeenCalled();
+    expectNonFinal(response);
   });
 });
