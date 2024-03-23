@@ -5,7 +5,7 @@ import {
   Model,
   DataTypes,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/databaseClient";
 
 class Settings extends Model<
   InferAttributes<Settings>,
@@ -34,6 +34,6 @@ Settings.init(
   },
   {
     tableName: "settings",
-    sequelize: db.sequelize,
+    sequelize: getSequelizeConnection(),
   }
 );

@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/databaseClient";
 import { Scope } from "../../utils/types/attributeTypes";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -67,7 +67,7 @@ User.init(
   },
   {
     tableName: "users",
-    sequelize: db.sequelize,
+    sequelize: getSequelizeConnection(),
   }
 );
 

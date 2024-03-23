@@ -83,7 +83,7 @@ describe('getAssetById', () => {
   afterEach(() => {
     jest.resetAllMocks();
     findByIdMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the params is missing id', async () => {
@@ -160,7 +160,7 @@ describe('createAsset', () => {
   afterEach(() => {
     jest.resetAllMocks();
     createMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the request body does not match the asset schema', async () => {
@@ -228,7 +228,7 @@ describe('updateAsset', () => {
     jest.resetAllMocks();
     findByIdMock.mockReset();
     updateMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError if the params.id is not present', async () => {
@@ -341,7 +341,7 @@ describe('deleteAsset', () => {
   afterEach(() => {
     jest.resetAllMocks();
     deleteMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the request is missing the id parameter', async () => {

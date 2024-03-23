@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/databaseClient";
 
 class Location extends Model<
   InferAttributes<Location>,
@@ -50,7 +50,7 @@ Location.init(
   },
   {
     tableName: "locations",
-    sequelize: db.sequelize,
+    sequelize: getSequelizeConnection(),
   }
 );
 

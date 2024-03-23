@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, { Express } from "express";
-import { migrator } from "./database/config/databaseClient";
+import { getMigrator } from "./database/config/databaseClient";
 import { redisClient } from "./database/config/redisClient";
 import cors from "cors";
 import helmet from "helmet";
@@ -30,6 +30,7 @@ app.use("/auth", authRouter);
 app.use(errorHandler);
 
 const startupConfiguration = async () => {
+  const migrator = getMigrator();
   await migrator.up();
   await redisClient.connect();
 };

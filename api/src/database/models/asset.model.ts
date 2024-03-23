@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/databaseClient";
 
 class Asset extends Model<
   InferAttributes<Asset>,
@@ -60,7 +60,7 @@ Asset.init(
   },
   {
     tableName: "assets",
-    sequelize: db.sequelize,
+    sequelize: getSequelizeConnection(),
   }
 );
 
