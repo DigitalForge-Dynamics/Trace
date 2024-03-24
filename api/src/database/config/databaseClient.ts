@@ -1,3 +1,4 @@
+import "ts-node/register";
 import { QueryInterface, Sequelize } from "sequelize";
 import { SequelizeStorage, Umzug } from "umzug";
 import ErrorController from "../../controllers/ErrorController";
