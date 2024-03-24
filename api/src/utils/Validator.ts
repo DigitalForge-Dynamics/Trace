@@ -7,6 +7,7 @@ import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
 import { AssetAttributes, LocationAttributes, UserAttributes } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
+import Logger from "./Logger";
 
 export const ajv = new Ajv2020();
 
@@ -33,13 +34,17 @@ const isLocation = (data: unknown): data is LocationAttributes => ajv.validate("
 
 export const validateAsset = (data: unknown): AssetAttributes => {
   if (!isAsset(data)) {
+    Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
   }
-  return data;
+  // Convert date fields from string into Date object
+  const result: AssetAttributes = JSON.parse(JSON.stringify(data), reviveAsset);
+  return result;
 };
 
 export const validateUser = (data: unknown): UserAttributes => {
   if (!isUser(data)) {
+    Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
   }
   return data;
@@ -47,6 +52,7 @@ export const validateUser = (data: unknown): UserAttributes => {
 
 export const validateLocation = (data: unknown): LocationAttributes => {
   if (!isLocation(data)) {
+    Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
   }
   return data;
@@ -65,3 +71,9 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   const { username, password } = data;
   return { username, password };
 }
+
+const reviveAsset = <T>(key: string, value: T): T | Date => {
+  const dates = ["nextAuditDate", "createdAt", "updatedAt"];
+  if (dates.includes(key) && typeof value === "string") return new Date(value);
+  return value;
+};

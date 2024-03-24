@@ -4,8 +4,6 @@ export interface AssetAttributes {
     name: string;
     serialNumber?: string;
     modelNumber?: string;
-    purchaseDate?: Date;
-    purchaseCost?: Number;
     nextAuditDate?: Date;
     createdAt?: Date;
     updatedAt?: Date;
