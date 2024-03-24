@@ -47,7 +47,9 @@ export const validateUser = (data: unknown): UserAttributes => {
     Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
   }
-  return data;
+  // Convert date fields from string into Date object
+  const result: UserAttributes = JSON.parse(JSON.stringify(data), reviveUser);
+  return result;
 };
 
 export const validateLocation = (data: unknown): LocationAttributes => {
@@ -74,6 +76,12 @@ export const validateUserLogin = (data: unknown): UserLogin => {
 
 const reviveAsset = <T>(key: string, value: T): T | Date => {
   const dates = ["nextAuditDate", "createdAt", "updatedAt"];
+  if (dates.includes(key) && typeof value === "string") return new Date(value);
+  return value;
+};
+
+const reviveUser = <T>(key: string, value: T): T | Date => {
+  const dates = ["createdAt", "updatedAt"];
   if (dates.includes(key) && typeof value === "string") return new Date(value);
   return value;
 };

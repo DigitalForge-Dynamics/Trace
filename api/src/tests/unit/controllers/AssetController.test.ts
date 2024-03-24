@@ -83,7 +83,7 @@ describe('getAssetById', () => {
   afterEach(() => {
     jest.resetAllMocks();
     findByIdMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the params is missing id', async () => {
@@ -160,7 +160,7 @@ describe('createAsset', () => {
   afterEach(() => {
     jest.resetAllMocks();
     createMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the request body does not match the asset schema', async () => {
@@ -187,7 +187,7 @@ describe('createAsset', () => {
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to create new asset"));
     expectNonFinal(response);
-    expect(createMock).toHaveBeenCalledWith(request.body);
+    expect(createMock).toHaveBeenCalledWith(testAsset);
   });
 
   it('Sends a 204 response when the asset is successfully created', async () => {
@@ -228,7 +228,7 @@ describe('updateAsset', () => {
     jest.resetAllMocks();
     findByIdMock.mockReset();
     updateMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError if the params.id is not present', async () => {
@@ -302,7 +302,7 @@ describe('updateAsset', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to update selected asset"));
     expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalledWith(3);
-    expect(updateMock).toHaveBeenCalledWith(3, request.body);
+    expect(updateMock).toHaveBeenCalledWith(3, testAsset);
   });
 
   it('Sets a 204 status when updating an asset is successful', async () => {
@@ -320,7 +320,7 @@ describe('updateAsset', () => {
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(findByIdMock).toHaveBeenCalledWith(4);
-    expect(updateMock).toHaveBeenCalledWith(4, request.body);
+    expect(updateMock).toHaveBeenCalledWith(4, testAsset);
   });
 });
 
@@ -341,7 +341,7 @@ describe('deleteAsset', () => {
   afterEach(() => {
     jest.resetAllMocks();
     deleteMock.mockReset();
-	resetMockLogger(logger);
+    resetMockLogger(logger);
   });
 
   it('Calls the next middleware with a BadRequestError when the request is missing the id parameter', async () => {
