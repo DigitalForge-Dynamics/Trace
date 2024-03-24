@@ -22,48 +22,48 @@ class Asset extends Model<
 }
 
 export const init = () => {
-Asset.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
+  Asset.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      assetTag: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      name: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      serialNumber: {
+        type: DataTypes.STRING(128),
+        allowNull: true,
+      },
+      modelNumber: {
+        type: DataTypes.STRING(128),
+        allowNull: true
+      },
+      nextAuditDate: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
-    assetTag: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    serialNumber: {
-      type: DataTypes.STRING(128),
-      allowNull: true,
-    },
-    modelNumber: {
-      type: DataTypes.STRING(128),
-      allowNull: true
-    },
-    nextAuditDate: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-  },
-  {
-    tableName: "assets",
-    sequelize: getSequelizeConnection(),
-  }
-);
+    {
+      tableName: "assets",
+      sequelize: getSequelizeConnection(),
+    }
+  );
 };
 
 export default Asset;

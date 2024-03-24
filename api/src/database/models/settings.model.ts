@@ -16,24 +16,28 @@ class Settings extends Model<
   declare categoryData: JSON;
 }
 
-Settings.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+export const init = () => {
+  Settings.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      category: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      categoryData: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
     },
-    category: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    categoryData: {
-      type: DataTypes.JSON,
-      allowNull: false,
-    },
-  },
-  {
-    tableName: "settings",
-    sequelize: getSequelizeConnection(),
-  }
-);
+    {
+      tableName: "settings",
+      sequelize: getSequelizeConnection(),
+    }
+  );
+};
+
+export default Settings;
