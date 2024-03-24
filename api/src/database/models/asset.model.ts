@@ -21,6 +21,7 @@ class Asset extends Model<
   declare updatedAt: CreationOptional<Date>;
 }
 
+export const init = () => {
 Asset.init(
   {
     id: {
@@ -63,5 +64,6 @@ Asset.init(
     sequelize: getSequelizeConnection(),
   }
 );
+};
 
 export default Asset;
