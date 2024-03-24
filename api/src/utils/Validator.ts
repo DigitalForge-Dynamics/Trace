@@ -5,7 +5,7 @@ import * as schema_settings from "./schemas/schema_settings.json";
 import * as schema_user from "./schemas/schema_user.json";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
-import { AssetAttributes, JsonString, LocationAttributes, UserAttributes } from "./types/attributeTypes";
+import { AssetAttributes, JsonNetworkType, LocationAttributes, UserAttributes } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
 
@@ -28,9 +28,9 @@ export const getId = (request: Request): number => {
   return result;
 };
 
-const isAsset = (data: unknown): data is JsonString<AssetAttributes> => ajv.validate("asset", data);
-const isUser = (data: unknown): data is JsonString<UserAttributes> => ajv.validate("user", data);
-const isLocation = (data: unknown): data is JsonString<LocationAttributes> => ajv.validate("location", data);
+const isAsset = (data: unknown): data is JsonNetworkType<AssetAttributes> => ajv.validate("asset", data);
+const isUser = (data: unknown): data is JsonNetworkType<UserAttributes> => ajv.validate("user", data);
+const isLocation = (data: unknown): data is JsonNetworkType<LocationAttributes> => ajv.validate("location", data);
 
 export const validateAsset = (data: unknown): AssetAttributes => {
   if (!isAsset(data)) {
@@ -70,7 +70,7 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   return { username, password };
 };
 
-const reviveAsset = (data: JsonString<AssetAttributes>): AssetAttributes => {
+const reviveAsset = (data: JsonNetworkType<AssetAttributes>): AssetAttributes => {
   const reviver = <T>(key: string, value: T): T | Date => {
     const dates = ["nextAuditDate", "createdAt", "updatedAt"];
     if (dates.includes(key) && typeof value === "string") return new Date(value);
@@ -79,7 +79,7 @@ const reviveAsset = (data: JsonString<AssetAttributes>): AssetAttributes => {
   return JSON.parse(JSON.stringify(data), reviver);
 };
 
-const reviveUser = (data: JsonString<UserAttributes>): UserAttributes => {
+const reviveUser = (data: JsonNetworkType<UserAttributes>): UserAttributes => {
   const reviver = <T>(key: string, value: T): T | Date => {
     const dates = ["createdAt", "updatedAt"];
     if (dates.includes(key) && typeof value === "string") return new Date(value);
@@ -88,7 +88,7 @@ const reviveUser = (data: JsonString<UserAttributes>): UserAttributes => {
   return JSON.parse(JSON.stringify(data), reviver);
 };
 
-const reviveLocation = (data: JsonString<LocationAttributes>): LocationAttributes => {
+const reviveLocation = (data: JsonNetworkType<LocationAttributes>): LocationAttributes => {
   const reviver = <T>(key: string, value: T): T | Date => {
     const dates = ["createdAt", "updatedAt"];
     if (dates.includes(key) && typeof value === "string") return new Date(value);
