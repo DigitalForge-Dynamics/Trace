@@ -4,23 +4,39 @@ import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
 import { getId, validateAsset } from "../utils/Validator";
 import Logger from "../utils/Logger";
+import { dynamicPager } from "../utils/DynamicPager";
 
 export default class AssetController extends ErrorController {
   private readonly assetService = new AssetService();
 
+  // Add pagination to endpoint steps
+  // 1. Create query parameter for limit & offset
+  // 2. Pass query parameters to Asset Service
+  // 3. Update sequelise command to use limit / offset
+  // 4. Refactor response to contain current pagination settings
+  // https://www.slingacademy.com/article/how-to-implement-pagination-in-sequelize-js/#Basic_Pagination
   public async getAllAssets(
-    _: Request<{}>,
+    req: Request<{}>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const retrievedAssets = await this.assetService.findAll();
+
+      // Will need to do checks etc
+      const buildPaginationOptions = dynamicPager(
+        req.query.page as unknown as number,
+        req.query.pageSize as unknown as number
+      );
+
+      const retrievedAssets = await this.assetService.findAll({
+        options: buildPaginationOptions,
+      });
 
       if (retrievedAssets.length <= 0) {
         throw ErrorController.NotFoundError("No Assets Found");
       }
 
-      Logger.info('Successfully retrieved Assets');
+      Logger.info("Successfully retrieved Assets");
       res.send(retrievedAssets).status(200).end();
       return;
     } catch (err) {

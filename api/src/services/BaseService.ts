@@ -9,7 +9,7 @@ export abstract class BaseService<TEntity extends Model>
     this.Model = Model;
   }
 
-  public async findAll(): Promise<TEntity[]> {
+  public async findAll(options: {}): Promise<TEntity[]> {
     return await this.Model.findAll();
   }
 
