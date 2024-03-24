@@ -5,7 +5,7 @@ import * as schema_settings from "./schemas/schema_settings.json";
 import * as schema_user from "./schemas/schema_user.json";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
-import { AssetAttributes, LocationAttributes, UserAttributes } from "./types/attributeTypes";
+import { AssetAttributes, JsonString, LocationAttributes, UserAttributes } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
 
@@ -28,18 +28,16 @@ export const getId = (request: Request): number => {
   return result;
 };
 
-const isAsset = (data: unknown): data is AssetAttributes => ajv.validate("asset", data);
-const isUser = (data: unknown): data is UserAttributes => ajv.validate("user", data);
-const isLocation = (data: unknown): data is LocationAttributes => ajv.validate("location", data);
+const isAsset = (data: unknown): data is JsonString<AssetAttributes> => ajv.validate("asset", data);
+const isUser = (data: unknown): data is JsonString<UserAttributes> => ajv.validate("user", data);
+const isLocation = (data: unknown): data is JsonString<LocationAttributes> => ajv.validate("location", data);
 
 export const validateAsset = (data: unknown): AssetAttributes => {
   if (!isAsset(data)) {
     Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
   }
-  // Convert date fields from string into Date object
-  const result: AssetAttributes = JSON.parse(JSON.stringify(data), reviveAsset);
-  return result;
+  return reviveAsset(data);
 };
 
 export const validateUser = (data: unknown): UserAttributes => {
@@ -47,9 +45,7 @@ export const validateUser = (data: unknown): UserAttributes => {
     Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
   }
-  // Convert date fields from string into Date object
-  const result: UserAttributes = JSON.parse(JSON.stringify(data), reviveUser);
-  return result;
+  return reviveUser(data);
 };
 
 export const validateLocation = (data: unknown): LocationAttributes => {
@@ -57,7 +53,7 @@ export const validateLocation = (data: unknown): LocationAttributes => {
     Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
   }
-  return data;
+  return reviveLocation(data);
 };
 
 export const validateUserLogin = (data: unknown): UserLogin => {
@@ -72,16 +68,31 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   }
   const { username, password } = data;
   return { username, password };
-}
-
-const reviveAsset = <T>(key: string, value: T): T | Date => {
-  const dates = ["nextAuditDate", "createdAt", "updatedAt"];
-  if (dates.includes(key) && typeof value === "string") return new Date(value);
-  return value;
 };
 
-const reviveUser = <T>(key: string, value: T): T | Date => {
-  const dates = ["createdAt", "updatedAt"];
-  if (dates.includes(key) && typeof value === "string") return new Date(value);
-  return value;
+const reviveAsset = (data: JsonString<AssetAttributes>): AssetAttributes => {
+  const reviver = <T>(key: string, value: T): T | Date => {
+    const dates = ["nextAuditDate", "createdAt", "updatedAt"];
+    if (dates.includes(key) && typeof value === "string") return new Date(value);
+    return value;
+  };
+  return JSON.parse(JSON.stringify(data), reviver);
+};
+
+const reviveUser = (data: JsonString<UserAttributes>): UserAttributes => {
+  const reviver = <T>(key: string, value: T): T | Date => {
+    const dates = ["createdAt", "updatedAt"];
+    if (dates.includes(key) && typeof value === "string") return new Date(value);
+    return value;
+  };
+  return JSON.parse(JSON.stringify(data), reviver);
+};
+
+const reviveLocation = (data: JsonString<LocationAttributes>): LocationAttributes => {
+  const reviver = <T>(key: string, value: T): T | Date => {
+    const dates = ["createdAt", "updatedAt"];
+    if (dates.includes(key) && typeof value === "string") return new Date(value);
+    return value;
+  };
+  return JSON.parse(JSON.stringify(data), reviver);
 };

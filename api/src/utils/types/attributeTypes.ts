@@ -55,3 +55,11 @@ export interface UserLoginAttributes {
     password: string;
 }
 
+export type JsonString<T> =
+  T extends Date ? string :
+  T extends number ? T :
+  T extends boolean ? T :
+  T extends string ? T :
+  T extends JSON ? T :
+  T extends object ? { [K in keyof T]?: JsonString<T[K]>} :
+  never;
