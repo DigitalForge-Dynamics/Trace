@@ -187,7 +187,7 @@ describe('createAsset', () => {
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to create new asset"));
     expectNonFinal(response);
-    expect(createMock).toHaveBeenCalledWith(request.body);
+    expect(createMock).toHaveBeenCalledWith(testAsset);
   });
 
   it('Sends a 204 response when the asset is successfully created', async () => {
@@ -302,7 +302,7 @@ describe('updateAsset', () => {
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to update selected asset"));
     expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalledWith(3);
-    expect(updateMock).toHaveBeenCalledWith(3, request.body);
+    expect(updateMock).toHaveBeenCalledWith(3, testAsset);
   });
 
   it('Sets a 204 status when updating an asset is successful', async () => {
@@ -320,7 +320,7 @@ describe('updateAsset', () => {
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(findByIdMock).toHaveBeenCalledWith(4);
-    expect(updateMock).toHaveBeenCalledWith(4, request.body);
+    expect(updateMock).toHaveBeenCalledWith(4, testAsset);
   });
 });
 
