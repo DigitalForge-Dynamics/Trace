@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express, { Express } from "express";
 import { getMigrator } from "./database/config/databaseClient";
-import { redisClient } from "./database/config/redisClient";
+import { getRedisClient } from "./database/config/redisClient";
 import cors from "cors";
 import helmet from "helmet";
 import assetsRouter from "./routes/AssetRouter";
@@ -31,8 +31,11 @@ app.use(errorHandler);
 
 const startupConfiguration = async () => {
   const migrator = getMigrator();
-  await migrator.up();
-  await redisClient.connect();
+  const redisClient = getRedisClient();
+  await Promise.all([
+    migrator.up(),
+	redisClient.connect(),
+  ]);
 };
 
 app.listen(port, () => {
