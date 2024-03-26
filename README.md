@@ -16,6 +16,10 @@ API_DATABASE_USERNAME=""
 API_DATABASE_PASSWORD=""
 API_DATABASE_HOST=""
 
+## Redis Credentials
+API_REDIS_HOST=""
+API_REDIS_PASSWORD=""
+
 ## Application Variables
 API_PORT=
 ```
