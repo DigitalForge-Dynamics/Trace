@@ -20,7 +20,7 @@ describe('authoriseRequest', () => {
   beforeEach(() => {
     // Express
     request = mockRequest();
-    const locals = { user: { scopes: [] }, required_scopes: [Scope.READ] };
+    const locals = { user: { scope: [] }, required_scopes: [Scope.READ] };
     response = mockResponse({ locals });
     next = mockNext();
     // Misc
@@ -64,7 +64,7 @@ describe('authoriseRequest', () => {
 
   it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
     // Given
-    response.locals.user.scopes = [];
+    response.locals.user.scope = [];
     response.locals.required_scopes = [Scope.READ];
 
     // When
@@ -80,7 +80,7 @@ describe('authoriseRequest', () => {
 
   it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
     // Given
-    response.locals.user.scopes = [Scope.READ, Scope.ASSET_CREATE];
+    response.locals.user.scope = [Scope.READ, Scope.ASSET_CREATE];
     response.locals.required_scopes = [Scope.READ];
 
     // When
