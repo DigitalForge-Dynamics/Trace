@@ -16,7 +16,7 @@ export const authoriseRequest = async (
     return;
   }
   const requiredScopes: Scope[] | undefined = res.locals.required_scopes;
-  const userScopes: Scope[] = user.scopes;
+  const userScopes: Scope[] = user.scope;
 
   if (requiredScopes === undefined) {
     Logger.error("No required_scopes defined for route.");

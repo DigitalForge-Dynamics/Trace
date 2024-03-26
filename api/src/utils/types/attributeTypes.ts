@@ -26,7 +26,7 @@ export interface UserAttributes {
     password: string;
     email: string;
     isActive: boolean;
-    scopes: Scope[];
+    scope: Scope[];
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -35,7 +35,7 @@ export enum Scope {
   READ = "TRACE_READ",
   // Asset
   ASSET_CREATE = "TRACE_ASSET_CREATE",
-  ASSET_DELETE = "TRACE_ASSET_DELTE",
+  ASSET_DELETE = "TRACE_ASSET_DELETE",
   ASSET_ASSIGN = "TRACE_ASSET_ASSIGN",
   ASSET_RETURN = "TRACE_ASSET_RETURN",
   ASSET_AUDIT = "TRACE_ASSET_AUDIT",
