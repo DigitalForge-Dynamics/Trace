@@ -46,12 +46,17 @@ describe("POST /assets", () => {
   });
 
   it('Sets a 401 status when the user is unauthenticated', async () => {
+    // Given
     delete (headers as any).authorization;
+
+    // When
     const response = await fetch(`${API_URL}/assets`, {
       method: 'POST',
       body: JSON.stringify(asset),
       headers,
     });
+
+    // Then
     const text = await response.text();
     expect(response.status).toBe(401);
     expect(text).toBe("");

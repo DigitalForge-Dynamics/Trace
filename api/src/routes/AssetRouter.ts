@@ -18,7 +18,7 @@ router
     assetController.getAllAssets(req, res, next);
   })
   .post((req, res, next) => {
-    res.locals.required_scopes = [Scope.ASSET_CREATE];
+    res.locals.required_scopes = [Scope.READ, Scope.ASSET_CREATE];
     authoriseRequest(req, res, next);
   }, (req, res, next) => {
     assetController.createAsset(req, res, next);
