@@ -15,7 +15,6 @@ export default class AuthenticationContoller extends ErrorController {
 
       const userDetails = await this.authService.getUser(data.username);
       if (!userDetails) {
-        console.log("User not found - Error 400");
         throw ErrorController.BadRequestError("User not found");
       }
 
@@ -25,14 +24,13 @@ export default class AuthenticationContoller extends ErrorController {
       );
 
       if (!isValid) {
-        console.log("Not valid password - Error 403");
         throw ErrorController.ForbiddenError("Not valid password")
       }
 
       Logger.info('User signed in successfully');
       res.status(200).send({
         idToken: this.authService.generateIdToken(userDetails),
-        accessToken: this.authService.generateAccessToken(userDetails.scopes),
+        accessToken: this.authService.generateAccessToken(userDetails.scope),
       });
     } catch (err) {
       next(err);
@@ -45,7 +43,6 @@ export default class AuthenticationContoller extends ErrorController {
 
       const ensureUniqueUser = await this.authService.getUser(data.username);
       if(ensureUniqueUser !== null) {
-        console.log(`User Already Exists - Error Code 404`);
         throw ErrorController.NotFoundError("User Already Exists");
       }
 
@@ -57,7 +54,6 @@ export default class AuthenticationContoller extends ErrorController {
       const user = await this.authService.createUser(userData);
 
       if (!user) {
-        console.log(`Unable to create new asset - Error Code 500`);
         throw ErrorController.InternalServerError("Unable to create new asset");
       }
 

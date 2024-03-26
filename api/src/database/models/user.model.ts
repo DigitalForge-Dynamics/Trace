@@ -16,7 +16,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare password: string;
   declare email: string;
   declare isActive: boolean;
-  declare scopes: Scope[];
+  declare scope: Scope[];
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -52,7 +52,7 @@ User.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    scopes: {
+    scope: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
