@@ -19,3 +19,12 @@ API_DATABASE_HOST=""
 ## Application Variables
 API_PORT=
 ```
+
+## API Integration Tests
+The integration tests require to be using the same token signing key as the API is using to validate.
+This can be achieved by setting the environment variable `EXPRESS_SIGNING_SECRET` to the same non-falsy value on both.
+e.g.
+```sh
+EXPRESS_SIGNING_SECRET="trace" npm start
+EXPRESS_SIGNING_SECRET="trace" npm run test:integration
+```
