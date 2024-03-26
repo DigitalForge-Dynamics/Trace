@@ -22,7 +22,7 @@ const getConnectionUrl = (): string => {
   const host = process.env.API_DATABASE_HOST;
   if (!database || !username || !password || !host) {
     Logger.error("Unable to load database credentials");
-    throw ErrorController.InternalServerError("No database connection");
+    throw ErrorController.InternalServerError();
   }
   connectionUrl = `postgres://${username}:${password}@${host}:5432/${database}`;
   return connectionUrl;
