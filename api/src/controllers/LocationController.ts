@@ -18,7 +18,6 @@ export default class LocationController extends ErrorController {
         await this.locationService.findAll();
 
       if (retrievedLocations.length === 0) {
-        console.log(`No Locations found - Error Code 404`);
         throw ErrorController.NotFoundError("No Locations found");
       }
 
@@ -39,7 +38,6 @@ export default class LocationController extends ErrorController {
       const retrievedLocation = await this.locationService.findById(requestId);
 
       if (!retrievedLocation) {
-        console.log(`No Locations found - Error Code 404`);
         throw ErrorController.NotFoundError("No Locations found");
       }
 
@@ -59,7 +57,6 @@ export default class LocationController extends ErrorController {
 
       const isSuccessfull = await this.locationService.create(requestData);
       if (!isSuccessfull) {
-        console.log(`Unable to create new location - Error Code 500`);
         throw ErrorController.InternalServerError(
           "Unable to create new location"
         );
@@ -82,9 +79,6 @@ export default class LocationController extends ErrorController {
 
       const isValidLocation = await this.locationService.findById(requestId);
       if (!isValidLocation) {
-        console.log(
-          `Unable to find selected location to update - Error Code 404`
-        );
         throw ErrorController.NotFoundError(
           "Unable to find selected location to update"
         );
@@ -95,7 +89,6 @@ export default class LocationController extends ErrorController {
         requestData
       );
       if (!isSuccessfull) {
-        console.log(`Unable to update selected location - Error Code 500`);
         throw ErrorController.InternalServerError(
           "Unable to update selected location"
         );
@@ -117,7 +110,6 @@ export default class LocationController extends ErrorController {
 
       const isDeleted = await this.locationService.delete(requestId);
       if (!isDeleted) {
-        console.log(`Unable to deleted selected location - Error Code 500`);
         throw ErrorController.InternalServerError(
           "Unable to deleted selected location"
         );
