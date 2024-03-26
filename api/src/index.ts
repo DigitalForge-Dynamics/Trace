@@ -34,7 +34,7 @@ const startupConfiguration = async () => {
   const redisClient = getRedisClient();
   await Promise.all([
     migrator.up(),
-	redisClient.connect(),
+    redisClient.connect(),
   ]);
 };
 
