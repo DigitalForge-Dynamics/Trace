@@ -81,12 +81,13 @@ class AuthService {
   }
 
   private generateClaims(): GenericClaimStructure {
+    const timestamp = Math.floor(Date.now() / 1000);
     return {
       iss: "urn:trace-api",
       sub: crypto.randomUUID(),
       aud: "urn:trace-consumer",
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-      iat: Date.now(),
+      exp: timestamp + 60 * 60,
+      iat: timestamp,
     };
   }
 }
