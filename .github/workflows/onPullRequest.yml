@@ -18,7 +18,7 @@ jobs:
       working-directory: api
 
     - name: Unit Test
-      run: npm test
+      run: npm test:unit
       working-directory: api
 
   Web:
