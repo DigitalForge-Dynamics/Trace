@@ -26,7 +26,7 @@ export interface UserAttributes {
     password: string;
     email: string;
     isActive: boolean;
-    scopes: Scope[];
+    scope: Scope[];
     createdAt?: Date;
     updatedAt?: Date;
 }
