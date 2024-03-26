@@ -15,7 +15,6 @@ export default class AuthenticationContoller extends ErrorController {
 
       const userDetails = await this.authService.getUser(data.username);
       if (!userDetails) {
-        console.log("User not found - Error 400");
         throw ErrorController.BadRequestError("User not found");
       }
 
@@ -25,7 +24,6 @@ export default class AuthenticationContoller extends ErrorController {
       );
 
       if (!isValid) {
-        console.log("Not valid password - Error 403");
         throw ErrorController.ForbiddenError("Not valid password")
       }
 
@@ -45,7 +43,6 @@ export default class AuthenticationContoller extends ErrorController {
 
       const ensureUniqueUser = await this.authService.getUser(data.username);
       if(ensureUniqueUser !== null) {
-        console.log(`User Already Exists - Error Code 404`);
         throw ErrorController.NotFoundError("User Already Exists");
       }
 
@@ -57,7 +54,6 @@ export default class AuthenticationContoller extends ErrorController {
       const user = await this.authService.createUser(userData);
 
       if (!user) {
-        console.log(`Unable to create new asset - Error Code 500`);
         throw ErrorController.InternalServerError("Unable to create new asset");
       }
 
