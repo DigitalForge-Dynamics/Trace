@@ -64,7 +64,6 @@ jobs:
       redis:
         image: redis:latest
         options: >-
-          --requirepass pipeline
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
@@ -89,7 +88,7 @@ jobs:
           API_DATABASE_USERNAME: pipeline
           API_DATABASE_PASSWORD: pipeline
           API_DATABASE_HOST: postgres
-          API_REDIS_PASSWORD: pipeline
+          API_REDIS_PASSWORD: ""
           API_REDIS_HOST: redis
 
       - name: Run integration tests
@@ -102,7 +101,7 @@ jobs:
           API_DATABASE_USERNAME: pipeline
           API_DATABASE_PASSWORD: pipeline
           API_DATABASE_HOST: postgres
-          API_REDIS_PASSWORD: pipeline
+          API_REDIS_PASSWORD: ""
           API_REDIS_HOST: redis
 
 

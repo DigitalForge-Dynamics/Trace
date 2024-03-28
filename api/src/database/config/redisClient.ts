@@ -3,7 +3,7 @@ import { createClient } from "redis";
 const password = process.env.API_REDIS_PASSWORD;
 const host = process.env.API_REDIS_HOST;
 
-if (!password || !host) {
+if (password === undefined || host === undefined) {
   console.error(`Unable to load Redis credentials`);
 }
 
