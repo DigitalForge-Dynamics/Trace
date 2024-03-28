@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/databaseClient";
 
 class Asset extends Model<
   InferAttributes<Asset>,
@@ -21,47 +21,49 @@ class Asset extends Model<
   declare updatedAt: CreationOptional<Date>;
 }
 
-Asset.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
+export const init = () => {
+  Asset.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      assetTag: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      name: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      serialNumber: {
+        type: DataTypes.STRING(128),
+        allowNull: true,
+      },
+      modelNumber: {
+        type: DataTypes.STRING(128),
+        allowNull: true
+      },
+      nextAuditDate: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
-    assetTag: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    serialNumber: {
-      type: DataTypes.STRING(128),
-      allowNull: true,
-    },
-    modelNumber: {
-      type: DataTypes.STRING(128),
-      allowNull: true
-    },
-    nextAuditDate: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-  },
-  {
-    tableName: "assets",
-    sequelize: db.sequelize,
-  }
-);
+    {
+      tableName: "assets",
+      sequelize: getSequelizeConnection(),
+    }
+  );
+};
 
 export default Asset;

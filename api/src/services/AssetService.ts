@@ -1,4 +1,4 @@
-import Asset from "../database/models/asset.model";
+import Asset, { init } from "../database/models/asset.model";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import { BaseService } from "./BaseService";
 import { IService } from "./IService";
@@ -15,6 +15,7 @@ class AssetService
 {
   constructor() {
     super(Asset);
+    init();
   }
 
   public async create(data: AssetAttributes): Promise<boolean> {

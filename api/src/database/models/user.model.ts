@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/databaseClient";
 import { Scope } from "../../utils/types/attributeTypes";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -21,54 +21,56 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare updatedAt: CreationOptional<Date>;
 }
 
-User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
+export const init = () => {
+  User.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      firstName: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      lastName: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      username: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      password: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+      scope: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
-    firstName: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    username: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },    
-    email: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-    },
-    scope: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-  },
-  {
-    tableName: "users",
-    sequelize: db.sequelize,
-  }
-);
+    {
+      tableName: "users",
+      sequelize: getSequelizeConnection(),
+    }
+  );
+};
 
 export default User;
