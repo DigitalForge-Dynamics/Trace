@@ -79,7 +79,7 @@ jobs:
 
       - name: Start API
       # Sleep as need to run Server in background, but need to give time for server to start
-        run: npm run start & sleep 10
+        run: npm run start &
         working-directory: api
         env:
           EXPRESS_SECRET_KEY: pipeline
@@ -90,6 +90,9 @@ jobs:
           API_DATABASE_HOST: postgres
           API_REDIS_PASSWORD: ""
           API_REDIS_HOST: redis
+
+      - name: Wait For API Server to start
+        run: sleep 10
 
       - name: Run integration tests
         run: npm run test:integration
@@ -97,13 +100,12 @@ jobs:
         env:
           EXPRESS_SECRET_KEY: pipeline
           API_PORT: 7071
-          API_DATABASE_NAME: pipeline
-          API_DATABASE_USERNAME: pipeline
-          API_DATABASE_PASSWORD: pipeline
-          API_DATABASE_HOST: postgres
-          API_REDIS_PASSWORD: ""
-          API_REDIS_HOST: redis
-
+          #API_DATABASE_NAME: pipeline
+          #API_DATABASE_USERNAME: pipeline
+          #API_DATABASE_PASSWORD: pipeline
+          #API_DATABASE_HOST: postgres
+          #API_REDIS_PASSWORD: ""
+          #API_REDIS_HOST: redis
 
   Web-E2E:
     runs-on: ubuntu-latest
