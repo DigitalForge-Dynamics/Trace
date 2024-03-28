@@ -97,12 +97,6 @@ jobs:
         env:
           EXPRESS_SECRET_KEY: pipeline
           API_PORT: 7071
-          #API_DATABASE_NAME: pipeline
-          #API_DATABASE_USERNAME: pipeline
-          #API_DATABASE_PASSWORD: pipeline
-          #API_DATABASE_HOST: postgres
-          #API_REDIS_PASSWORD: ""
-          #API_REDIS_HOST: redis
 
   Web-E2E:
     runs-on: ubuntu-latest
