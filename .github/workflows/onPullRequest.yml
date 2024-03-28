@@ -96,6 +96,14 @@ jobs:
         working-directory: api
         env:
           EXPRESS_SECRET_KEY: pipeline
+          API_PORT: 7071
+          API_DATABASE_NAME: pipeline
+          API_DATABASE_USERNAME: pipeline
+          API_DATABASE_PASSWORD: pipeline
+          API_DATABASE_HOST: localhost
+          API_REDIS_PASSWORD: test123
+          API_REDIS_HOST: localhost
+
 
   Web-E2E:
     runs-on: ubuntu-latest
