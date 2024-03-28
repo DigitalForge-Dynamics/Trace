@@ -11,7 +11,7 @@ interface ILocationService extends IService<Location> {
 export default class LocationService extends BaseService<Location> implements ILocationService {
   constructor() {
     super(Location);
-	init();
+    init();
   }
 
   public async create(data: LocationAttributes): Promise<boolean> {
