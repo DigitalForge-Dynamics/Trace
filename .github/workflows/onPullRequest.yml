@@ -87,9 +87,9 @@ jobs:
           API_DATABASE_NAME: pipeline
           API_DATABASE_USERNAME: pipeline
           API_DATABASE_PASSWORD: pipeline
-          API_DATABASE_HOST: localhost
+          API_DATABASE_HOST: postgres
           API_REDIS_PASSWORD: test123
-          API_REDIS_HOST: localhost
+          API_REDIS_HOST: redis
 
       - name: Run integration tests
         run: npm run test:integration
@@ -100,9 +100,9 @@ jobs:
           API_DATABASE_NAME: pipeline
           API_DATABASE_USERNAME: pipeline
           API_DATABASE_PASSWORD: pipeline
-          API_DATABASE_HOST: localhost
+          API_DATABASE_HOST: postgres
           API_REDIS_PASSWORD: test123
-          API_REDIS_HOST: localhost
+          API_REDIS_HOST: redis
 
 
   Web-E2E:
