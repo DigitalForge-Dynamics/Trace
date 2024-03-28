@@ -9,7 +9,7 @@ const getConnectionUrl = (): string => {
   if (connectionUrl !== undefined) return connectionUrl;
   const password = process.env.API_REDIS_PASSWORD;
   const host = process.env.API_REDIS_HOST;
-  if (!host || !password) {
+  if (host === undefined || password === undefined) {
     Logger.error("Missing Redis Credentials");
     throw ErrorController.InternalServerError();
   }

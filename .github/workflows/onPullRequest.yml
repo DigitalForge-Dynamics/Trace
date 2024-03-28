@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  API:
+  API-Unit:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
       run: npm run test:unit
       working-directory: api
 
-  Web:
+  Web-Unit:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -41,3 +41,69 @@ jobs:
     - name: Unit Test
       run: npm test
       working-directory: web
+
+  API-Integration:
+    runs-on: ubuntu-latest
+    needs:
+      - API-Unit
+    container: node
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: pipeline
+          POSTGRES_USER: pipeline
+          POSTGRES_PASSWORD: pipeline
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:latest
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: api
+
+      - name: Start API
+      # Sleep as need to run Server in background, but need to give time for server to start
+        run: npm run start & sleep 10
+        working-directory: api
+        env:
+          EXPRESS_SECRET_KEY: pipeline
+          API_PORT: 7071
+          API_DATABASE_NAME: pipeline
+          API_DATABASE_USERNAME: pipeline
+          API_DATABASE_PASSWORD: pipeline
+          API_DATABASE_HOST: postgres
+          API_REDIS_PASSWORD: ""
+          API_REDIS_HOST: redis
+
+      - name: Run integration tests
+        run: npm run test:integration
+        working-directory: api
+        env:
+          EXPRESS_SECRET_KEY: pipeline
+          API_PORT: 7071
+
+  Web-E2E:
+    runs-on: ubuntu-latest
+    needs:
+      - Web-Unit
+      - API-Integration
+    steps:
+      - name: Placeholder
+        run: echo "E2E-Placeholder"
+
