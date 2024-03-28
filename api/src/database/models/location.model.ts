@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { db } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/databaseClient";
 
 class Location extends Model<
   InferAttributes<Location>,
@@ -19,39 +19,41 @@ class Location extends Model<
   declare updatedAt: CreationOptional<Date>;
 }
 
-Location.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
+export const init = () => {
+  Location.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      locationName: {
+        type: DataTypes.STRING(128),
+        allowNull: false,
+      },
+      geoLocation: {
+        type: DataTypes.JSON,
+        allowNull: true,
+      },
+      primaryLocation: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
-    locationName: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    geoLocation: {
-      type: DataTypes.JSON,
-      allowNull: true,
-    },
-    primaryLocation: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-  },
-  {
-    tableName: "locations",
-    sequelize: db.sequelize,
-  }
-);
+    {
+      tableName: "locations",
+      sequelize: getSequelizeConnection(),
+    }
+  );
+};
 
 export default Location;

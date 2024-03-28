@@ -1,15 +1,26 @@
-import { createClient } from "redis";
+import { RedisClientType, createClient } from "redis";
+import ErrorController from "../../controllers/ErrorController";
+import Logger from "../../utils/Logger";
 
-const username = process.env.API_REDIS_USERNAME;
-const password = process.env.API_REDIS_PASSWORD;
-const host = process.env.API_REDIS_HOST;
+let connectionUrl: string | undefined;
+let redisClient: RedisClientType | undefined;
 
-if (!username || !password || !host) {
-  console.error(`Unable to load Redis credentials`);
-}
+const getConnectionUrl = (): string => {
+  if (connectionUrl !== undefined) return connectionUrl;
+  const password = process.env.API_REDIS_PASSWORD;
+  const host = process.env.API_REDIS_HOST;
+  if (!host || !password) {
+    Logger.error("Missing Redis Credentials");
+    throw ErrorController.InternalServerError();
+  }
+  connectionUrl = `redis://:${password}@${host}:6379`;
+  return connectionUrl;
+};
 
-const connectionUrl: string = `redis://:${password}@${host}:6379`;
-
-export const redisClient = createClient({
-  url: connectionUrl,
-}).on("error", (err) => console.error(`Redis Client Error`, err));
+export const getRedisClient = (): RedisClientType => {
+  if (redisClient !== undefined) return redisClient;
+  redisClient = createClient({ url: getConnectionUrl() });
+  redisClient.on("error", (err) => Logger.error(`Redis Client Error: ${err}`));
+  redisClient.on("connect", () => Logger.info("Redis connected"));
+  return redisClient;
+};
