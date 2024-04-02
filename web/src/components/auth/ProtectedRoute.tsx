@@ -7,6 +7,6 @@ const PrivateRoutes = () => {
     return (
         auth.authState.isLoggedIn ? <Outlet/> : <Navigate to="/login"/>
     );
-}
+};
 
 export default PrivateRoutes;
