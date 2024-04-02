@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import AssetService from "../services/AssetService";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { getId, validateAsset } from "../utils/Validator";
+import { getId, getInt, getOptQueryString, validateAsset } from "../utils/Validator";
 import Logger from "../utils/Logger";
 
 export default class AssetController extends ErrorController {
@@ -14,11 +14,13 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const { page, pageSize } = req.query;
-      const retrievedAssets = await this.assetService.findAllPaginated(
-        page as unknown as number,
-        pageSize as unknown as number
-      );
+      const page = getInt(getOptQueryString(req, 'page'));
+      const pageSize = getInt(getOptQueryString(req, 'pageSize'));
+      if (page < 1 || pageSize < 1) {
+        throw ErrorController.BadRequestError();
+      }
+
+      const retrievedAssets = await this.assetService.findAllPaginated(page, pageSize);
 
       if (retrievedAssets.totalRecords <= 0) {
         throw ErrorController.NotFoundError("No Assets Found");

@@ -16,16 +16,29 @@ ajv.addSchema(schema_location, "location");
 ajv.addSchema(schema_settings, "settings");
 ajv.addSchema(schema_user, "user");
 
-export const getId = (request: Request): number => {
-  const { id } = request.params;
-  if (id === undefined) {
+export const getOptQueryString = (request: Request, identifier: string): string | undefined => {
+  const value = request.query[identifier];
+  if (value === undefined || typeof value === 'string') {
+    return value;
+  }
+  Logger.error(`Expected string | undefined query for identifier: ${identifier}, but got ${typeof value}`);
+  throw ErrorController.BadRequestError();
+};
+
+export const getInt = (value: string | undefined): number => {
+  if (value === undefined) {
     throw ErrorController.BadRequestError();
   }
-  const result = parseInt(id);
+  const result = parseInt(value);
   if (isNaN(result)) {
     throw ErrorController.BadRequestError()
   }
   return result;
+};
+
+export const getId = (request: Request): number => {
+  const { id } = request.params;
+  return getInt(id);
 };
 
 const isAsset = (data: unknown): data is JsonNetworkType<AssetAttributes> => ajv.validate("asset", data);

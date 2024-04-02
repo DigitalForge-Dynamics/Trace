@@ -7,6 +7,7 @@ export abstract class BaseService<TEntity extends Model>
 {
   protected readonly Model: ModelStatic<TEntity>;
   private readonly paginator: Paginator<TEntity>;
+
   constructor(Model: ModelStatic<TEntity>) {
     this.Model = Model;
     this.paginator = new Paginator<TEntity>(this.Model);
