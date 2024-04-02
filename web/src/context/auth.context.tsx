@@ -49,7 +49,7 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 
   const logout = useCallback(() => {
-    authDispatch({ type: AuthOption.LOGOUT, payload: null });
+    authDispatch({ type: AuthOption.LOGOUT });
     navigate("/login");
   }, [navigate]);
 

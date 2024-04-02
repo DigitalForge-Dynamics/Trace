@@ -4,16 +4,15 @@ export enum AuthOption {
 }
 
 export type AuthState =
-	| { isLoggedIn: false }
-	| {
-		isLoggedIn: true;
-		authToken: string;
-		userId: string;
-		email: string;
-		firstName: string;
-		lastName: string;
-	};
-
+| { isLoggedIn: false }
+| {
+  isLoggedIn: true;
+  authToken: string;
+  userId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+};
 
 export interface AuthContextProps {
   authState: AuthState;
@@ -22,14 +21,8 @@ export interface AuthContextProps {
 }
 
 export type AuthAction =
-  | {
-      type: AuthOption.LOGIN;
-      payload: AuthData;
-    }
-  | {
-      type: AuthOption.LOGOUT;
-      payload: null;
-    };
+| { type: AuthOption.LOGOUT; }
+| { type: AuthOption.LOGIN; payload: AuthData; };
 
 export type AuthData = {
   accessToken: string;
@@ -38,3 +31,34 @@ export type AuthData = {
   firstName: string;
   lastName: string;
 };
+
+export type Tokens = {
+  accesstoken: string;
+  idToken: string;
+  refreshToken: string;
+};
+
+export type GenericClaimStructure = {
+  iss: string;
+  sub: string;
+  aud: string;
+  exp: number;
+  iat: number;
+  token_use: TokenUse;
+};
+
+export const enum TokenUse {
+  Id = 'id',
+  Access = 'access',
+  Refresh = 'refresh',
+}
+
+export type RefreshTokenPayload = { token_use: TokenUse.Refresh; username: string };
+export type AccessTokenPayload = { token_use: TokenUse.Access, scope: string[]; };
+export type IdTokenPayload = {
+  token_use: TokenUse.Id;
+  firstname: string;
+  lastname: string;
+  email: string;
+};
+
