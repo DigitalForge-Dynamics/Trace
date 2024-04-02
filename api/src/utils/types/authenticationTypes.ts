@@ -15,14 +15,16 @@ export const enum TokenUse {
   Refresh = 'refresh',
 }
 
-export type RefreshToken = { token_use: TokenUse.Refresh; };
-export type AccessToken = { token_use: TokenUse.Access, scope: Scope[]; };
-export type IdToken = {
+export type RefreshTokenPayload = { token_use: TokenUse.Refresh; };
+export type AccessTokenPayload = { token_use: TokenUse.Access, scope: Scope[]; };
+export type IdTokenPayload = {
   token_use: TokenUse.Id;
   firstname: string;
   lastname: string;
   email: string;
 };
+
+export type TokenPayload = GenericClaimStructure & (RefreshTokenPayload | AccessTokenPayload | IdTokenPayload);
 
 export type UserLogin = {
   username: string;
