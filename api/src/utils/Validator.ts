@@ -16,12 +16,10 @@ ajv.addSchema(schema_location, "location");
 ajv.addSchema(schema_settings, "settings");
 ajv.addSchema(schema_user, "user");
 
-export const getOptQueryString = (request: Request, identifier: string): string | undefined => {
-  const value = request.query[identifier];
+export const getOptString = (value: unknown): string | undefined => {
   if (value === undefined || typeof value === 'string') {
     return value;
   }
-  Logger.error(`Expected string | undefined query for identifier: ${identifier}, but got ${typeof value}`);
   throw ErrorController.BadRequestError();
 };
 
