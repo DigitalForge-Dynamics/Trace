@@ -9,12 +9,16 @@ export type GenericClaimStructure = {
   token_use: TokenUse;
 };
 
-export type TokenUse = 'id' | 'access' | 'refresh';
+export const enum TokenUse {
+  Id = 'id',
+  Access = 'access',
+  Refresh = 'refresh',
+}
 
-export type RefreshToken = { token_use: 'refresh'; };
-export type AccessToken = { token_use: 'access', scope: Scope[]; };
+export type RefreshToken = { token_use: TokenUse.Refresh; };
+export type AccessToken = { token_use: TokenUse.Access, scope: Scope[]; };
 export type IdToken = {
-  token_use: 'id';
+  token_use: TokenUse.Id;
   firstname: string;
   lastname: string;
   email: string;

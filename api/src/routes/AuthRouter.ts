@@ -3,7 +3,7 @@ import AuthenticationController from "../controllers/AuthenticationController";
 import { authenticateRequest } from "../middlewares/authenticateRequest";
 import { authoriseRequest } from "../middlewares/authoriseRequest";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
-import { GenericClaimStructure } from "../utils/types/authenticationTypes";
+import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
 import AuthService from "../services/AuthenticationService";
 
 const router: Router = express.Router();
@@ -17,7 +17,7 @@ router.route("/logout").post(authenticateRequest);
 
 router.route("/refresh").post(authenticateRequest, (_, res) => {
   const user = res.locals.user as UserAttributes & GenericClaimStructure;
-  if (user.token_use !== 'refresh') {
+  if (user.token_use !== TokenUse.Refresh) {
     res.status(403).end();
     return;
   }
@@ -31,6 +31,7 @@ router
   .route("/register")
   .post(authenticateRequest, (req, res, next) => {
     res.locals.required_scopes = [Scope.USER_CREATE];
+    res.locals.token_type = TokenUse.Access;
     authoriseRequest(req, res, next);
   }, (req, res, next) =>
     authController.signUp(req, res, next)

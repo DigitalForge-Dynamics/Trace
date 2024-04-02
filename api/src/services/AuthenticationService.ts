@@ -25,7 +25,7 @@ class AuthService {
   }
 
   public generateIdToken(user: UserAttributes): string {
-    const tokenClaims = this.generateClaims('id');
+    const tokenClaims = this.generateClaims(TokenUse.Id);
     return jwt.sign(
       {
         ...tokenClaims,
@@ -39,7 +39,7 @@ class AuthService {
   }
 
   public generateAccessToken(scopes: Scope[]): string {
-    const tokenClaims = this.generateClaims('access');
+    const tokenClaims = this.generateClaims(TokenUse.Access);
     return jwt.sign(
       {
         ...tokenClaims,
@@ -51,7 +51,7 @@ class AuthService {
   }
   
   private generateRefreshToken(): string {
-    const tokenClaims = this.generateClaims('refresh');
+    const tokenClaims = this.generateClaims(TokenUse.Refresh);
     return jwt.sign(
       tokenClaims,
       this.getJWTSecretKey(),
