@@ -8,6 +8,7 @@ import ErrorController from "../controllers/ErrorController";
 import { AssetAttributes, JsonNetworkType, LocationAttributes, UserAttributes } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
+import type { ParsedQs } from "qs";
 
 export const ajv = new Ajv2020();
 
@@ -16,7 +17,9 @@ ajv.addSchema(schema_location, "location");
 ajv.addSchema(schema_settings, "settings");
 ajv.addSchema(schema_user, "user");
 
-export const getOptString = (value: unknown): string | undefined => {
+type QueryValue = string | string[] | ParsedQs | ParsedQs[] | undefined;
+
+export const getOptString = (value: QueryValue): string | undefined => {
   if (value === undefined || typeof value === 'string') {
     return value;
   }

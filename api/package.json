@@ -7,7 +7,7 @@
     "start": "npx tsc && nodemon dist/index.js",
     "test:unit": "jest src/tests/unit",
     "test:integration": "jest src/tests/integration",
-    "test:coverage": "jest src/* --coverage"
+    "test:coverage": "jest src/tests --coverage"
   },
   "author": "",
   "license": "ISC",
