@@ -50,7 +50,7 @@ class AuthService {
     );
   }
   
-  private generateRefreshToken(username: string): string {
+  public generateRefreshToken(username: string): string {
     const tokenClaims = this.generateClaims(TokenUse.Refresh);
     return jwt.sign(
       {

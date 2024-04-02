@@ -31,6 +31,7 @@ export default class AuthenticationContoller extends ErrorController {
       res.status(200).send({
         idToken: this.authService.generateIdToken(userDetails),
         accessToken: this.authService.generateAccessToken(userDetails.scope),
+        refreshToken: this.authService.generateRefreshToken(userDetails.username),
       });
     } catch (err) {
       next(err);
