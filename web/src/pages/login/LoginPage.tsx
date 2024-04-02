@@ -15,7 +15,6 @@ function LoginPage() {
     if (authData) {
       login({
         accessToken: authData.accessToken,
-        userId: authData.userId,
         email: authData.email,
         firstName: authData.firstName,
         lastName: authData.lastName,

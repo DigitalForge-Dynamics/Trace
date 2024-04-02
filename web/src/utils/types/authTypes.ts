@@ -8,7 +8,6 @@ export type AuthState =
 | {
   isLoggedIn: true;
   authToken: string;
-  userId: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -26,7 +25,6 @@ export type AuthAction =
 
 export type AuthData = {
   accessToken: string;
-  userId: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -53,8 +51,6 @@ export const enum TokenUse {
   Refresh = 'refresh',
 }
 
-export type RefreshTokenPayload = { token_use: TokenUse.Refresh; username: string };
-export type AccessTokenPayload = { token_use: TokenUse.Access, scope: string[]; };
 export type IdTokenPayload = {
   token_use: TokenUse.Id;
   firstname: string;

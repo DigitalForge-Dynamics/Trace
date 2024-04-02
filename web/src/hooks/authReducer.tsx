@@ -15,7 +15,6 @@ const authStateReducer: React.Reducer<AuthState, AuthAction> = (
       ...state,
       isLoggedIn: true,
       authToken: action.payload.accessToken,
-      userId: action.payload.userId,
       email: action.payload.email,
       firstName: action.payload.firstName,
       lastName: action.payload.lastName,
