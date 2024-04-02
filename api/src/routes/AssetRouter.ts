@@ -3,7 +3,6 @@ import AssetController from "../controllers/AssetController";
 import { authenticateRequest } from "../middlewares/authenticateRequest";
 import { authoriseRequest } from "../middlewares/authoriseRequest";
 import { Scope } from "../utils/types/attributeTypes";
-import { TokenUse } from "../utils/types/authenticationTypes";
 
 const router: Router = express.Router();
 const assetController = new AssetController();
