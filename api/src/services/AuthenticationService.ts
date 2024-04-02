@@ -92,9 +92,9 @@ class AuthService {
   private generateClaims(token_use: TokenUse): GenericClaimStructure {
     const timestamp = Math.floor(Date.now() / 1000);
     const duration_secs = {
-      [TokenUse.Access]: 2 * 60,
-      [TokenUse.Id]: 2 * 60,
-      [TokenUse.Refresh]: 60 * 60
+      [TokenUse.Access]: 2 * 60, // 2 minutes
+      [TokenUse.Id]: 12 * 60 * 60, // 12 hours
+      [TokenUse.Refresh]: 60 * 60 // 1 hour
     }[token_use];
     return {
       iss: "urn:trace-api",
