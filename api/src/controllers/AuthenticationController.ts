@@ -4,7 +4,7 @@ import AuthService from "../services/AuthenticationService";
 import { validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
-import { UserLogin } from "../utils/types/authenticationTypes";
+import { TokenUse, UserLogin } from "../utils/types/authenticationTypes";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly authService = new AuthService();
@@ -58,6 +58,29 @@ export default class AuthenticationContoller extends ErrorController {
       }
 
       res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async refresh(_: Request, res: Response, next: NextFunction) {
+    try {
+      const { user } = res.locals;
+      if (user === undefined) {
+        Logger.error("Missing user locals within refresh controller.");
+        throw ErrorController.InternalServerError();
+      }
+      if (user.token_use !== TokenUse.Refresh) {
+        throw ErrorController.ForbiddenError("Unexpected token type.");
+      }
+      const userAttributes = await this.authService.getUser(user.username);
+      if (userAttributes === null) {
+        throw ErrorController.NotFoundError("User not found");
+      }
+      const { scope } = userAttributes;
+      const accessToken = this.authService.generateAccessToken(scope);
+      Logger.info(`Successfully refreshed token for: ${user.username}`);
+      res.status(200).send(accessToken).end();
     } catch (err) {
       next(err);
     }

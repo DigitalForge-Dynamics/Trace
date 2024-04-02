@@ -12,9 +12,10 @@ const rateLimiter = new RateLimiterRedis({
 });
 
 const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    rateLimiter.consume(req.ip ?? 'Unknown').then(() => {
-        next();
-    }).catch((reason: string) => {
+    rateLimiter
+    .consume(req.ip ?? 'Unknown')
+    .then(() => { next(); })
+    .catch((reason: string) => {
         Logger.info(`RateLimitReason: ${reason}`);
         res.status(429).send('Too Many Requests');
     });
