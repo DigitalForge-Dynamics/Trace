@@ -50,10 +50,13 @@ class AuthService {
     );
   }
   
-  private generateRefreshToken(): string {
+  private generateRefreshToken(username: string): string {
     const tokenClaims = this.generateClaims(TokenUse.Refresh);
     return jwt.sign(
-      tokenClaims,
+      {
+        ...tokenClaims,
+        username,
+      },
       this.getJWTSecretKey(),
       { algorithm: "HS512" }
     )

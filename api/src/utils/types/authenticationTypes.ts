@@ -15,7 +15,7 @@ export const enum TokenUse {
   Refresh = 'refresh',
 }
 
-export type RefreshTokenPayload = { token_use: TokenUse.Refresh; };
+export type RefreshTokenPayload = { token_use: TokenUse.Refresh; username: string };
 export type AccessTokenPayload = { token_use: TokenUse.Access, scope: Scope[]; };
 export type IdTokenPayload = {
   token_use: TokenUse.Id;
