@@ -9,18 +9,22 @@ export default class AssetController extends ErrorController {
   private readonly assetService = new AssetService();
 
   public async getAllAssets(
-    _: Request<{}>,
+    req: Request<{}>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const retrievedAssets = await this.assetService.findAll();
+      const { page, pageSize } = req.query;
+      const retrievedAssets = await this.assetService.findAllPaginated(
+        page as unknown as number,
+        pageSize as unknown as number
+      );
 
-      if (retrievedAssets.length <= 0) {
+      if (retrievedAssets.totalRecords <= 0) {
         throw ErrorController.NotFoundError("No Assets Found");
       }
 
-      Logger.info('Successfully retrieved Assets');
+      Logger.info("Successfully retrieved Assets");
       res.send(retrievedAssets).status(200).end();
       return;
     } catch (err) {
