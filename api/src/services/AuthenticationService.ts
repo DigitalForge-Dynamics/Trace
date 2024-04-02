@@ -93,7 +93,7 @@ class AuthService {
     const timestamp = Math.floor(Date.now() / 1000);
     const duration_secs = {
       [TokenUse.Access]: 2 * 60, // 2 minutes
-      [TokenUse.Id]: 12 * 60 * 60, // 12 hours
+      [TokenUse.Id]: 60 * 60, // 1 hour
       [TokenUse.Refresh]: 60 * 60 // 1 hour
     }[token_use];
     return {
