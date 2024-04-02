@@ -4,7 +4,7 @@ import { Scope } from "../../../utils/types/attributeTypes";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
-import { TokenUse } from "../../../utils/types/authenticationTypes";
+import { AccessTokenPayload, TokenUse } from "../../../utils/types/authenticationTypes";
 
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
   info: jest.fn(),
@@ -80,7 +80,7 @@ describe('authoriseRequest', () => {
 
   it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
     // Given
-    (response.locals.user as any).scope = [];
+    (response.locals.user as AccessTokenPayload).scope = [];
     response.locals.required_scopes = [Scope.READ];
 
     // When
@@ -96,7 +96,7 @@ describe('authoriseRequest', () => {
 
   it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
     // Given
-    (response.locals.user as any).scope = [Scope.READ, Scope.ASSET_CREATE];
+    (response.locals.user as AccessTokenPayload).scope = [Scope.READ, Scope.ASSET_CREATE];
     response.locals.required_scopes = [Scope.READ];
 
     // When

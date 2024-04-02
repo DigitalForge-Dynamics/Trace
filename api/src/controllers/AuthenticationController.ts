@@ -4,7 +4,7 @@ import AuthService from "../services/AuthenticationService";
 import { validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
-import { TokenUse, UserLogin } from "../utils/types/authenticationTypes";
+import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly authService = new AuthService();
@@ -14,7 +14,7 @@ export default class AuthenticationContoller extends ErrorController {
       const data: UserLogin = validateUserLogin(req.body);
 
       const userDetails = await this.authService.getUser(data.username);
-      if (!userDetails) {
+      if (userDetails === null) {
         throw ErrorController.BadRequestError("User not found");
       }
 
@@ -66,7 +66,7 @@ export default class AuthenticationContoller extends ErrorController {
 
   public async refresh(_: Request, res: Response, next: NextFunction) {
     try {
-      const { user } = res.locals;
+      const user: TokenPayload | undefined = res.locals.user;
       if (user === undefined) {
         Logger.error("Missing user locals within refresh controller.");
         throw ErrorController.InternalServerError();
