@@ -1,21 +1,27 @@
 import { Response, Request, NextFunction } from "express";
-import { Scope, UserAttributes } from "../utils/types/attributeTypes";
+import { Scope } from "../utils/types/attributeTypes";
 import Logger from "../utils/Logger";
+import { TokenPayload, TokenUse } from "../utils/types/authenticationTypes";
 
 export const authoriseRequest = async (
   _: Request,
   res: Response,
   next: NextFunction
 ) => {
-  // & unknown to indicate possible presence of other data. Does not affect typing, only documentative.
-  const user: (UserAttributes & unknown) | undefined = res.locals.user;
+  const user: TokenPayload | undefined = res.locals.user;
+  const requiredScopes: Scope[] | undefined = res.locals.required_scopes;
+
   if (!user) {
     // Set within authenticateRequest middleware
     Logger.error("Missing user within authoriseRequest from authenticateRequest.");
     res.status(500).end();
     return;
   }
-  const requiredScopes: Scope[] | undefined = res.locals.required_scopes;
+  if (user.token_use !== TokenUse.Access) {
+    Logger.error(`Invalid token_use: ${user.token_use} provided. Expected access.`);
+    res.status(401).end();
+    return;
+  }
   const userScopes: Scope[] = user.scope;
 
   if (requiredScopes === undefined) {

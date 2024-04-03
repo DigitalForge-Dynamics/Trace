@@ -1,5 +1,5 @@
 import AuthService from "../../services/AuthenticationService";
-import { AssetAttributes } from "../../utils/types/attributeTypes";
+import { AssetAttributes, Scope } from "../../utils/types/attributeTypes";
 import { testAsset } from "../helpers/testData";
 const { API_PORT } = process.env;
 
@@ -21,7 +21,7 @@ describe("POST /assets", () => {
   });
 
   afterEach(async () => {
-    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_ASSET_DELETE"])}`;
+    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_ASSET_DELETE" as Scope])}`;
     await fetch(`${API_URL}/assets/${testAsset.id}`, {
       method: 'DELETE',
       headers,
@@ -30,7 +30,7 @@ describe("POST /assets", () => {
 
   it('It creates an Asset', async () => {
     // Given
-    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_READ", "TRACE_ASSET_CREATE"])}`;
+    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_READ" as Scope, "TRACE_ASSET_CREATE" as Scope])}`;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {
