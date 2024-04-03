@@ -52,7 +52,7 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer: ${authData.refreshToken}`,
+      "Authorization": `Bearer ${authData.refreshToken}`,
     },
   });
   if (res.status !== 200) {
