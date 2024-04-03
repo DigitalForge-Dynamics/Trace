@@ -24,7 +24,7 @@ export const decodeUserAuth = (tokens: Tokens): AuthData => {
   if (idTokenBody === undefined) throw new Error();
   const idTokenPayload = JSON.parse(atob(idTokenBody)) as IdTokenPayload;
   return {
-    accessToken: tokens.accesstoken,
+    accessToken: tokens.accessToken,
     email: idTokenPayload.email,
     firstName: idTokenPayload.firstname,
     lastName: idTokenPayload.lastname,

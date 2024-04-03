@@ -11,15 +11,15 @@ const authStateReducer: React.Reducer<AuthState, AuthAction> = (
   action: AuthAction,
 ) => {
   if (action.type === AuthOption.LOGIN) {
-	setSessionUser(action.payload);
+    setSessionUser(action.payload);
     return {
       ...state,
-       ...action.payload,
+      data: action.payload,
       isLoggedIn: true,
     };
   }
   if (action.type === AuthOption.LOGOUT) {
-	removeSessionUser();
+    removeSessionUser();
     return defaultAuthState;
   }
 

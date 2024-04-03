@@ -5,7 +5,7 @@ export enum AuthOption {
 
 export type AuthState =
 | { isLoggedIn: false }
-| ({ isLoggedIn: true; } & AuthData);
+| { isLoggedIn: true; data: AuthData; };
 
 export interface AuthContextProps {
   authState: AuthState;
@@ -25,7 +25,7 @@ export type AuthData = {
 };
 
 export type Tokens = {
-  accesstoken: string;
+  accessToken: string;
   idToken: string;
   refreshToken: string;
 };

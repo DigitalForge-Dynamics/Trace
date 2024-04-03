@@ -34,7 +34,7 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     (data: AuthData) => {
       authDispatch({
         type: AuthOption.LOGIN,
-		payload: data,
+        payload: data,
       });
       navigate("/");
     },
