@@ -1,4 +1,4 @@
-import { AuthData  } from "../utils/types/authTypes";
+import { AuthData } from "../utils/types/authTypes";
 
 export const setSessionUser = (user: AuthData): void => {
   sessionStorage.setItem("trace_user", JSON.stringify(user));

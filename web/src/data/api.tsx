@@ -41,7 +41,7 @@ const decodeTokenPayload = (token: string): unknown | null => {
   try {
     const body = token.split(".")[1];
     if (body === undefined) return null;
-    return JSON.parse(body);
+    return JSON.parse(atob(body));
   } catch (err) {
     return null;
   }
