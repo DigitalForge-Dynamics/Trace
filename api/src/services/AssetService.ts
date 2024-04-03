@@ -19,9 +19,9 @@ class AssetService
   }
 
   public async create(data: AssetAttributes): Promise<boolean> {
-    const isCreated = await Asset.create(data);
+    const asset = await Asset.create(data);
 
-    if (isCreated.id <= 0) {
+    if (asset.id <= 0) {
       return false;
     }
     return true;
@@ -31,18 +31,18 @@ class AssetService
     assetId: number,
     data: AssetAttributes
   ): Promise<boolean> {
-    const isUpdated = await Asset.update(data, { where: { id: assetId } });
+    const [affectedCount] = await Asset.update(data, { where: { id: assetId } });
 
-    if (isUpdated[0] <= 0) {
+    if (affectedCount <= 0) {
       return false;
     }
     return true;
   }
 
   public async delete(assetId: number): Promise<boolean> {
-    const isDeleted = await Asset.destroy({ where: { id: assetId } });
+    const deletedCount = await Asset.destroy({ where: { id: assetId } });
 
-    if (isDeleted <= 0) {
+    if (deletedCount <= 0) {
       return false;
     }
 
