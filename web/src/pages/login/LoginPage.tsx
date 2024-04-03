@@ -13,12 +13,7 @@ function LoginPage() {
 
   useEffect(() => {
     if (authData) {
-      login({
-        accessToken: authData.accessToken,
-        email: authData.email,
-        firstName: authData.firstName,
-        lastName: authData.lastName,
-      });
+      login(authData);
     }
   }, [authData, login]);
 

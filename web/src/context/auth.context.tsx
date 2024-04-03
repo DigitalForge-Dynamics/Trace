@@ -7,6 +7,7 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
 import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
+import { getSessionUser } from "../data/api";
 
 export const AuthContext = createContext<AuthContextProps>({
   authState: defaultAuthState,
@@ -22,13 +23,13 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = sessionStorage.getItem("trace_user");
-
-    if (user) {
-      const userData: AuthData = JSON.parse(user);
+    const userData: AuthData | null = getSessionUser();
+    if (userData && !authState.isLoggedIn) {
       authDispatch({ type: AuthOption.LOGIN, payload: userData });
+    } else if (!userData && authState.isLoggedIn) {
+      authDispatch({ type: AuthOption.LOGOUT });
     }
-  }, []);
+  }, [authState.isLoggedIn]);
 
   const login = useCallback(
     (data: AuthData) => {
