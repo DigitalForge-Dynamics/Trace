@@ -20,6 +20,8 @@ export type AuthAction =
 export type AuthData = {
   accessToken: string;
   refreshToken: string;
+  expiry: number;
+  refreshExpiry: number;
   email: string;
   firstName: string;
   lastName: string;

@@ -1,4 +1,4 @@
-import { Tokens, AuthData, IdTokenPayload } from "../utils/types/authTypes";
+import { Tokens, AuthData, IdTokenPayload, GenericClaimStructure } from "../utils/types/authTypes";
 
 export interface UserLoginData {
   username: string;
@@ -14,20 +14,55 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
       password: userData.password,
     }),
   });
+  if (res.status !== 200) {
+    throw new Error();
+  }
 
   const data: Tokens = await res.json();
   return data;
 };
 
 export const decodeUserAuth = (tokens: Tokens): AuthData => {
-  const idTokenBody = tokens.idToken.split(".")[1];
-  if (idTokenBody === undefined) throw new Error();
-  const idTokenPayload = JSON.parse(atob(idTokenBody)) as IdTokenPayload;
+  const idTokenPayload = decodeTokenPayload(tokens.idToken) as IdTokenPayload;
+  const accessTokenPayload = decodeTokenPayload(tokens.accessToken) as GenericClaimStructure;
+  const refreshTokenPayload = decodeTokenPayload(tokens.refreshToken) as GenericClaimStructure;
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
+    expiry: accessTokenPayload.exp,
+    refreshExpiry: refreshTokenPayload.exp,
     email: idTokenPayload.email,
     firstName: idTokenPayload.firstname,
     lastName: idTokenPayload.lastname,
+  };
+};
+
+const decodeTokenPayload = (token: string): unknown | null => {
+  try {
+    const body = token.split(".")[1];
+    if (body === undefined) return null;
+    return JSON.parse(body);
+  } catch (err) {
+    return null;
+  }
+};
+
+export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
+  const res = await fetch("http://localhost:3000/auth/refresh", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer: ${authData.refreshToken}`,
+    },
+  });
+  if (res.status !== 200) {
+    throw new Error();
+  }
+  const accessToken: string = await res.text();
+  const accessTokenPayload = decodeTokenPayload(accessToken) as GenericClaimStructure;
+  return {
+    ...authData,
+    accessToken,
+    expiry: accessTokenPayload.exp,
   };
 };

@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
 import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
+import { refreshToken } from "../data/api";
 import { getSessionUser } from "../data/storage";
 
 export const AuthContext = createContext<AuthContextProps>({
@@ -26,6 +27,17 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       authDispatch({ type: AuthOption.LOGIN, payload: userData });
     } else if (!userData && authState.isLoggedIn) {
       authDispatch({ type: AuthOption.LOGOUT });
+      return;
+    } else if (!userData) {
+      return;
+    }
+    if (userData.refreshExpiry < Date.now()) {
+      authDispatch({ type: AuthOption.LOGOUT });
+    } else if (userData.expiry < Date.now()) {
+      refreshToken(userData)
+      .then((newAuthData: AuthData) => {
+        authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
+      });
     }
   }, [authState.isLoggedIn]);
 
