@@ -1,6 +1,6 @@
 import React from "react";
 import { AuthAction, AuthState, AuthOption } from "../utils/types/authTypes";
-import { setSessionUser, removeSessionUser } from "../data/api";
+import { setSessionUser, removeSessionUser } from "../data/storage";
 
 export const defaultAuthState: AuthState = {
   isLoggedIn: false,

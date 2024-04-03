@@ -4,10 +4,9 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
 import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
-import { getSessionUser } from "../data/api";
+import { getSessionUser } from "../data/storage";
 
 export const AuthContext = createContext<AuthContextProps>({
   authState: defaultAuthState,
@@ -20,7 +19,6 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     authStateReducer,
     defaultAuthState
   );
-  const navigate = useNavigate();
 
   useEffect(() => {
     const userData: AuthData | null = getSessionUser();
@@ -31,21 +29,13 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     }
   }, [authState.isLoggedIn]);
 
-  const login = useCallback(
-    (data: AuthData) => {
-      authDispatch({
-        type: AuthOption.LOGIN,
-        payload: data,
-      });
-      navigate("/");
-    },
-    [navigate]
-  );
+  const login = useCallback((data: AuthData) => {
+    authDispatch({ type: AuthOption.LOGIN, payload: data });
+  }, []);
 
   const logout = useCallback(() => {
     authDispatch({ type: AuthOption.LOGOUT });
-    navigate("/login");
-  }, [navigate]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout }}>
