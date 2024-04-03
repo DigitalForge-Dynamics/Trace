@@ -3,7 +3,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import icon from "../../assets/trace-icon.png";
 import { AuthData } from "../../utils/types/authTypes";
 import { AuthContext } from "../../context/auth.context";
-import { UserLoginData, fetchUserTokens, decodeUserAuth } from "../../data/api";
+import { UserLoginData, loginUser, decodeUserAuth } from "../../data/api";
 import background from "../../assets/login-background.jpg";
 import LoginForm from "../../components/login/LoginForm.component";
 
@@ -23,7 +23,7 @@ function LoginPage() {
   }, [authData, login]);
 
   const submitForm = async (data: UserLoginData) => {
-    const tokens = await fetchUserTokens(data);
+    const tokens = await loginUser(data);
     const tokenAuthData = decodeUserAuth(tokens);
     setAuthData(tokenAuthData);
   };

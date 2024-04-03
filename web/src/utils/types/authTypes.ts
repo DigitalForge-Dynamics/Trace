@@ -5,13 +5,7 @@ export enum AuthOption {
 
 export type AuthState =
 | { isLoggedIn: false }
-| {
-  isLoggedIn: true;
-  authToken: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-};
+| ({ isLoggedIn: true; } & AuthData);
 
 export interface AuthContextProps {
   authState: AuthState;

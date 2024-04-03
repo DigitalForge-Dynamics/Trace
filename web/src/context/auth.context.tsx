@@ -32,15 +32,9 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const login = useCallback(
     (data: AuthData) => {
-      const { accessToken, email, firstName, lastName } = data;
       authDispatch({
         type: AuthOption.LOGIN,
-        payload: {
-          accessToken,
-          email,
-          firstName,
-          lastName,
-        },
+		payload: data,
       });
       navigate("/");
     },
