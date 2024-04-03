@@ -13,6 +13,8 @@ router
 
 router.route("/logout").post(authenticateRequest);
 
+router.route("/refresh").post(authenticateRequest, authController.refresh);
+
 router
   .route("/register")
   .post(authenticateRequest, (req, res, next) => {

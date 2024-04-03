@@ -32,12 +32,11 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const login = useCallback(
     (data: AuthData) => {
-      const { accessToken, email, userId, firstName, lastName } = data;
+      const { accessToken, email, firstName, lastName } = data;
       authDispatch({
         type: AuthOption.LOGIN,
         payload: {
           accessToken,
-          userId,
           email,
           firstName,
           lastName,
@@ -49,7 +48,7 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 
   const logout = useCallback(() => {
-    authDispatch({ type: AuthOption.LOGOUT, payload: null });
+    authDispatch({ type: AuthOption.LOGOUT });
     navigate("/login");
   }, [navigate]);
 

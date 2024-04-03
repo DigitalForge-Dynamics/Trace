@@ -31,7 +31,7 @@ export interface UserAttributes {
     updatedAt?: Date;
 }
 
-export enum Scope {
+export const enum Scope {
   READ = "TRACE_READ",
   // Asset
   ASSET_CREATE = "TRACE_ASSET_CREATE",

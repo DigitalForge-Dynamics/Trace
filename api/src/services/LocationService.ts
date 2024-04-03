@@ -15,27 +15,27 @@ export default class LocationService extends BaseService<Location> implements IL
   }
 
   public async create(data: LocationAttributes): Promise<boolean> {
-    const isCreated = await Location.create(data);
+    const location = await Location.create(data);
 
-    if (isCreated.id <= 0) {
+    if (location.id <= 0) {
       return false;
     }
     return true;
   }
 
   public async update(locationId: number, data: LocationAttributes): Promise<boolean> {
-    const isUpdated = await Location.update(data, { where: { id: locationId } });
+    const [affectedCount] = await Location.update(data, { where: { id: locationId } });
 
-    if (isUpdated[0] <= 0) {
+    if (affectedCount <= 0) {
       return false;
     }
     return true;
   }
 
   public async delete(locationId: number): Promise<boolean> {
-    const isDeleted = await Location.destroy({ where: { id: locationId } });
+    const deletedCount = await Location.destroy({ where: { id: locationId } });
 
-    if (isDeleted <= 0) {
+    if (deletedCount <= 0) {
       return false;
     }
     return true;

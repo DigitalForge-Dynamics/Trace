@@ -1,9 +1,11 @@
+import { Tokens, AuthData, IdTokenPayload } from "../utils/types/authTypes";
+
 export interface UserLoginData {
   username: string;
   password: string;
 }
 
-export const fetchUserAuth = async (userData: UserLoginData) => {
+export const fetchUserTokens = async (userData: UserLoginData): Promise<Tokens> => {
   const res = await fetch("http://localhost:3000/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -13,6 +15,18 @@ export const fetchUserAuth = async (userData: UserLoginData) => {
     }),
   });
 
-  const data = res.json();
+  const data: Tokens = await res.json();
   return data;
+};
+
+export const decodeUserAuth = (tokens: Tokens): AuthData => {
+  const idTokenBody = tokens.idToken.split(".")[1];
+  if (idTokenBody === undefined) throw new Error();
+  const idTokenPayload = JSON.parse(atob(idTokenBody)) as IdTokenPayload;
+  return {
+    accessToken: tokens.accesstoken,
+    email: idTokenPayload.email,
+    firstName: idTokenPayload.firstname,
+    lastName: idTokenPayload.lastname,
+  };
 };

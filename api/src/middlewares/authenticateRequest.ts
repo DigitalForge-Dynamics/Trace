@@ -1,8 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import jwt, { VerifyErrors } from "jsonwebtoken";
 import AuthService from "../services/AuthenticationService";
-import { UserAttributes } from "../utils/types/attributeTypes";
-import { GenericClaimStructure } from "../utils/types/authenticationTypes";
+import { TokenPayload } from "../utils/types/authenticationTypes";
 
 export const authenticateRequest = (
   req: Request,
@@ -26,7 +25,7 @@ export const authenticateRequest = (
       res.status(403).end();
       return;
     }
-    res.locals.user = user as UserAttributes & GenericClaimStructure;
+    res.locals.user = user as TokenPayload;
     next();
     return;
   });

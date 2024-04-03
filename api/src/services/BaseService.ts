@@ -19,7 +19,7 @@ export abstract class BaseService<TEntity extends Model>
   public async findById(id: number): Promise<TEntity | null> {
     const data = await this.Model.findByPk(id);
 
-    if (!data) {
+    if (data === null) {
       return null;
     }
 

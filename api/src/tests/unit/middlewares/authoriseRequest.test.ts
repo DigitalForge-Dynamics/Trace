@@ -4,6 +4,7 @@ import { Scope } from "../../../utils/types/attributeTypes";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
+import { AccessTokenPayload, TokenUse } from "../../../utils/types/authenticationTypes";
 
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
   info: jest.fn(),
@@ -20,7 +21,7 @@ describe('authoriseRequest', () => {
   beforeEach(() => {
     // Express
     request = mockRequest();
-    const locals = { user: { scope: [] }, required_scopes: [Scope.READ] };
+    const locals = { user: { scope: [], token_use: TokenUse.Access }, required_scopes: [Scope.READ] };
     response = mockResponse({ locals });
     next = mockNext();
     // Misc
@@ -62,9 +63,24 @@ describe('authoriseRequest', () => {
     expect(logger.error).toHaveBeenCalledWith("No required_scopes defined for route.");
   });
 
+  it('Returns a 401 error response if the token_use is not access', async () => {
+    // Given
+    response.locals.user!.token_use = 'Another value' as TokenUse;
+
+    // When
+    await authoriseRequest(request, response, next);
+
+    // Then
+    expect(response.status).toHaveBeenCalledWith(401);
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledWith("Invalid token_use: Another value provided. Expected access.");
+  });
+
   it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
     // Given
-    response.locals.user.scope = [];
+    (response.locals.user as AccessTokenPayload).scope = [];
     response.locals.required_scopes = [Scope.READ];
 
     // When
@@ -80,7 +96,7 @@ describe('authoriseRequest', () => {
 
   it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
     // Given
-    response.locals.user.scope = [Scope.READ, Scope.ASSET_CREATE];
+    (response.locals.user as AccessTokenPayload).scope = [Scope.READ, Scope.ASSET_CREATE];
     response.locals.required_scopes = [Scope.READ];
 
     // When
