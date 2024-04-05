@@ -1,4 +1,3 @@
-import User from "../database/models/user.model";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
 import * as argon2 from "argon2";
 import crypto from "crypto";
