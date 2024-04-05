@@ -18,7 +18,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginData(loginInformation);
+    if (loginInformation.username.length > 0 && loginInformation.password.length > 0) {
+      loginData(loginInformation);
+    }
   };
 
   return (
