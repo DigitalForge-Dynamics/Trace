@@ -1,19 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { UserAttributes } from "../utils/types/attributeTypes";
-import AuthService from "../services/AuthenticationService";
+import UserService from "../services/UserService";
 import { validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
+import AuthService from "../services/AuthenticationService";
 
 export default class AuthenticationContoller extends ErrorController {
+  private readonly userService = new UserService();
   private readonly authService = new AuthService();
 
   public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
     try {
       const data: UserLogin = validateUserLogin(req.body);
 
-      const userDetails = await this.authService.getUser(data.username);
+      const userDetails = await this.userService.getUser(data.username);
       if (userDetails === null) {
         throw ErrorController.BadRequestError("User not found");
       }
@@ -42,7 +44,7 @@ export default class AuthenticationContoller extends ErrorController {
     try {
       const data: UserAttributes = validateUser(req.body);
 
-      const ensureUniqueUser = await this.authService.getUser(data.username);
+      const ensureUniqueUser = await this.userService.getUser(data.username);
       if(ensureUniqueUser !== null) {
         throw ErrorController.NotFoundError("User Already Exists");
       }
@@ -52,7 +54,7 @@ export default class AuthenticationContoller extends ErrorController {
         password: await this.authService.hashPassword(data.password),
       };
 
-      const user = await this.authService.createUser(userData);
+      const user = await this.userService.createUser(userData);
 
       if (!user) {
         throw ErrorController.InternalServerError("Unable to create new asset");
@@ -74,7 +76,7 @@ export default class AuthenticationContoller extends ErrorController {
       if (user.token_use !== TokenUse.Refresh) {
         throw ErrorController.ForbiddenError("Unexpected token type.");
       }
-      const userAttributes = await this.authService.getUser(user.username);
+      const userAttributes = await this.userService.getUser(user.username);
       if (userAttributes === null) {
         throw ErrorController.NotFoundError("User not found");
       }
