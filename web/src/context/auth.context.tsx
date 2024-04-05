@@ -39,15 +39,15 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
       });
     }
-  }, [authState.isLoggedIn]);
+  }, [authDispatch, authState.isLoggedIn]);
 
   const login = useCallback((data: AuthData) => {
     authDispatch({ type: AuthOption.LOGIN, payload: data });
-  }, []);
+  }, [authDispatch]);
 
   const logout = useCallback(() => {
     authDispatch({ type: AuthOption.LOGOUT });
-  }, []);
+  }, [authDispatch]);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout }}>

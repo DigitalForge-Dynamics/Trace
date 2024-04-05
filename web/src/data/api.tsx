@@ -23,9 +23,12 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
 };
 
 export const decodeUserAuth = (tokens: Tokens): AuthData => {
-  const idTokenPayload = decodeTokenPayload(tokens.idToken) as IdTokenPayload;
-  const accessTokenPayload = decodeTokenPayload(tokens.accessToken) as GenericClaimStructure;
-  const refreshTokenPayload = decodeTokenPayload(tokens.refreshToken) as GenericClaimStructure;
+  const idTokenPayload = decodeTokenPayload(tokens.idToken) as IdTokenPayload | null;
+  const accessTokenPayload = decodeTokenPayload(tokens.accessToken) as GenericClaimStructure | null;
+  const refreshTokenPayload = decodeTokenPayload(tokens.refreshToken) as GenericClaimStructure | null;
+  if (idTokenPayload === null || accessTokenPayload === null || refreshTokenPayload === null) {
+    throw new Error();
+  }
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
@@ -59,7 +62,8 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
     throw new Error();
   }
   const accessToken: string = await res.text();
-  const accessTokenPayload = decodeTokenPayload(accessToken) as GenericClaimStructure;
+  const accessTokenPayload = decodeTokenPayload(accessToken) as GenericClaimStructure | null;
+  if (accessTokenPayload === null) throw new Error();
   return {
     ...authData,
     accessToken,
