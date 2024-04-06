@@ -48,7 +48,7 @@ export default class AuthenticationContoller extends ErrorController {
 
       const ensureUniqueUser = await this.userService.getUser(data.username);
       if(ensureUniqueUser !== null) {
-        throw ErrorController.NotFoundError("User Already Exists");
+        throw ErrorController.BadRequestError("User Already Exists");
       }
 
       const userData: UserAttributes = {
@@ -59,7 +59,7 @@ export default class AuthenticationContoller extends ErrorController {
       const user = await this.userService.createUser(userData);
 
       if (!user) {
-        throw ErrorController.InternalServerError("Unable to create new asset");
+        throw ErrorController.InternalServerError("Unable to create new user");
       }
 
       res.status(204).end();

@@ -11,7 +11,7 @@
     "password",
     "email",
     "isActive",
-    "scopes"
+    "scope"
   ],
   "properties": {
     "id": {
@@ -35,7 +35,7 @@
     "isActive": {
       "type": "boolean"
     },
-    "scopes": {
+    "scope": {
       "type": "array"
     },
     "createdAt": {
