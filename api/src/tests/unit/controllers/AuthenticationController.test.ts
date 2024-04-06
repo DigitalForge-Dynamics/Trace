@@ -7,7 +7,7 @@ import AuthenticationController from "../../../controllers/AuthenticationControl
 import { TokenUse } from "../../../utils/types/authenticationTypes";
 import AuthenticationService from "../../../services/AuthenticationService";
 import UserService from "../../../services/UserService";
-import { Scope, UserAttributes } from "../../../utils/types/attributeTypes";
+import { Scope, UserAttributes, UserLoginAttributes } from "../../../utils/types/attributeTypes";
 
 jest.mock("../../../services/UserService.ts");
 jest.mock("../../../services/BaseService.ts");
@@ -41,8 +41,7 @@ describe("signIn", () => {
     resetMockLogger(logger);
   });
 
-
-  it.each(["username", "password"])
+  it.each<keyof UserLoginAttributes>(["username", "password"])
   ("Calls the next middleware with a BadRequestError if the request does not contain %p", async (fieldName: string) => {
     // Given
     delete request.body[fieldName];
@@ -122,7 +121,135 @@ describe("signIn", () => {
 });
 
 describe("signUp", () => {
-  it("Dummy Test", () => {});
+  const authController: AuthenticationController = new AuthenticationController();
+  let request: Request;
+  let response: Response;
+  let next: NextFunction;
+  let getUserMock: jest.MockedFunction<typeof UserService.prototype.getUser>;
+  let createUserMock: jest.MockedFunction<typeof UserService.prototype.createUser>;
+  let user: UserAttributes;
+
+  beforeEach(() => {
+    user = {
+      firstName: "FIRST_NAME",
+      lastName: "LAST_NAME",
+      username: "USERNAME",
+      password: "PASSWORD",
+      email: "EMAIL",
+      isActive: true,
+      scope: [],
+    };
+    request = mockRequest();
+    request.body = user;
+    const locals = { user: { token_use: TokenUse.Refresh } };
+    response = mockResponse({ locals });
+    next = mockNext();
+    getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
+    createUserMock = UserService.prototype.createUser as jest.MockedFunction<typeof UserService.prototype.createUser>;
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+    getUserMock.mockReset();
+    createUserMock.mockReset();
+    resetMockLogger(logger);
+  });
+
+  it.each<keyof UserAttributes>(["firstName", "lastName", "username", "password", "email", "isActive", "scope"])
+  ("Calls the next middleware with a BadRequestError if the request data is missing %p",
+  async (fieldName: string) => {
+    // Given
+    delete request.body[fieldName];
+
+    // When
+    await authController.signUp(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
+    expect(logger.error).toHaveBeenCalledWith([expect.objectContaining({
+      params: { "missingProperty": fieldName }
+    })]);
+    expect(getUserMock).not.toHaveBeenCalled();
+    expect(createUserMock).not.toHaveBeenCalled();
+    expectNonFinal(response);
+  });
+  
+  it("Calls the next middleware with a BadRequestError if the request data has an extra field", async () => {
+    // Given
+    request.body.extra = "EXTRA";
+
+    // When
+    await authController.signUp(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
+    expect(logger.error).toHaveBeenCalledWith([expect.objectContaining({
+      params: { "additionalProperty": "extra" }
+    })]);
+    expect(getUserMock).not.toHaveBeenCalled();
+    expect(createUserMock).not.toHaveBeenCalled();
+    expectNonFinal(response);
+  });
+
+  it("Calls the next middleware with a BadRequestError if the user already exists", async () => {
+    // Given
+    getUserMock.mockResolvedValue(user);
+
+    // When
+    await authController.signUp(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("User Already Exists"));
+    expect(getUserMock).toHaveBeenCalledWith(request.body.username);
+    expect(createUserMock).not.toHaveBeenCalled();
+    expectNonFinal(response);
+  });
+
+  it("Creates the user overriding the plain text password with the hashed password", async () => {
+    // Given
+    getUserMock.mockResolvedValue(null);
+    createUserMock.mockResolvedValue(true);
+
+    // When
+    await authController.signUp(request, response, next);
+
+    // Then
+    expect(next).not.toHaveBeenCalled();
+    expect(request.body.password).toBe("PASSWORD");
+    expect(createUserMock).toHaveBeenCalledWith({
+      ...request.body,
+      password: expect.stringMatching(/^\$argon2id\$v=19\$m=65536\,t=3\,p=[A-Za-z0-9\$\+\/]{68}$/)
+    });
+  });
+
+  it("Calls the next middleware with an InternalServerError if unable to create the user in the database", async () => {
+    // Given
+    getUserMock.mockResolvedValue(null);
+    createUserMock.mockResolvedValue(false);
+
+    // When
+    await authController.signUp(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError("Unable to create new user"));
+    expectNonFinal(response);
+  });
+
+  it("Sets a 204 status with no content when the user is created successfully", async () => {
+    // Given
+    getUserMock.mockResolvedValue(null);
+    createUserMock.mockResolvedValue(true);
+
+    // When
+    await authController.signUp(request, response, next);
+
+    // Then
+    expect(next).not.toHaveBeenCalled();
+    expect(response.status).toHaveBeenCalledWith(204);
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.json).not.toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
+  });
 });
 
 describe("refresh", () => {
