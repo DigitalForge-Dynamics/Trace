@@ -48,64 +48,64 @@ describe("refresh", () => {
   });
 
   it("Calls the next middleware with an InternalServerError if the user attribute is missing from authenticateUser.", async () => {
-  	// Given
-	delete response.locals.user;
+    // Given
+    delete response.locals.user;
 
-	// When
-	await authController.refresh(request, response, next);
+    // When
+    await authController.refresh(request, response, next);
 
-	// Then
-	expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError());
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError());
   });
 
 
   it("Calls the next middleware with a ForbiddenError if the user token_use is not 'refresh'", async () => {
     // Given
-	response.locals.user!.token_use = TokenUse.Access;
+    response.locals.user!.token_use = TokenUse.Access;
 
     // When
-	await authController.refresh(request, response, next);
+    await authController.refresh(request, response, next);
 
     // Then
-	expect(next).toHaveBeenCalledWith(ErrorController.ForbiddenError("Unexpected token type."));
+    expect(next).toHaveBeenCalledWith(ErrorController.ForbiddenError("Unexpected token type."));
   });
 
   it("Calls the next middleware with a NotFoundError if the user is not found in the database", async () => {
-  	// Given
-	getUserMock.mockResolvedValue(null);
+    // Given
+    getUserMock.mockResolvedValue(null);
 
-	// When
-	await authController.refresh(request, response, next);
+    // When
+    await authController.refresh(request, response, next);
 
-	// Then
-	expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("User not found"));
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("User not found"));
   });
 
   it("Generates a new access token with the user's scopes as read from the database", async () => {
-	// Given
-	const scope: Scope[] = [Scope.ASSET_CREATE, Scope.ASSET_RETURN];
-	getUserMock.mockResolvedValue({ scope } as UserAttributes);
-	const generateAccessTokenSpy = jest.spyOn(AuthenticationService.prototype, "generateAccessToken");
+    // Given
+    const scope: Scope[] = [Scope.ASSET_CREATE, Scope.ASSET_RETURN];
+    getUserMock.mockResolvedValue({ scope } as UserAttributes);
+    const generateAccessTokenSpy = jest.spyOn(AuthenticationService.prototype, "generateAccessToken");
 
-	// When
-	await authController.refresh(request, response, next);
+    // When
+    await authController.refresh(request, response, next);
 
-	// Then
-	expect(generateAccessTokenSpy).toHaveBeenCalledWith(scope);
-	generateAccessTokenSpy.mockRestore();
+    // Then
+    expect(generateAccessTokenSpy).toHaveBeenCalledWith(scope);
+    generateAccessTokenSpy.mockRestore();
   });
 
   it("Sets a 200 response with the access token in the body when successful", async () => {
-  	// Given
-	getUserMock.mockResolvedValue({ scope: [Scope.ASSET_CREATE, Scope.ASSET_RETURN] } as UserAttributes);
+    // Given
+    getUserMock.mockResolvedValue({ scope: [Scope.ASSET_CREATE, Scope.ASSET_RETURN] } as UserAttributes);
 
-	// When
-	await authController.refresh(request, response, next);
+    // When
+    await authController.refresh(request, response, next);
 
-	// Then
-	expect(next).not.toHaveBeenCalled()
-	expect(response.status).toHaveBeenCalledWith(200);
-	expect(response.send).toHaveBeenCalledWith(expect.any(String));
-	expect(response.end).toHaveBeenCalled();
+    // Then
+    expect(next).not.toHaveBeenCalled()
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).toHaveBeenCalledWith(expect.any(String));
+    expect(response.end).toHaveBeenCalled();
   });
 });
