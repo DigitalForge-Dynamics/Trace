@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import ErrorController from "../../../controllers/ErrorController";
-import { mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
+import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import AuthenticationController from "../../../controllers/AuthenticationController";
@@ -19,7 +19,106 @@ jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
 describe("signIn", () => {
-  it("Dummy Test", () => {});
+  const authController: AuthenticationController = new AuthenticationController();
+  const authService: AuthenticationService = new AuthenticationService();
+  let request: Request;
+  let response: Response;
+  let next: NextFunction;
+  let getUserMock: jest.MockedFunction<typeof UserService.prototype.getUser>;
+
+  beforeEach(() => {
+    request = mockRequest();
+    request.body = { username: "USERNAME", password: "PASSWORD" };
+    const locals = { user: { token_use: TokenUse.Refresh } };
+    response = mockResponse({ locals });
+    next = mockNext();
+    getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+    getUserMock.mockReset();
+    resetMockLogger(logger);
+  });
+
+
+  it.each(["username", "password"])
+  ("Calls the next middleware with a BadRequestError if the request does not contain %p", async (fieldName: string) => {
+    // Given
+    delete request.body[fieldName];
+
+    // When
+    await authController.signIn(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(getUserMock).not.toHaveBeenCalled();
+    expectNonFinal(response);
+  });
+
+  it("Calls the next middleware with a BadRequestError if the request contains an extra field", async () => {
+    // Given
+    request.body.extra = "EXTRA";
+
+    // When
+    await authController.signIn(request, response, next);
+
+    // Then
+    expect(getUserMock).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expectNonFinal(response);
+  });
+
+  it("Calls the next middleware with a ForbiddenError if the user does not exist", async () => {
+    // Given
+    getUserMock.mockResolvedValue(null);
+
+    // When
+    await authController.signIn(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.ForbiddenError());
+    expect(logger.error).toHaveBeenCalledWith("User does not exist: 'USERNAME'");
+    expect(getUserMock).toHaveBeenCalledWith(request.body.username);
+    expectNonFinal(response);
+  });
+
+  it("Calls the next middleware with a ForbiddenError if the password does not match", async () => {
+    // Given
+    const user: UserAttributes = {
+        password: await authService.hashPassword("PASSWORD_OTHER"),
+    } as UserAttributes;
+    getUserMock.mockResolvedValue(user);
+
+    // When
+    await authController.signIn(request, response, next);
+
+    // Then
+    expect(next).toHaveBeenCalledWith(ErrorController.ForbiddenError());
+    expect(logger.error).toHaveBeenCalledWith("Incorrect Password for user: 'USERNAME'");
+    expectNonFinal(response);
+  });
+
+  it("Sets a 200 status with a body of tokens when the user authenticates successfully", async () => {
+    // Given
+    const user: UserAttributes = {
+        password: await authService.hashPassword("PASSWORD"),
+    } as UserAttributes;
+    getUserMock.mockResolvedValue(user);
+
+    // When
+    await authController.signIn(request, response, next);
+
+    // Then
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.send).not.toHaveBeenCalled();
+    expect(response.json).toHaveBeenCalledWith({
+        idToken: expect.any(String),
+        accessToken: expect.any(String),
+        refreshToken: expect.any(String),
+    });
+    expect(response.end).toHaveBeenCalled();
+  });
 });
 
 describe("signUp", () => {
@@ -56,6 +155,7 @@ describe("refresh", () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.InternalServerError());
+    expect(getUserMock).not.toHaveBeenCalled();
   });
 
 
@@ -68,6 +168,7 @@ describe("refresh", () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.ForbiddenError("Unexpected token type."));
+    expect(getUserMock).not.toHaveBeenCalled();
   });
 
   it("Calls the next middleware with a NotFoundError if the user is not found in the database", async () => {

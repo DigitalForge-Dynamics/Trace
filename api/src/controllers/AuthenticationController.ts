@@ -17,7 +17,8 @@ export default class AuthenticationContoller extends ErrorController {
 
       const userDetails = await this.userService.getUser(data.username);
       if (userDetails === null) {
-        throw ErrorController.BadRequestError("User not found");
+        Logger.error(`User does not exist: '${data.username}'`);
+        throw ErrorController.ForbiddenError();
       }
 
       const isValid = await this.authService.passwordVerification(
@@ -26,15 +27,16 @@ export default class AuthenticationContoller extends ErrorController {
       );
 
       if (!isValid) {
-        throw ErrorController.ForbiddenError("Not valid password")
+        Logger.error(`Incorrect Password for user: '${data.username}'`);
+        throw ErrorController.ForbiddenError();
       }
 
       Logger.info('User signed in successfully');
-      res.status(200).send({
+      res.status(200).json({
         idToken: this.authService.generateIdToken(userDetails),
         accessToken: this.authService.generateAccessToken(userDetails.scope),
         refreshToken: this.authService.generateRefreshToken(userDetails.username),
-      });
+      }).end();
     } catch (err) {
       next(err);
     }

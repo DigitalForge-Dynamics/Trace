@@ -66,6 +66,12 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   if (!("password" in data) || typeof data.password !== "string") {
     throw ErrorController.BadRequestError();
   }
+  const permitted: Array<keyof UserLogin> = ["username", "password"];
+  for (const key in data) {
+    if (!permitted.includes(key as any)) {
+      throw ErrorController.BadRequestError();
+    }
+  }
   const { username, password } = data;
   return { username, password };
 };
