@@ -22,7 +22,7 @@ export default class ErrorController {
   }
 }
 
-class HandleError extends Error {
+export class HandleError extends Error {
   readonly statusCode: number;
   constructor(message: string, statusCode: number) {
     super(message);
