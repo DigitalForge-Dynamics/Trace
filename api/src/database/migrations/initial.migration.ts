@@ -114,7 +114,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    scope: {
+    scopes: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
