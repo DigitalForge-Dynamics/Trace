@@ -1,21 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import { UserAttributes } from "../utils/types/attributeTypes";
-import AuthService from "../services/AuthenticationService";
+import UserService from "../services/UserService";
 import { validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
+import AuthService from "../services/AuthenticationService";
 
 export default class AuthenticationContoller extends ErrorController {
+  private readonly userService = new UserService();
   private readonly authService = new AuthService();
 
   public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
     try {
       const data: UserLogin = validateUserLogin(req.body);
 
-      const userDetails = await this.authService.getUser(data.username);
+      const userDetails = await this.userService.getUser(data.username);
       if (userDetails === null) {
-        throw ErrorController.BadRequestError("User not found");
+        Logger.error(`User does not exist: '${data.username}'`);
+        throw ErrorController.ForbiddenError();
       }
 
       const isValid = await this.authService.passwordVerification(
@@ -24,15 +27,16 @@ export default class AuthenticationContoller extends ErrorController {
       );
 
       if (!isValid) {
-        throw ErrorController.ForbiddenError("Not valid password")
+        Logger.error(`Incorrect Password for user: '${data.username}'`);
+        throw ErrorController.ForbiddenError();
       }
 
       Logger.info('User signed in successfully');
-      res.status(200).send({
+      res.status(200).json({
         idToken: this.authService.generateIdToken(userDetails),
         accessToken: this.authService.generateAccessToken(userDetails.scope),
         refreshToken: this.authService.generateRefreshToken(userDetails.username),
-      });
+      }).end();
     } catch (err) {
       next(err);
     }
@@ -42,9 +46,9 @@ export default class AuthenticationContoller extends ErrorController {
     try {
       const data: UserAttributes = validateUser(req.body);
 
-      const ensureUniqueUser = await this.authService.getUser(data.username);
+      const ensureUniqueUser = await this.userService.getUser(data.username);
       if(ensureUniqueUser !== null) {
-        throw ErrorController.NotFoundError("User Already Exists");
+        throw ErrorController.BadRequestError("User Already Exists");
       }
 
       const userData: UserAttributes = {
@@ -52,10 +56,10 @@ export default class AuthenticationContoller extends ErrorController {
         password: await this.authService.hashPassword(data.password),
       };
 
-      const user = await this.authService.createUser(userData);
+      const user = await this.userService.createUser(userData);
 
       if (!user) {
-        throw ErrorController.InternalServerError("Unable to create new asset");
+        throw ErrorController.InternalServerError("Unable to create new user");
       }
 
       res.status(204).end();
@@ -74,7 +78,7 @@ export default class AuthenticationContoller extends ErrorController {
       if (user.token_use !== TokenUse.Refresh) {
         throw ErrorController.ForbiddenError("Unexpected token type.");
       }
-      const userAttributes = await this.authService.getUser(user.username);
+      const userAttributes = await this.userService.getUser(user.username);
       if (userAttributes === null) {
         throw ErrorController.NotFoundError("User not found");
       }
