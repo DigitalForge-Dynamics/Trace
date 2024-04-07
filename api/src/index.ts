@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, { Express } from "express";
-import { startup as databaseStartup } from "./database/config/databaseClient";
+import { startup as databaseStartup, shutdown as databaseShutdown } from "./database/config/databaseClient";
 import { getRedisClient } from "./database/config/redisClient";
 import cors from "cors";
 import helmet from "helmet";
@@ -37,10 +37,19 @@ const startupConfiguration = async () => {
   ]);
 };
 
-app.listen(port, async () => {
+const server = app.listen(port, async () => {
   console.log(`Server is starting on port: ${port}`);
   await startupConfiguration();
   console.log(`Server has started on port: ${port}`);
 });
+
+// TODO: Attach as callback to listener. Exported only to allow to be unused
+export const shutdown = async () => {
+  console.log("Shutting down server...");
+  await databaseShutdown();
+  server.close(() => {
+    console.log("Server has shutdown");
+  });
+};
 
 export default app;

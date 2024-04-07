@@ -81,4 +81,11 @@ export const startup = async () => {
   await seeder.up();
 };
 
-export type Migration = typeof Umzug.prototype._types.migration;
+export const shutdown = async () => {
+  const migrator = getMigrator();
+  const seeder = getSeeder();
+  await seeder.down();
+  await migrator.down();
+};
+
+export type Migration = Umzug<QueryInterface>["_types"]["migration"];
