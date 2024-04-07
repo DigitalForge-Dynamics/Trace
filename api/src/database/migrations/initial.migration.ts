@@ -2,7 +2,7 @@ import type { Migration } from "../config/databaseClient";
 import { DataTypes } from "sequelize";
 
 export const up: Migration = async ({ context: queryInterface }) => {
-  await queryInterface.createTable("assets", {
+  const assets = queryInterface.createTable("assets", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -39,7 +39,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
     },
   });
 
-  await queryInterface.createTable("locations", {
+  const locations = queryInterface.createTable("locations", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -68,7 +68,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
     },
   });
 
-  await queryInterface.createTable("settings", {
+  const settings = queryInterface.createTable("settings", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -84,7 +84,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
     },
   });
 
-  await queryInterface.createTable("users", {
+  const users = queryInterface.createTable("users", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -114,7 +114,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    scope: {
+    scopes: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
@@ -127,11 +127,16 @@ export const up: Migration = async ({ context: queryInterface }) => {
       allowNull: true,
     },
   });
+  await Promise.all([
+    assets, locations, settings, users,
+  ]);
 };
 
 export const down: Migration = async ({ context: queryInterface }) => {
-  await queryInterface.dropTable("assets");
-  await queryInterface.dropTable("locations");
-  await queryInterface.dropTable("settings");
-  await queryInterface.dropTable("users");
+  await Promise.all([
+    queryInterface.dropTable("assets"),
+    queryInterface.dropTable("locations"),
+    queryInterface.dropTable("settings"),
+    queryInterface.dropTable("users"),
+  ]);
 };
