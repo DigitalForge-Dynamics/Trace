@@ -1,4 +1,4 @@
-import { UserAttributes } from "../../utils/types/attributeTypes";
+import { Scope, UserAttributes } from "../../utils/types/attributeTypes";
 import AuthenticationService from "../../services/AuthenticationService";
 import type { Migration } from "../config/databaseClient";
 import User from "../models/user.model";
@@ -10,9 +10,9 @@ export const up: Migration = async () => {
     lastName: "TEST_ADMIN",
     username: "TEST_ADMIN",
     password: await authService.hashPassword("TEST_ADMIN_PASSWORD"),
-    email: "",
+    email: "email",
     isActive: true,
-    scope: [],
+    scope: [Scope.USER_CREATE],
   };
   const user: UserAttributes = {
     firstName: "TEST_USER",
@@ -21,11 +21,11 @@ export const up: Migration = async () => {
     password: await authService.hashPassword("TEST_USER_PASSWORD"),
     email: "",
     isActive: true,
-    scope: [],
+    scope: [Scope.READ],
   };
   await Promise.all([
-    User.upsert(userAdmin),
-    User.upsert(user),
+    User.create(userAdmin),
+    User.create(user),
   ]);
 };
 

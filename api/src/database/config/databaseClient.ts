@@ -77,16 +77,11 @@ export const getSeeder = (): Umzug<QueryInterface> => {
 // TODO: Only use seeder when testing, in both startup and shutdown
 export const startup = async () => {
   const migrator = getMigrator();
-  const seeder = getSeeder();
   await migrator.up();
-  await seeder.up();
-};
-
-export const shutdown = async () => {
-  const migrator = getMigrator();
-  const seeder = getSeeder();
-  await seeder.down();
-  await migrator.down();
+  if (process.env.NODE_ENV === "development") {
+    const seeder = getSeeder();
+    await seeder.up();
+  }
 };
 
 export type Migration = Umzug<QueryInterface>["_types"]["migration"];

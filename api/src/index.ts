@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, { Express } from "express";
-import { startup as databaseStartup, shutdown as databaseShutdown } from "./database/config/databaseClient";
+import { startup as databaseStartup, getSeeder } from "./database/config/databaseClient";
 import { getRedisClient } from "./database/config/redisClient";
 import cors from "cors";
 import helmet from "helmet";
@@ -46,7 +46,10 @@ const server = app.listen(port, async () => {
 // TODO: Attach as callback to listener. Exported only to allow to be unused
 export const shutdown = async () => {
   console.log("Shutting down server...");
-  await databaseShutdown();
+  if (process.env.NODE_ENV === "development") {
+    const seeder = getSeeder();
+    await seeder.down();
+  }
   server.close(() => {
     console.log("Server has shutdown");
   });
