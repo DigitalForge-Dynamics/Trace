@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, { Express } from "express";
-import { getMigrator } from "./database/config/databaseClient";
+import { startup as databaseStartup } from "./database/config/databaseClient";
 import { getRedisClient } from "./database/config/redisClient";
 import cors from "cors";
 import helmet from "helmet";
@@ -30,17 +30,17 @@ app.use("/auth", authRouter);
 app.use(errorHandler);
 
 const startupConfiguration = async () => {
-  const migrator = getMigrator();
   const redisClient = getRedisClient();
   await Promise.all([
-    migrator.up(),
+    databaseStartup(),
     redisClient.connect(),
   ]);
 };
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-  startupConfiguration();
+app.listen(port, async () => {
+  console.log(`Server is starting on port: ${port}`);
+  await startupConfiguration();
+  console.log(`Server has started on port: ${port}`);
 });
 
 export default app;

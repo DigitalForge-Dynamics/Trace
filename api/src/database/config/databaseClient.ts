@@ -13,6 +13,7 @@ let connectionUrl: string | undefined;
 let sequelize: Sequelize | undefined;
 let db: DatabaseClient | undefined;
 let migrator: Umzug<QueryInterface> | undefined;
+let seeder: Umzug<QueryInterface> | undefined;
 
 const getConnectionUrl = (): string => {
   if (connectionUrl !== undefined) return connectionUrl;
@@ -57,6 +58,27 @@ export const getMigrator = (): Umzug<QueryInterface> => {
     logger: Logger,
   });
   return migrator;
+};
+
+export const getSeeder = (): Umzug<QueryInterface> => {
+  if (seeder !== undefined) return seeder;
+  const sequelize = getSequelizeConnection();
+  seeder = new Umzug({
+    migrations: {
+      glob: "src/database/seeding/*.seeding.ts",
+    },
+    context: sequelize.getQueryInterface(),
+    storage: new SequelizeStorage({ sequelize }),
+    logger: Logger,
+  });
+  return seeder;
+};
+
+export const startup = async () => {
+  const migrator = getMigrator();
+  const seeder = getSeeder();
+  await migrator.up();
+  await seeder.up();
 };
 
 export type Migration = typeof Umzug.prototype._types.migration;
