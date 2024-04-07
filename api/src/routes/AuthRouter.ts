@@ -15,7 +15,7 @@ router.route("/logout").post(authenticateRequest);
 
 router.route("/refresh").post(
   authenticateRequest,
-  (req, res, next) => authController.refresh(req, res, next)
+  (req, res, next) => authController.refresh(req, res, next),
 );
 
 router.route("/register").post(
