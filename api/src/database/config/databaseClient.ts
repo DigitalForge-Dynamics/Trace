@@ -74,6 +74,7 @@ export const getSeeder = (): Umzug<QueryInterface> => {
   return seeder;
 };
 
+// TODO: Only use seeder when testing, in both startup and shutdown
 export const startup = async () => {
   const migrator = getMigrator();
   const seeder = getSeeder();
