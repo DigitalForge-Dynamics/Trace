@@ -11,6 +11,7 @@ import authRouter from "./routes/AuthRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
+import { isDevelopment } from "./utils";
 
 const app: Express = express();
 const port = process.env.API_PORT;
@@ -43,16 +44,15 @@ const server = app.listen(port, async () => {
   console.log(`Server has started on port: ${port}`);
 });
 
-// TODO: Attach as callback to listener. Exported only to allow to be unused
-export const shutdown = async () => {
+process.on("SIGINT", async () => {
   console.log("Shutting down server...");
-  if (process.env.NODE_ENV === "development") {
+  if (isDevelopment()) {
     const seeder = getSeeder();
     await seeder.down();
   }
   server.close(() => {
     console.log("Server has shutdown");
   });
-};
+});
 
 export default app;

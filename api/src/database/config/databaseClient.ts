@@ -3,6 +3,7 @@ import { QueryInterface, Sequelize } from "sequelize";
 import { SequelizeStorage, Umzug } from "umzug";
 import ErrorController from "../../controllers/ErrorController";
 import Logger from "../../utils/Logger";
+import { isDevelopment } from "../../utils";
 
 interface DatabaseClient {
   sequelize: Sequelize;
@@ -74,11 +75,10 @@ export const getSeeder = (): Umzug<QueryInterface> => {
   return seeder;
 };
 
-// TODO: Only use seeder when testing, in both startup and shutdown
 export const startup = async () => {
   const migrator = getMigrator();
   await migrator.up();
-  if (process.env.NODE_ENV === "development") {
+  if (isDevelopment()) {
     const seeder = getSeeder();
     await seeder.up();
   }
