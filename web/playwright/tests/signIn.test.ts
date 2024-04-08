@@ -8,6 +8,6 @@ test.describe("Sign In as regular user", () => {
       page.getByLabel("Password").type("TEST_USER_PASSWORD"),
     ]);
     await page.getByText("Login").click();
-    await page.getByText("Welcome to your Dashboard, TEST_USER!");
+    await expect(page.getByText("Welcome to your Dashboard, TEST_USER!")).toBeVisible();
   });
 });
