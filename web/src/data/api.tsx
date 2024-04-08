@@ -1,6 +1,6 @@
 import { Tokens, AuthData, IdTokenPayload, GenericClaimStructure } from "../utils/types/authTypes";
 
-const API_URL = `http://localhost:${process.env["API_PORT"]}`;
+const API_URL = "http://localhost:3000";
 
 export interface UserLoginData {
   username: string;
