@@ -1,27 +1,25 @@
 import React from "react";
 import { AuthAction, AuthState, AuthOption } from "../utils/types/authTypes";
+import { setSessionUser, removeSessionUser } from "../data/storage";
 
 export const defaultAuthState: AuthState = {
   isLoggedIn: false,
 };
 
 const authStateReducer: React.Reducer<AuthState, AuthAction> = (
-  state,
-  action
+  state: AuthState,
+  action: AuthAction,
 ) => {
   if (action.type === AuthOption.LOGIN) {
-    sessionStorage.setItem("trace_user", JSON.stringify(action.payload));
+    setSessionUser(action.payload);
     return {
       ...state,
+      data: action.payload,
       isLoggedIn: true,
-      authToken: action.payload.accessToken,
-      email: action.payload.email,
-      firstName: action.payload.firstName,
-      lastName: action.payload.lastName,
     };
   }
   if (action.type === AuthOption.LOGOUT) {
-    sessionStorage.removeItem("trace_user");
+    removeSessionUser();
     return defaultAuthState;
   }
 

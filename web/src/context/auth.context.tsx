@@ -4,9 +4,10 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
 import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
+import { refreshToken } from "../data/api";
+import { getSessionUser } from "../data/storage";
 
 export const AuthContext = createContext<AuthContextProps>({
   authState: defaultAuthState,
@@ -19,38 +20,34 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     authStateReducer,
     defaultAuthState
   );
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const user = sessionStorage.getItem("trace_user");
-
-    if (user) {
-      const userData: AuthData = JSON.parse(user);
+    const userData: AuthData | null = getSessionUser();
+    if (userData && !authState.isLoggedIn) {
       authDispatch({ type: AuthOption.LOGIN, payload: userData });
+    } else if (!userData && authState.isLoggedIn) {
+      authDispatch({ type: AuthOption.LOGOUT });
+      return;
+    } else if (!userData) {
+      return;
     }
-  }, []);
-
-  const login = useCallback(
-    (data: AuthData) => {
-      const { accessToken, email, firstName, lastName } = data;
-      authDispatch({
-        type: AuthOption.LOGIN,
-        payload: {
-          accessToken,
-          email,
-          firstName,
-          lastName,
-        },
+    if (userData.refreshExpiry < Date.now()) {
+      authDispatch({ type: AuthOption.LOGOUT });
+    } else if (userData.expiry < Date.now()) {
+      refreshToken(userData)
+      .then((newAuthData: AuthData) => {
+        authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
       });
-      navigate("/");
-    },
-    [navigate]
-  );
+    }
+  }, [authDispatch, authState.isLoggedIn]);
+
+  const login = useCallback((data: AuthData) => {
+    authDispatch({ type: AuthOption.LOGIN, payload: data });
+  }, [authDispatch]);
 
   const logout = useCallback(() => {
     authDispatch({ type: AuthOption.LOGOUT });
-    navigate("/login");
-  }, [navigate]);
+  }, [authDispatch]);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout }}>

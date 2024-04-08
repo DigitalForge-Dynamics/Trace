@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { HandleError } from "../controllers/ErrorController";
 
 type GenericError = {
   statusCode: number;
@@ -6,17 +7,27 @@ type GenericError = {
 };
 
 export const errorHandler = (
-  err: GenericError,
+  err: Error,
   _req: Request<{}>,
   res: Response,
   _next: NextFunction
 ) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
+  const { statusCode, message } = sanitiseError(err);
 
-  res.status(statusCode).json({
+  res
+  .status(statusCode)
+  .json({
     error: {
       message,
     },
-  });
+  })
+  .end();
+};
+
+const sanitiseError = (error: Error): GenericError => {
+  if (error instanceof HandleError) return error;
+  return {
+    statusCode: 500,
+    message: "Internal Server Error",
+  };
 };

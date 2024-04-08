@@ -1,4 +1,3 @@
-import User from "../database/models/user.model";
 import { Scope, UserAttributes } from "../utils/types/attributeTypes";
 import * as argon2 from "argon2";
 import crypto from "crypto";
@@ -6,24 +5,6 @@ import jwt from "jsonwebtoken";
 import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
 
 class AuthService {
-  public async getUser(requestedUser: string): Promise<UserAttributes | null> {
-    const user = await User.findOne({ where: { username: requestedUser } });
-
-    if (!user) {
-      return null;
-    }
-    return user;
-  }
-
-  public async createUser(data: UserAttributes): Promise<boolean> {
-    const isCreated = await User.create(data);
-
-    if (isCreated.id <= 0) {
-      return false;
-    }
-    return true;
-  }
-
   public generateIdToken(user: UserAttributes): string {
     const tokenClaims = this.generateClaims(TokenUse.Id);
     return jwt.sign(

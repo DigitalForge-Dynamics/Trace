@@ -5,13 +5,7 @@ export enum AuthOption {
 
 export type AuthState =
 | { isLoggedIn: false }
-| {
-  isLoggedIn: true;
-  authToken: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-};
+| { isLoggedIn: true; data: AuthData; };
 
 export interface AuthContextProps {
   authState: AuthState;
@@ -25,13 +19,16 @@ export type AuthAction =
 
 export type AuthData = {
   accessToken: string;
+  refreshToken: string;
+  expiry: number;
+  refreshExpiry: number;
   email: string;
   firstName: string;
   lastName: string;
 };
 
 export type Tokens = {
-  accesstoken: string;
+  accessToken: string;
   idToken: string;
   refreshToken: string;
 };

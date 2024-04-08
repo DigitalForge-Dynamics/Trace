@@ -3,6 +3,7 @@ import { QueryInterface, Sequelize } from "sequelize";
 import { SequelizeStorage, Umzug } from "umzug";
 import ErrorController from "../../controllers/ErrorController";
 import Logger from "../../utils/Logger";
+import { isDevelopment } from "../../utils";
 
 interface DatabaseClient {
   sequelize: Sequelize;
@@ -13,6 +14,7 @@ let connectionUrl: string | undefined;
 let sequelize: Sequelize | undefined;
 let db: DatabaseClient | undefined;
 let migrator: Umzug<QueryInterface> | undefined;
+let seeder: Umzug<QueryInterface> | undefined;
 
 const getConnectionUrl = (): string => {
   if (connectionUrl !== undefined) return connectionUrl;
@@ -59,4 +61,27 @@ export const getMigrator = (): Umzug<QueryInterface> => {
   return migrator;
 };
 
-export type Migration = typeof Umzug.prototype._types.migration;
+export const getSeeder = (): Umzug<QueryInterface> => {
+  if (seeder !== undefined) return seeder;
+  const sequelize = getSequelizeConnection();
+  seeder = new Umzug({
+    migrations: {
+      glob: "src/database/seeding/*.seeding.ts",
+    },
+    context: sequelize.getQueryInterface(),
+    storage: new SequelizeStorage({ sequelize }),
+    logger: Logger,
+  });
+  return seeder;
+};
+
+export const startup = async () => {
+  const migrator = getMigrator();
+  await migrator.up();
+  if (isDevelopment()) {
+    const seeder = getSeeder();
+    await seeder.up();
+  }
+};
+
+export type Migration = Umzug<QueryInterface>["_types"]["migration"];
