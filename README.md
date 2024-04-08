@@ -32,3 +32,8 @@ e.g.
 EXPRESS_SIGNING_SECRET="trace" npm start
 EXPRESS_SIGNING_SECRET="trace" npm run test:integration
 ```
+
+## Web Application Variables
+```
+API_PORT=
+```

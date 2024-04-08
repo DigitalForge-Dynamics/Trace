@@ -1,6 +1,6 @@
 import { Tokens, AuthData, IdTokenPayload, GenericClaimStructure } from "../utils/types/authTypes";
 
-const getApiUrl = (): string => "http://localhost:7071";
+const API_URL = `http://localhost:${process.env["API_PORT"]}`;
 
 export interface UserLoginData {
   username: string;
@@ -8,8 +8,7 @@ export interface UserLoginData {
 }
 
 export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
-  const url = getApiUrl();
-  const res = await fetch(`${url}/auth/login`, {
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -54,8 +53,7 @@ const decodeTokenPayload = (token: string): unknown | null => {
 };
 
 export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
-  const url = getApiUrl();
-  const res = await fetch(`${url}/auth/refresh`, {
+  const res = await fetch(`${API_URL}/auth/refresh`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

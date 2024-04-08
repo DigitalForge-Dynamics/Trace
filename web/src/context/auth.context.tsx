@@ -21,7 +21,7 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     defaultAuthState
   );
   const navigate = useNavigate();
-  const activeUser = getSessionUser();
+  const activeUser: AuthData | null = getSessionUser();
 
   const login = useCallback((data: AuthData) => {
     authDispatch({ type: AuthOption.LOGIN, payload: data });
@@ -35,18 +35,19 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   // Monitor token expiration
   const tokenMonitor = async () => {
+    const now = Math.floor(Date.now() / 1000);
     if (activeUser === null) {
-      console.log("No active user. Signing out");
+      // No active user. Signing out
       logout();
       return;
     }
-    if (activeUser.refreshExpiry < Date.now() / 1000) {
-      console.log("Refresh expired. Signing out");
+    if (activeUser.refreshExpiry < now) {
+      // Refresh expired. Signing out
       logout();
       return;
     }
-    if (activeUser.expiry < Date.now() / 1000) {
-      console.log("Access expired. Refreshing");
+    if (activeUser.expiry < now) {
+      // Access expired. Refreshing
       const newAuthData: AuthData = await refreshToken(activeUser)
       return authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
     }
