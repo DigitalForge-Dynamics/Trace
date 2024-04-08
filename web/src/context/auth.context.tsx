@@ -1,13 +1,11 @@
 import React, {
   createContext,
   useReducer,
-  useEffect,
   useCallback,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
 import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
-import { refreshToken } from "../data/api";
-import { getSessionUser } from "../data/storage";
 
 export const AuthContext = createContext<AuthContextProps>({
   authState: defaultAuthState,
@@ -21,29 +19,12 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     defaultAuthState
   );
 
-  useEffect(() => {
-    const userData: AuthData | null = getSessionUser();
-    if (userData && !authState.isLoggedIn) {
-      authDispatch({ type: AuthOption.LOGIN, payload: userData });
-    } else if (!userData && authState.isLoggedIn) {
-      authDispatch({ type: AuthOption.LOGOUT });
-      return;
-    } else if (!userData) {
-      return;
-    }
-    if (userData.refreshExpiry < Date.now()) {
-      authDispatch({ type: AuthOption.LOGOUT });
-    } else if (userData.expiry < Date.now()) {
-      refreshToken(userData)
-      .then((newAuthData: AuthData) => {
-        authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
-      });
-    }
-  }, [authDispatch, authState.isLoggedIn]);
+  const navigate = useNavigate();
 
   const login = useCallback((data: AuthData) => {
     authDispatch({ type: AuthOption.LOGIN, payload: data });
-  }, [authDispatch]);
+    navigate("/");
+  }, [navigate, authDispatch]);
 
   const logout = useCallback(() => {
     authDispatch({ type: AuthOption.LOGOUT });
