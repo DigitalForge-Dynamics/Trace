@@ -103,7 +103,56 @@ jobs:
     needs:
       - Web-Unit
       - API-Integration
+    container: node
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: pipeline
+          POSTGRES_USER: pipeline
+          POSTGRES_PASSWORD: pipeline
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:latest
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
     steps:
-      - name: Placeholder
-        run: echo "E2E-Placeholder"
+      - uses: actions/checkout@v4
+
+      - name: Install API dependencies
+        run: npm ci
+        working-directory: api
+
+      - name: Install Web dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Start API
+      # Sleep as need to run Server in background, but need to give time for server to start
+        run: npm run start & sleep 10
+        working-directory: api
+        env:
+          EXPRESS_SECRET_KEY: pipeline
+          API_PORT: 7071
+          API_DATABASE_NAME: pipeline
+          API_DATABASE_USERNAME: pipeline
+          API_DATABASE_PASSWORD: pipeline
+          API_DATABASE_HOST: postgres
+          API_REDIS_PASSWORD: ""
+          API_REDIS_HOST: redis
+
+      - name: Start Web & sleep 10
+        run: npm run start
+        working-directory: web
 
