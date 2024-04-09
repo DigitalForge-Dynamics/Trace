@@ -155,6 +155,7 @@ jobs:
           API_DATABASE_HOST: postgres
           API_REDIS_PASSWORD: ""
           API_REDIS_HOST: redis
+          NODE_ENV: "development"
 
       - name: Start Web
         run: npm run start & sleep 2
