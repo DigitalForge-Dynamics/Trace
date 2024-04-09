@@ -100,7 +100,6 @@ jobs:
 
   Web-E2E:
     runs-on: ubuntu-latest
-    if: false
     needs:
       - Web-Unit
       - API-Integration
