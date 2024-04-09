@@ -1,9 +1,9 @@
 import React, {
   createContext,
   useReducer,
-  useEffect,
   useCallback,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
 import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
 import { refreshToken } from "../data/api";
@@ -20,34 +20,40 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     authStateReducer,
     defaultAuthState
   );
-
-  useEffect(() => {
-    const userData: AuthData | null = getSessionUser();
-    if (userData && !authState.isLoggedIn) {
-      authDispatch({ type: AuthOption.LOGIN, payload: userData });
-    } else if (!userData && authState.isLoggedIn) {
-      authDispatch({ type: AuthOption.LOGOUT });
-      return;
-    } else if (!userData) {
-      return;
-    }
-    if (userData.refreshExpiry < Date.now()) {
-      authDispatch({ type: AuthOption.LOGOUT });
-    } else if (userData.expiry < Date.now()) {
-      refreshToken(userData)
-      .then((newAuthData: AuthData) => {
-        authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
-      });
-    }
-  }, [authDispatch, authState.isLoggedIn]);
+  const navigate = useNavigate();
+  const activeUser: AuthData | null = getSessionUser();
 
   const login = useCallback((data: AuthData) => {
     authDispatch({ type: AuthOption.LOGIN, payload: data });
-  }, [authDispatch]);
+    navigate("/");
+  }, [navigate, authDispatch]);
 
   const logout = useCallback(() => {
     authDispatch({ type: AuthOption.LOGOUT });
-  }, [authDispatch]);
+    navigate("/");
+  }, [navigate, authDispatch]);
+
+  // Monitor token expiration
+  const tokenMonitor = async () => {
+    const now = Math.floor(Date.now() / 1000);
+    if (activeUser === null) {
+      // No active user. Signing out
+      logout();
+      return;
+    }
+    if (activeUser.refreshExpiry < now) {
+      // Refresh expired. Signing out
+      logout();
+      return;
+    }
+    if (activeUser.expiry < now) {
+      // Access expired. Refreshing
+      const newAuthData: AuthData = await refreshToken(activeUser)
+      return authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
+    }
+  };
+
+  setInterval(tokenMonitor, 60*1000);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout }}>
