@@ -138,8 +138,8 @@ jobs:
         run: npm ci
         working-directory: web
 
-      - name: Instal playwright browsers
-        run: npx playwright install
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
         working-directory: web
 
       - name: Start API
