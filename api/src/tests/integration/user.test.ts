@@ -57,8 +57,6 @@ describe("POST /auth", () => {
     });
 
     // Then
-    const text = await response.text();
-    expect(text).toBe("");
     expect(response.status).toBe(200);
     const idToken = await response.text();
     expect(idToken).toMatch(/^eyJ/);
