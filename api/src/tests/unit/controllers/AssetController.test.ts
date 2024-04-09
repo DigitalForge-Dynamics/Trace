@@ -48,7 +48,7 @@ describe('getAllAssets', () => {
     // Then
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.send).toHaveBeenCalledWith([testAsset]);
-    expect(response.end).toHaveBeenCalled();
+    //expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(logger.info).toHaveBeenCalledWith("Successfully retrieved Assets");
   });
@@ -136,7 +136,7 @@ describe('getAssetById', () => {
     // Then
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.send).toHaveBeenCalledWith(testAsset);
-    expect(response.end).toHaveBeenCalled();
+    //expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(findByIdMock).toHaveBeenCalledWith(3);
     expect(logger.info).not.toHaveBeenCalled();

@@ -36,7 +36,7 @@ export default class AuthenticationContoller extends ErrorController {
         idToken: this.authService.generateIdToken(userDetails),
         accessToken: this.authService.generateAccessToken(userDetails.scope),
         refreshToken: this.authService.generateRefreshToken(userDetails.username),
-      }).end();
+      });
     } catch (err) {
       next(err);
     }
@@ -85,7 +85,7 @@ export default class AuthenticationContoller extends ErrorController {
       const { scope } = userAttributes;
       const accessToken = this.authService.generateAccessToken(scope);
       Logger.info(`Successfully refreshed token for: ${user.username}`);
-      res.status(200).send(accessToken).end();
+      res.status(200).send(accessToken);
     } catch (err) {
       next(err);
     }
