@@ -77,10 +77,14 @@ export const getSeeder = (): Umzug<QueryInterface> => {
 
 export const startup = async () => {
   const migrator = getMigrator();
+  console.log("Migrating");
   await migrator.up();
+  console.log("Migrated");
   if (isDevelopment()) {
+    console.log("Seeding");
     const seeder = getSeeder();
     await seeder.up();
+    console.log("Seeded");
   }
 };
 
