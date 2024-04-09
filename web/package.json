@@ -9,7 +9,9 @@
     "test": "vitest src",
     "test:coverage": "vitest run src --coverage",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "e2e": "playwright test playwright/tests",
+    "e2e:trace": "playwright test playwright/tests --trace on"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",

@@ -161,7 +161,7 @@ jobs:
         working-directory: web
 
       - name: Run Playwright
-        run: npx playwright test --trace on
+        run: npm run e2e:trace
 
       - uses: actions/upload-artifact@v4
         if: always()
