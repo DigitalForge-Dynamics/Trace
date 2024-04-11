@@ -79,7 +79,7 @@ jobs:
 
       - name: Start API
       # Sleep as need to run Server in background, but need to give time for server to start
-        run: npm run start & sleep 15
+        run: npm run start & sleep 10
         working-directory: api
         env:
           EXPRESS_SECRET_KEY: pipeline

@@ -334,6 +334,6 @@ describe("refresh", () => {
     expect(next).not.toHaveBeenCalled()
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.send).toHaveBeenCalledWith(expect.any(String));
-    //expect(response.end).toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
   });
 });

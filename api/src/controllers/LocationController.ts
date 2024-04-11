@@ -21,7 +21,7 @@ export default class LocationController extends ErrorController {
         throw ErrorController.NotFoundError("No Locations found");
       }
 
-      res.status(200).send(retrievedLocations);
+      res.status(200).send(retrievedLocations).end();
     } catch (err) {
       next(err);
     }
@@ -41,7 +41,7 @@ export default class LocationController extends ErrorController {
         throw ErrorController.NotFoundError("No Locations found");
       }
 
-      res.status(200).send(retrievedLocation);
+      res.status(200).send(retrievedLocation).end();
     } catch (err) {
       next(err);
     }

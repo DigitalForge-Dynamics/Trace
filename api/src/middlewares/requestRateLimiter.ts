@@ -17,7 +17,7 @@ const rateLimiterMiddleware = (req: Request, res: Response, next: NextFunction) 
     .then(() => { next(); })
     .catch((reason: string) => {
         Logger.info(`RateLimitReason: ${reason}`);
-        res.status(429).send('Too Many Requests');
+        res.status(429).send('Too Many Requests').end();
     });
 };
 
