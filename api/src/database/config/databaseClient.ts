@@ -3,7 +3,7 @@ import { QueryInterface, Sequelize } from "sequelize";
 import { SequelizeStorage, Umzug } from "umzug";
 import ErrorController from "../../controllers/ErrorController";
 import Logger from "../../utils/Logger";
-import { isDevelopment } from "../../utils";
+import { isSeedDatabase } from "../../utils";
 
 interface DatabaseClient {
   sequelize: Sequelize;
@@ -80,7 +80,7 @@ export const startup = async () => {
   console.log("Migrating");
   await migrator.up();
   console.log("Migrated");
-  if (isDevelopment()) {
+  if (isSeedDatabase()) {
     console.log("Seeding");
     const seeder = getSeeder();
     await seeder.up();

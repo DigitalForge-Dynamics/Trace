@@ -22,6 +22,7 @@ API_REDIS_PASSWORD=""
 
 ## Application Variables
 API_PORT=
+API_SEED_DATABASE="true"
 ```
 
 ## API Integration Tests
