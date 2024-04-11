@@ -116,7 +116,7 @@ describe("signIn", () => {
         accessToken: expect.any(String),
         refreshToken: expect.any(String),
     });
-    //expect(response.end).toHaveBeenCalled();
+    expect(response.end).toHaveBeenCalled();
   });
 });
 

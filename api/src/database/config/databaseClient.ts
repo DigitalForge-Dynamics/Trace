@@ -77,14 +77,14 @@ export const getSeeder = (): Umzug<QueryInterface> => {
 
 export const startup = async () => {
   const migrator = getMigrator();
-  console.log("Migrating");
+  Logger.info("Migrating database");
   await migrator.up();
-  console.log("Migrated");
+  Logger.info("Migrated database");
   if (isSeedDatabase()) {
-    console.log("Seeding");
+    Logger.info("Seeding database");
     const seeder = getSeeder();
     await seeder.up();
-    console.log("Seeded");
+    Logger.info("Seeded database");
   }
 };
 
