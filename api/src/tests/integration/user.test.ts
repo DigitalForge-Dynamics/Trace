@@ -6,7 +6,7 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
-describe.skip("POST /auth", () => {
+describe("POST /auth", () => {
   it.each<[string, string]>([
     ["TEST_ADMIN", "TEST_ADMIN_PASSWORD"],
     ["TEST_USER", "TEST_USER_PASSWORD"],
