@@ -21,7 +21,8 @@ export const errorHandler = (
     error: {
       message,
     },
-  });
+  })
+  .end();
 };
 
 const sanitiseError = (error: Error): GenericError => {
