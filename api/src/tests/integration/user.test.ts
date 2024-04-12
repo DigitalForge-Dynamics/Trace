@@ -12,25 +12,27 @@ describe("POST /auth", () => {
     ["TEST_USER", "TEST_USER_PASSWORD"],
   ])
   ("Signs in with username %p", async (username, password) => {
-  // Given
-  const body = JSON.stringify({
-    username,
-    password,
-  });
+    // Given
+    const body = JSON.stringify({
+      username,
+      password,
+    });
 
-  // When
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: "POST",
-    headers,
-    body,
-  });
+    // When
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers,
+      body,
+    });
 
-  // Then
-  expect(response.status).toBe(200);
-  const tokens = await response.json();
-  expect(tokens.accessToken).toBeDefined();
-  expect(tokens.idToken).toBeDefined();
-  expect(tokens.refreshToken).toBeDefined();
+    // Then
+    expect(response.status).toBe(200);
+    const tokens = await response.json();
+    expect(tokens).toEqual({
+      accessToken: expect.any(String),
+      idToken: expect.any(String),
+      refreshToken: expect.any(String),
+    });
   });
 
   it("Refreshes an access token", async () => {
