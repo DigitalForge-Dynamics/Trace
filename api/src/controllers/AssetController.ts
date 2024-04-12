@@ -21,7 +21,7 @@ export default class AssetController extends ErrorController {
       }
 
       Logger.info('Successfully retrieved Assets');
-      res.status(200).send(retrievedAssets).end();
+      res.send(retrievedAssets).status(200).end();
       return;
     } catch (err) {
       next(err);
@@ -42,7 +42,7 @@ export default class AssetController extends ErrorController {
         throw ErrorController.NotFoundError("Asset not Found");
       }
 
-      res.status(200).send(retrievedAsset).end();
+      res.send(retrievedAsset).status(200).end();
     } catch (err) {
       next(err);
     }

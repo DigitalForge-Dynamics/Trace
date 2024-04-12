@@ -81,6 +81,7 @@ export const startup = async () => {
   await migrator.up();
   Logger.info("Migrated database");
   if (isSeedDatabase()) {
+    Logger.warn("Database seeding is enabled. This results in public admin credentials.");
     Logger.info("Seeding database");
     const seeder = getSeeder();
     await seeder.up();
