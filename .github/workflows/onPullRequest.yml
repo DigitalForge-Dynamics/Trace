@@ -78,7 +78,7 @@ jobs:
         working-directory: api
 
       - name: Start API
-        run: npm run start & sleep 15
+        run: npm run start & sleep 10
         working-directory: api
         env:
           EXPRESS_SECRET_KEY: pipeline
@@ -139,11 +139,11 @@ jobs:
         working-directory: web
 
       - name: Install playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
         working-directory: web
 
       - name: Start API
-        run: npm run start & sleep 15
+        run: npm run start & sleep 10
         working-directory: api
         env:
           EXPRESS_SECRET_KEY: pipeline
