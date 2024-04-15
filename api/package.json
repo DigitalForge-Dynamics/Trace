@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npx tsc && nodemon dist/index.js",
     "test:unit": "jest src/tests/unit",
-    "test:integration": "jest src/tests/integration"
+    "test:integration": "jest src/tests/integration --maxWorkers 5"
   },
   "author": "",
   "license": "ISC",
