@@ -90,6 +90,7 @@ jobs:
           API_DATABASE_HOST: postgres
           API_REDIS_PASSWORD: ""
           API_REDIS_HOST: redis
+          API_SEED_DATABASE: "true"
 
       - name: Run integration tests
         run: npm run test:integration

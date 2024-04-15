@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { HandleError } from "../controllers/ErrorController";
+import Logger from "../utils/Logger";
 
 type GenericError = {
   statusCode: number;
@@ -26,6 +27,7 @@ export const errorHandler = (
 
 const sanitiseError = (error: Error): GenericError => {
   if (error instanceof HandleError) return error;
+  Logger.error(error);
   return {
     statusCode: 500,
     message: "Internal Server Error",

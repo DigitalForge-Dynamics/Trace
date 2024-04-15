@@ -1,7 +1,7 @@
 import { Scope, UserAttributes } from "../../utils/types/attributeTypes";
 import AuthenticationService from "../../services/AuthenticationService";
 import type { Migration } from "../config/databaseClient";
-import User from "../models/user.model";
+import User, { init } from "../models/user.model";
 
 export const up: Migration = async () => {
   const authService = new AuthenticationService();
@@ -23,6 +23,7 @@ export const up: Migration = async () => {
     isActive: true,
     scope: [Scope.READ],
   };
+  init();
   await Promise.all([
     User.create(userAdmin),
     User.create(user),
@@ -30,6 +31,7 @@ export const up: Migration = async () => {
 };
 
 export const down: Migration = async () => {
+  init();
   await Promise.all([
     User.destroy({ where: { username: "TEST_ADMIN" } }),
     User.destroy({ where: { username: "TEST_USER" } }),
