@@ -8,6 +8,7 @@ import assetsRouter from "./routes/AssetRouter";
 import locationsRouter from "./routes/LocationRouter";
 import settingsRouter from "./routes/SettingsRouter";
 import authRouter from "./routes/AuthRouter";
+import systemRouter from "./routes/SystemRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
@@ -24,6 +25,7 @@ app.use(rateLimiterMiddleware);
 app.disable("x-powered-by");
 
 // Routes
+app.use("/system", systemRouter);
 app.use("/settings", settingsRouter);
 app.use("/assets", assetsRouter);
 app.use("/locations", locationsRouter);
