@@ -1,4 +1,4 @@
-name: Deploy Trace Assets Documentation Site
+name: Deploy Documentation
 
 on:
   push:
