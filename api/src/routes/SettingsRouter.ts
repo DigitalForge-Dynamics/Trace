@@ -13,11 +13,8 @@ router.route("/general").put(
     authoriseRequest(req, res, next);
   },
   (_, res) => {
-    res
-    .status(501)
-    .send("NOT IMPLEMENTED - UPDATE GENERAL SETTINGS")
-    .end();
-  },
+    res.status(501).send("NOT IMPLEMENTED - UPDATE GENERAL SETTINGS").end();
+  }
 );
 
 export default router;
