@@ -76,7 +76,7 @@ export type JsonNetworkType<T> =
       T;
 
 export type HealthCheckType = {
-  uptime: any;
+  uptime: string;
   message: string;
   timestamp: Date;
 };
