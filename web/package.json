@@ -6,10 +6,12 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "test": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test": "vitest src",
+    "test:coverage": "vitest run src --coverage",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "e2e": "playwright test playwright/tests",
+    "e2e:trace": "playwright test playwright/tests --trace on"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -21,6 +23,7 @@
     "react-router-dom": "^6.21.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.43.0",
     "@testing-library/react": "^14.2.1",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
