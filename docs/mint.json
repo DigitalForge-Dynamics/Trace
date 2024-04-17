@@ -15,14 +15,20 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["introduction", "quickstart"]
+      "pages": ["introduction", "getting-started"]
     }
   ],
+  "tabs": [
+    {
+      "name": "API References",
+      "url": "api-references"
+    }
+  ],
+  "primaryTab": {
+    "name": "Home"
+  },
   "footerSocials": {
     "github": "https://github.com/digitalforge-dynamics/trace"
   },
-  "openapi": ["/openapi.json"]
+  "openapi": ["/versions/v0/openapi.json"]
 }
-
-  
-
