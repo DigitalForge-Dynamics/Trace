@@ -1,6 +1,11 @@
 {
   "name": "Trace Asset Management",
   "favicon": "/trace.svg",
+  "logo": {
+    "light": "/trace-icon.png",
+    "dark": "/trace-icon.png",
+    "href": "https://digitalforgedynamics.com"
+  },
   "colors": {
     "primary": "#16A34A",
     "light": "#4ADE80",
@@ -14,21 +19,11 @@
   ],
   "navigation": [
     {
-      "group": "Getting Started",
-      "pages": ["introduction", "getting-started", "api-reference"]
+      "group": "Home",
+      "pages": ["general/introduction", "general/quick-start"]
     }
   ],
-  "tabs": [
-    {
-      "name": "API References",
-      "url": "api-references"
-    }
-  ],
-  "primaryTab": {
-    "name": "Home"
-  },
   "footerSocials": {
     "github": "https://github.com/digitalforge-dynamics/trace"
-  },
-  "openapi": ["/versions/v0/openapi.json"]
+  }
 }

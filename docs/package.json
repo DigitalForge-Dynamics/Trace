@@ -1,0 +1,13 @@
+{
+  "name": "trace-docs",
+  "version": "0.0.0",
+  "description": "",
+  "main": "mint.json",
+  "scripts": {
+    "prepare": "npm i -g mintlify",
+    "start": "mintlify dev --port 3333",
+    "validate": "mintlify broken-links"
+  },
+  "author": "",
+  "license": "ISC"
+}
