@@ -15,7 +15,7 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["introduction", "getting-started"]
+      "pages": ["introduction", "getting-started", "api-reference"]
     }
   ],
   "tabs": [
