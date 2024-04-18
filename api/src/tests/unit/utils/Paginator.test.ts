@@ -1,22 +1,49 @@
-import { Model, ModelStatic } from "sequelize";
+import { ModelStatic } from "sequelize";
 import Paginator from "../../../utils/Paginator";
+import { testPaginationAssets } from "../../helpers/testData";
 
-// Define a mock model
-class MockModel<T extends Model> extends Model<T> {
-    // Add any necessary mock implementations of Sequelize methods here
-    static override async findAndCountAll<T>(): Promise<{ rows: T[]; count: number }> {
-        // Mock implementation to return dummy data
-        return { rows: [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }], count: 2 };
-    }
-}
+const MockedModel: jest.Mocked<ModelStatic<any>> =
+  jest.createMockFromModule("sequelize");
+const mockFindAndCountAll = jest.fn();
+MockedModel.findAndCountAll = mockFindAndCountAll;
 
-// Create a mock ModelStatic
-const MockModelStatic: ModelStatic<Model<any>> = MockModel as any;
+describe("Paginator Unit Tests", () => {
+  let paginator: Paginator<any>;
 
-describe('Paginator', () => {
-    let paginator: typeof Paginator<Model<any>>
+  beforeEach(() => {
+    paginator = new Paginator(MockedModel);
+  });
 
-    beforeEach(() => {
-        // Create a new instance of Paginator with the mock ModelStatic
-        paginator = new Paginator<Model<any>>(MockModelStatic);
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("returns paginated test data with 3 total records", async () => {
+
+    mockFindAndCountAll.mockResolvedValueOnce({ rows: testPaginationAssets.data, count: testPaginationAssets.totalRecords });
+
+    const page = 1;
+    const pageSize = 10;
+    const result = await paginator.paginate(page, pageSize);
+
+    expect(result.lastPage).toBe(1);
+    expect(result.totalRecords).toBe(3);
+    expect(result.hasMorePages).toBe(false);
+    expect(result.data).toEqual(testPaginationAssets.data);
+    expect(mockFindAndCountAll).toHaveBeenCalledWith({
+      limit: pageSize,
+      offset: 0,
     });
+  });
+
+  it("should throw error for invalid page or pageSize", async () => {
+    const page = 0;
+    const pageSize = 10;
+
+    await expect(paginator.paginate(page, pageSize)).rejects.toThrow();
+    expect(mockFindAndCountAll).not.toHaveBeenCalled();
+
+    await expect(paginator.paginate(pageSize, page)).rejects.toThrow();
+    expect(mockFindAndCountAll).not.toHaveBeenCalled();
+  });
+});
