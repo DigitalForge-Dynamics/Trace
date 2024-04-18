@@ -1,0 +1,29 @@
+{
+  "name": "Trace Asset Management",
+  "favicon": "/trace.svg",
+  "logo": {
+    "light": "/trace-icon.png",
+    "dark": "/trace-icon.png",
+    "href": "https://digitalforgedynamics.com"
+  },
+  "colors": {
+    "primary": "#16A34A",
+    "light": "#4ADE80",
+    "dark": "#166534"
+  },
+  "topbarLinks": [
+    {
+      "name": "Contact Us",
+      "url": "mailto:support@digitalforgedynamics.com"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Home",
+      "pages": ["general/introduction", "general/quick-start"]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/digitalforge-dynamics/trace"
+  }
+}

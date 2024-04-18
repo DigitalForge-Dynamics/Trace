@@ -1,6 +1,9 @@
 
 ![Trace - Transparent PNG](https://github.com/DigitalForge-Dynamics/Trace/assets/76014409/1a5c47be-8461-46b6-84cb-54e48f91ebfd)
 
+## Documentation
+https://docs.traceassets.com
+
 ## Database Development
 To start development on the database, please configure the following ``` .env.docker.development ``` environment file with any credentials to configure the hosted Database.
 
@@ -22,13 +25,14 @@ API_REDIS_PASSWORD=""
 
 ## Application Variables
 API_PORT=
+API_SEED_DATABASE="true" # Only to be set if in a trusted environment. Has security implications.
 ```
 
 ## API Integration Tests
 The integration tests require to be using the same token signing key as the API is using to validate.
-This can be achieved by setting the environment variable ```EXPRESS_SIGNING_SECRET``` to the same non-falsy value on both.
+This can be achieved by setting the environment variable ```EXPRESS_SECRET_KEY``` to the same non-falsy value on both.
 e.g.
 ```sh
-EXPRESS_SIGNING_SECRET="trace" npm start
-EXPRESS_SIGNING_SECRET="trace" npm run test:integration
+EXPRESS_SECRET_KEY="trace" npm start
+EXPRESS_SECRET_KEY="trace" npm run test:integration
 ```

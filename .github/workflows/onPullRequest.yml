@@ -78,7 +78,6 @@ jobs:
         working-directory: api
 
       - name: Start API
-      # Sleep as need to run Server in background, but need to give time for server to start
         run: npm run start & sleep 10
         working-directory: api
         env:
@@ -90,6 +89,7 @@ jobs:
           API_DATABASE_HOST: postgres
           API_REDIS_PASSWORD: ""
           API_REDIS_HOST: redis
+          API_SEED_DATABASE: "true"
 
       - name: Run integration tests
         run: npm run test:integration
@@ -103,7 +103,69 @@ jobs:
     needs:
       - Web-Unit
       - API-Integration
+    container: node
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: pipeline
+          POSTGRES_USER: pipeline
+          POSTGRES_PASSWORD: pipeline
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:latest
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
     steps:
-      - name: Placeholder
-        run: echo "E2E-Placeholder"
+      - uses: actions/checkout@v4
 
+      - name: Install API dependencies
+        run: npm ci
+        working-directory: api
+
+      - name: Install Web dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: web
+
+      - name: Start API
+        run: npm run start & sleep 10
+        working-directory: api
+        env:
+          EXPRESS_SECRET_KEY: pipeline
+          API_PORT: 3000
+          API_DATABASE_NAME: pipeline
+          API_DATABASE_USERNAME: pipeline
+          API_DATABASE_PASSWORD: pipeline
+          API_DATABASE_HOST: postgres
+          API_REDIS_PASSWORD: ""
+          API_REDIS_HOST: redis
+          API_SEED_DATABASE: "true"
+
+      - name: Start Web
+        run: npm run start & sleep 2
+        working-directory: web
+
+      - name: Run Playwright
+        run: npm run e2e:trace
+        working-directory: web
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: web/playwright/report

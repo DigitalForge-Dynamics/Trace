@@ -3,7 +3,7 @@ import { QueryInterface, Sequelize } from "sequelize";
 import { SequelizeStorage, Umzug } from "umzug";
 import ErrorController from "../../controllers/ErrorController";
 import Logger from "../../utils/Logger";
-import { isDevelopment } from "../../utils";
+import { isSeedDatabase } from "../../utils";
 
 interface DatabaseClient {
   sequelize: Sequelize;
@@ -77,10 +77,15 @@ export const getSeeder = (): Umzug<QueryInterface> => {
 
 export const startup = async () => {
   const migrator = getMigrator();
+  Logger.info("Migrating database");
   await migrator.up();
-  if (isDevelopment()) {
+  Logger.info("Migrated database");
+  if (isSeedDatabase()) {
+    Logger.warn("Database seeding is enabled. This results in public admin credentials.");
+    Logger.info("Seeding database");
     const seeder = getSeeder();
     await seeder.up();
+    Logger.info("Seeded database");
   }
 };
 

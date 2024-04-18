@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import icon from "../../assets/trace-icon.png";
-import { AuthData } from "../../utils/types/authTypes";
+import { AuthData, Tokens } from "../../utils/types/authTypes";
 import { AuthContext } from "../../context/auth.context";
 import { UserLoginData, loginUser, decodeUserAuth } from "../../data/api";
 import background from "../../assets/login-background.jpg";
@@ -12,14 +12,14 @@ function LoginPage() {
   const { login } = useContext(AuthContext);
 
   useEffect(() => {
-    if (authData) {
+    if (authData !== undefined) {
       login(authData);
     }
   }, [authData, login]);
 
-  const submitForm = async (data: UserLoginData) => {
-    const tokens = await loginUser(data);
-    const tokenAuthData = decodeUserAuth(tokens);
+  const submitForm = async (data: UserLoginData): Promise<void> => {
+    const tokens: Tokens = await loginUser(data);
+    const tokenAuthData: AuthData = decodeUserAuth(tokens);
     setAuthData(tokenAuthData);
   };
 
