@@ -2,25 +2,31 @@ import { NextFunction, Request, Response } from "express";
 import AssetService from "../services/AssetService";
 import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
-import { getId, validateAsset } from "../utils/Validator";
+import { getId, getInt, getOptString, validateAsset } from "../utils/Validator";
 import Logger from "../utils/Logger";
 
 export default class AssetController extends ErrorController {
   private readonly assetService = new AssetService();
 
   public async getAllAssets(
-    _: Request<{}>,
+    req: Request<{}>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const retrievedAssets = await this.assetService.findAll();
+      const page = getInt(getOptString(req.query.page));
+      const pageSize = getInt(getOptString(req.query.pageSize));
+      if (page < 1 || pageSize < 1) {
+        throw ErrorController.BadRequestError();
+      }
 
-      if (retrievedAssets.length <= 0) {
+      const retrievedAssets = await this.assetService.findAllPaginated(page, pageSize);
+
+      if (retrievedAssets.totalRecords <= 0) {
         throw ErrorController.NotFoundError("No Assets Found");
       }
 
-      Logger.info('Successfully retrieved Assets');
+      Logger.info("Successfully retrieved Assets");
       res.send(retrievedAssets).status(200).end();
       return;
     } catch (err) {
