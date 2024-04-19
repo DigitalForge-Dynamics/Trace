@@ -5,7 +5,7 @@ import * as schema_settings from "./schemas/schema_settings.json";
 import * as schema_user from "./schemas/schema_user.json";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
-import { AssetAttributes, JsonNetworkType, LocationAttributes, UserAttributes } from "./types/attributeTypes";
+import { AssetCreationAttributes, JsonNetworkType, LocationCreationAttributes, UserCreationAttributes } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
 import type { ParsedQs } from "qs";
@@ -42,11 +42,11 @@ export const getId = (request: Request): number => {
   return getInt(id);
 };
 
-const isAsset = (data: unknown): data is JsonNetworkType<AssetAttributes> => ajv.validate("asset", data);
-const isUser = (data: unknown): data is JsonNetworkType<UserAttributes> => ajv.validate("user", data);
-const isLocation = (data: unknown): data is JsonNetworkType<LocationAttributes> => ajv.validate("location", data);
+const isAsset = (data: unknown): data is JsonNetworkType<AssetCreationAttributes> => ajv.validate("asset", data);
+const isUser = (data: unknown): data is JsonNetworkType<UserCreationAttributes> => ajv.validate("user", data);
+const isLocation = (data: unknown): data is JsonNetworkType<LocationCreationAttributes> => ajv.validate("location", data);
 
-export const validateAsset = (data: unknown): AssetAttributes => {
+export const validateAsset = (data: unknown): AssetCreationAttributes => {
   if (!isAsset(data)) {
     Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
@@ -54,7 +54,7 @@ export const validateAsset = (data: unknown): AssetAttributes => {
   return reviveAsset(data);
 };
 
-export const validateUser = (data: unknown): UserAttributes => {
+export const validateUser = (data: unknown): UserCreationAttributes => {
   if (!isUser(data)) {
     Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
@@ -62,7 +62,7 @@ export const validateUser = (data: unknown): UserAttributes => {
   return reviveUser(data);
 };
 
-export const validateLocation = (data: unknown): LocationAttributes => {
+export const validateLocation = (data: unknown): LocationCreationAttributes => {
   if (!isLocation(data)) {
     Logger.error(ajv.errors);
     throw ErrorController.BadRequestError("Invalid Request");
@@ -107,7 +107,7 @@ export const parseMFACode = (data: unknown): string => {
   return data;
 };
 
-const reviveAsset = (data: JsonNetworkType<AssetAttributes>): AssetAttributes => {
+const reviveAsset = (data: JsonNetworkType<AssetCreationAttributes>): AssetCreationAttributes => {
   const reviver = <T>(key: string, value: T): T | Date => {
     const dates = ["nextAuditDate", "createdAt", "updatedAt"];
     if (dates.includes(key) && typeof value === "string") return new Date(value);
@@ -116,7 +116,7 @@ const reviveAsset = (data: JsonNetworkType<AssetAttributes>): AssetAttributes =>
   return JSON.parse(JSON.stringify(data), reviver);
 };
 
-const reviveUser = (data: JsonNetworkType<UserAttributes>): UserAttributes => {
+const reviveUser = (data: JsonNetworkType<UserCreationAttributes>): UserCreationAttributes => {
   const reviver = <T>(key: string, value: T): T | Date => {
     const dates = ["createdAt", "updatedAt"];
     if (dates.includes(key) && typeof value === "string") return new Date(value);
@@ -125,7 +125,7 @@ const reviveUser = (data: JsonNetworkType<UserAttributes>): UserAttributes => {
   return JSON.parse(JSON.stringify(data), reviver);
 };
 
-const reviveLocation = (data: JsonNetworkType<LocationAttributes>): LocationAttributes => {
+const reviveLocation = (data: JsonNetworkType<LocationCreationAttributes>): LocationCreationAttributes => {
   const reviver = <T>(key: string, value: T): T | Date => {
     const dates = ["createdAt", "updatedAt"];
     if (dates.includes(key) && typeof value === "string") return new Date(value);

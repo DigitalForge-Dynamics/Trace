@@ -1,36 +1,40 @@
-export interface AssetAttributes {
-  id?: number;
-  assetTag: string;
-  name: string;
-  serialNumber?: string;
-  modelNumber?: string;
-  nextAuditDate?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface AssetCreationAttributes {
+	assetTag: string;
+	name: string;
+	serialNumber?: string;
+	modelNumber?: string;
+	nextAuditDate?: Date;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
-export interface LocationAttributes {
-  id?: number;
-  locationName: string;
-  geoLocation?: JSON;
-  primaryLocation: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface UserCreationAttributes {
+	firstName: string;
+	lastName: string;
+	username: string;
+	password: string;
+	email: string;
+	isActive: boolean;
+	scope: Scope[];
+	createdAt?: Date;
+	updatedAt?: Date;
+	mfaSecret?: string;
 }
 
-export interface UserAttributes {
-  id?: number;
-  firstName: string;
-  lastName: string;
-  username: string;
-  password: string;
-  email: string;
-  isActive: boolean;
-  scope: Scope[];
-  createdAt?: Date;
-  updatedAt?: Date;
-  mfaSecret?: string | null;
+export interface LocationCreationAttributes {
+	locationName: string;
+	geoLocation?: JSON;
+	primaryLocation: boolean;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
+
+type StoredAttributes<TCreation> = { id: number }
+& { [K in keyof TCreation]-?: undefined extends TCreation[K] ? Exclude<TCreation[K], undefined> | null : TCreation[K] };
+
+export interface AssetStoredAttributes extends StoredAttributes<AssetCreationAttributes> {}
+export interface UserStoredAttributes extends StoredAttributes<UserCreationAttributes> {}
+export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
 
 export const enum Scope {
   READ = "TRACE_READ",

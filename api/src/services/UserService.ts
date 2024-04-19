@@ -1,11 +1,11 @@
 import User, { init } from "../database/models/user.model";
-import { UserAttributes } from "../utils/types/attributeTypes";
+import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
 import { BaseService } from "./BaseService";
 import { IService } from "./IService";
 
 interface IUserService extends IService<User> {
-  getUser(username: string): Promise<UserAttributes | null>;
-  createUser(data: UserAttributes): Promise<boolean>;
+  getUser(username: string): Promise<UserStoredAttributes | null>;
+  createUser(data: UserCreationAttributes): Promise<boolean>;
 }
 
 export default class UserService extends BaseService<User> implements IUserService {
@@ -14,7 +14,7 @@ export default class UserService extends BaseService<User> implements IUserServi
     init();
   }
 
-  public async getUser(requestedUser: string): Promise<UserAttributes | null> {
+  public async getUser(requestedUser: string): Promise<UserStoredAttributes | null> {
     const user = await User.findOne({ where: { username: requestedUser } });
 
     if (!user) {
@@ -23,7 +23,7 @@ export default class UserService extends BaseService<User> implements IUserServi
     return user;
   }
 
-  public async createUser(data: UserAttributes): Promise<boolean> {
+  public async createUser(data: UserCreationAttributes): Promise<boolean> {
     const isCreated = await User.create(data);
 
     if (isCreated.id <= 0) {
@@ -33,7 +33,7 @@ export default class UserService extends BaseService<User> implements IUserServi
   }
 
   public async setMfaSecret(username: string, mfaSecret: string): Promise<boolean> {
-    const updates: Partial<UserAttributes> = { mfaSecret };
+    const updates: Partial<UserCreationAttributes> = { mfaSecret };
     const filter = { where: { username: username } };
     const [affectedCount] = await User.update(updates, filter);
     if (affectedCount === 0) {

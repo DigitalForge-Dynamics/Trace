@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { UserAttributes } from "../utils/types/attributeTypes";
 import UserService from "../services/UserService";
 import { parseMFACode, validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
@@ -7,6 +6,7 @@ import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
 import AuthService from "../services/AuthenticationService";
 import { getRedisClient } from "../database/config/redisClient";
+import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
@@ -32,7 +32,7 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.ForbiddenError();
       }
 
-      if (userDetails.mfaSecret !== undefined && userDetails.mfaSecret !== null) {
+      if (userDetails.mfaSecret !== null) {
         Logger.warn(`MFA Secret:${userDetails.mfaSecret}|`);
         if (data.mfaCode === undefined) {
           Logger.error(`Missing mfa code for user '${data.username}' with MFA enabled.`);
@@ -61,14 +61,14 @@ export default class AuthenticationContoller extends ErrorController {
 
   public async signUp(req: Request<{}>, res: Response, next: NextFunction) {
     try {
-      const data: UserAttributes = validateUser(req.body);
+      const data: UserCreationAttributes = validateUser(req.body);
 
       const ensureUniqueUser = await this.userService.getUser(data.username);
       if(ensureUniqueUser !== null) {
         throw ErrorController.BadRequestError("User Already Exists");
       }
 
-      const userData: UserAttributes = {
+      const userData: UserCreationAttributes = {
         ...data,
         password: await this.authService.hashPassword(data.password),
       };
@@ -118,7 +118,7 @@ export default class AuthenticationContoller extends ErrorController {
       if (user.token_use !== TokenUse.Access) {
         throw ErrorController.ForbiddenError("Unexpected token type.");
       }
-      const userDetails: UserAttributes | null = await this.userService.getUser(user.sub);
+      const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
       if (userDetails === null) {
         throw ErrorController.ForbiddenError();
       }
@@ -156,7 +156,7 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.BadRequestError();
       }
       await redis.del(user.sub);
-      const userDetails: UserAttributes | null = await this.userService.getUser(user.sub);
+      const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
       if (userDetails === null) {
         throw ErrorController.ForbiddenError();
       }

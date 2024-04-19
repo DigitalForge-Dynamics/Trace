@@ -1,11 +1,11 @@
-import { Scope, UserAttributes } from "../utils/types/attributeTypes";
+import { Scope, UserStoredAttributes } from "../utils/types/attributeTypes";
 import * as argon2 from "argon2";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
 
 class AuthService {
-  public generateIdToken(user: UserAttributes): string {
+  public generateIdToken(user: UserStoredAttributes): string {
     const tokenClaims = this.generateClaims(TokenUse.Id, user.username);
     return jwt.sign(
       {

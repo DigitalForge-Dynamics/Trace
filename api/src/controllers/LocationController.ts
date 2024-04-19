@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import LocationService from "../services/LocationService";
-import { LocationAttributes } from "../utils/types/attributeTypes";
 import Location from "../database/models/location.model";
 import ErrorController from "./ErrorController";
 import { getId, validateLocation } from "../utils/Validator";
+import { LocationCreationAttributes } from "../utils/types/attributeTypes";
 
 export default class LocationController extends ErrorController {
   private readonly locationService = new LocationService();
@@ -53,7 +53,7 @@ export default class LocationController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestData: LocationAttributes = validateLocation(req.body);
+      const requestData: LocationCreationAttributes = validateLocation(req.body);
 
       const isSuccessfull = await this.locationService.create(requestData);
       if (!isSuccessfull) {
@@ -75,7 +75,7 @@ export default class LocationController extends ErrorController {
   ) {
     try {
       const requestId: number = getId(req);
-      const requestData: LocationAttributes = validateLocation(req.body);
+      const requestData: LocationCreationAttributes = validateLocation(req.body);
 
       const isValidLocation = await this.locationService.findById(requestId);
       if (!isValidLocation) {

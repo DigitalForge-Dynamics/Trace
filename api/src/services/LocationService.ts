@@ -1,10 +1,10 @@
 import Location, { init } from "../database/models/location.model";
-import { LocationAttributes } from "../utils/types/attributeTypes";
+import { LocationCreationAttributes } from "../utils/types/attributeTypes";
 import { BaseService, IService } from "./BaseService";
 
 interface ILocationService extends IService<Location> {
-  create(data: LocationAttributes): Promise<boolean>;
-  update(locationId: number, data: LocationAttributes): Promise<boolean>;
+  create(data: LocationCreationAttributes): Promise<boolean>;
+  update(locationId: number, data: LocationCreationAttributes): Promise<boolean>;
   delete(locationId: number): Promise<boolean>;
 }
 
@@ -14,7 +14,7 @@ export default class LocationService extends BaseService<Location> implements IL
     init();
   }
 
-  public async create(data: LocationAttributes): Promise<boolean> {
+  public async create(data: LocationCreationAttributes): Promise<boolean> {
     const location = await Location.create(data);
 
     if (location.id <= 0) {
@@ -23,7 +23,7 @@ export default class LocationService extends BaseService<Location> implements IL
     return true;
   }
 
-  public async update(locationId: number, data: LocationAttributes): Promise<boolean> {
+  public async update(locationId: number, data: LocationCreationAttributes): Promise<boolean> {
     const [affectedCount] = await Location.update(data, { where: { id: locationId } });
 
     if (affectedCount <= 0) {

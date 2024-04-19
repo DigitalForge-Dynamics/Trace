@@ -6,9 +6,6 @@
   "additionalProperties": false,
   "required": ["locationName", "primaryLocation"],
   "properties": {
-    "id": {
-      "type": "number"
-    },
     "locationName": {
       "type": "string"
     },

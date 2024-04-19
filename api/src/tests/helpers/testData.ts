@@ -1,8 +1,7 @@
 import { PaginationResult } from "../../utils/Paginator";
-import { AssetAttributes } from "../../utils/types/attributeTypes";
+import { AssetCreationAttributes, AssetStoredAttributes } from "../../utils/types/attributeTypes";
 
-export const testAsset: AssetAttributes = {
-  id: 1,
+export const testCreationAsset: AssetCreationAttributes = {
   assetTag: "testAssetTag",
   name: "testAsset",
   serialNumber: "testSerialNumber",
@@ -12,7 +11,18 @@ export const testAsset: AssetAttributes = {
   updatedAt: new Date(),
 };
 
-export const testPaginationAssets: PaginationResult<AssetAttributes> = {
+export const testStoredAsset: AssetStoredAttributes = {
+	id: 1,
+	assetTag: testCreationAsset.assetTag,
+	name: testCreationAsset.name,
+	serialNumber: testCreationAsset.serialNumber!,
+	modelNumber: testCreationAsset.modelNumber!,
+	nextAuditDate: testCreationAsset.nextAuditDate!,
+	createdAt: testCreationAsset.createdAt!,
+	updatedAt: testCreationAsset.updatedAt!,
+};
+
+export const testPaginationAssets: PaginationResult<AssetStoredAttributes> = {
   lastPage: 1,
   totalRecords: 3,
   hasMorePages: false,

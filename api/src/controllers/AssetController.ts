@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import AssetService from "../services/AssetService";
-import { AssetAttributes } from "../utils/types/attributeTypes";
 import ErrorController from "./ErrorController";
 import { getId, getInt, getOptString, validateAsset } from "../utils/Validator";
 import Logger from "../utils/Logger";
+import { AssetCreationAttributes } from "../utils/types/attributeTypes";
 
 export default class AssetController extends ErrorController {
   private readonly assetService = new AssetService();
@@ -60,7 +60,7 @@ export default class AssetController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const requestData: AssetAttributes = validateAsset(req.body);
+      const requestData: AssetCreationAttributes = validateAsset(req.body);
 
       const isSuccessfull = await this.assetService.create(requestData);
       if (!isSuccessfull) {
@@ -80,7 +80,7 @@ export default class AssetController extends ErrorController {
   ) {
     try {
       const requestId = getId(req);
-      const requestData: AssetAttributes = validateAsset(req.body);
+      const requestData: AssetCreationAttributes = validateAsset(req.body);
 
       const isValidAsset = await this.assetService.findById(requestId);
       if (!isValidAsset) {

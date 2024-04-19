@@ -6,9 +6,6 @@
   "additionalProperties": false,
   "required": ["assetTag", "name"],
   "properties": {
-    "id": {
-      "type": "number"
-    },
     "assetTag": {
       "type": "string"
     },
