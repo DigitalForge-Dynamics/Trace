@@ -35,29 +35,28 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   }, [navigate, authDispatch]);
 
   // Monitor token expiration
-  const tokenMonitor = async () => {
-    const now = Math.floor(Date.now() / 1000);
-    if (activeUser === null) {
-      // No active user. Signing out
-      logout();
-      return;
-    }
-    if (activeUser.refreshExpiry < now) {
-      // Refresh expired. Signing out
-      logout();
-      return;
-    }
-    if (activeUser.expiry < now) {
-      // Access expired. Refreshing
-      const newAuthData: AuthData = await refreshToken(activeUser)
-      return authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
-    }
-  };
-
   useEffect(() => {
+    const tokenMonitor = async () => {
+      const now = Math.floor(Date.now() / 1000);
+      if (activeUser === null) {
+        // No active user. Signing out
+        logout();
+        return;
+      }
+      if (activeUser.refreshExpiry < now) {
+        // Refresh expired. Signing out
+        logout();
+        return;
+      }
+      if (activeUser.expiry < now) {
+        // Access expired. Refreshing
+        const newAuthData: AuthData = await refreshToken(activeUser)
+        return authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
+      }
+    };
     const interval = setInterval(tokenMonitor, 60*1000);
-	return () => clearInterval(interval);
-  }, [tokenMonitor]);
+    return () => clearInterval(interval);
+  }, [activeUser, logout]);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout }}>
