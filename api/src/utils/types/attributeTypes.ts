@@ -18,7 +18,6 @@ export interface UserCreationAttributes {
   scope: Scope[];
   createdAt?: Date;
   updatedAt?: Date;
-  mfaSecret?: string;
 }
 
 export interface LocationCreationAttributes {
@@ -34,7 +33,9 @@ type StoredAttributes<TCreation> = { id: number }
 & { [K in keyof TCreation]-?: undefined extends TCreation[K] ? Exclude<TCreation[K], undefined> | null : TCreation[K] };
 
 export interface AssetStoredAttributes extends StoredAttributes<AssetCreationAttributes> {}
-export interface UserStoredAttributes extends StoredAttributes<UserCreationAttributes> {}
+export interface UserStoredAttributes extends StoredAttributes<UserCreationAttributes> {
+  mfaSecret: string | null;
+}
 export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
 
 export const enum Scope {

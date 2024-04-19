@@ -33,7 +33,7 @@ export default class UserService extends BaseService<User> implements IUserServi
   }
 
   public async setMfaSecret(username: string, mfaSecret: string): Promise<boolean> {
-    const updates: Partial<UserCreationAttributes> = { mfaSecret };
+    const updates: Partial<UserStoredAttributes> = { mfaSecret };
     const filter = { where: { username: username } };
     const [affectedCount] = await User.update(updates, filter);
     if (affectedCount === 0) {
