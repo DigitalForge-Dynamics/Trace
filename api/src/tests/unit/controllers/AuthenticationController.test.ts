@@ -12,9 +12,9 @@ import { Scope, UserCreationAttributes, UserLoginAttributes, UserStoredAttribute
 jest.mock("../../../services/UserService.ts");
 jest.mock("../../../services/BaseService.ts");
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-	info: jest.fn(),
-	warn: jest.fn(),
-	error: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
@@ -102,8 +102,8 @@ describe("signIn", () => {
   it("Sets a 200 status with a body of tokens when the user authenticates successfully", async () => {
     // Given
     const user: UserStoredAttributes = {
-        password: await authService.hashPassword("PASSWORD"),
-		mfaSecret: null,
+      password: await authService.hashPassword("PASSWORD"),
+      mfaSecret: null,
     } as UserStoredAttributes;
     getUserMock.mockResolvedValue(user);
 
@@ -114,9 +114,9 @@ describe("signIn", () => {
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.send).not.toHaveBeenCalled();
     expect(response.json).toHaveBeenCalledWith({
-        idToken: expect.any(String),
-        accessToken: expect.any(String),
-        refreshToken: expect.any(String),
+      idToken: expect.any(String),
+      accessToken: expect.any(String),
+      refreshToken: expect.any(String),
     });
     expect(response.end).toHaveBeenCalled();
   });

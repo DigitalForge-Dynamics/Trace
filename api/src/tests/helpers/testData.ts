@@ -12,14 +12,14 @@ export const testCreationAsset: AssetCreationAttributes = {
 };
 
 export const testStoredAsset: AssetStoredAttributes = {
-	id: 1,
-	assetTag: testCreationAsset.assetTag,
-	name: testCreationAsset.name,
-	serialNumber: testCreationAsset.serialNumber!,
-	modelNumber: testCreationAsset.modelNumber!,
-	nextAuditDate: testCreationAsset.nextAuditDate!,
-	createdAt: testCreationAsset.createdAt!,
-	updatedAt: testCreationAsset.updatedAt!,
+  id: 1,
+  assetTag: testCreationAsset.assetTag,
+  name: testCreationAsset.name,
+  serialNumber: testCreationAsset.serialNumber!,
+  modelNumber: testCreationAsset.modelNumber!,
+  nextAuditDate: testCreationAsset.nextAuditDate!,
+  createdAt: testCreationAsset.createdAt!,
+  updatedAt: testCreationAsset.updatedAt!,
 };
 
 export const testPaginationAssets: PaginationResult<AssetStoredAttributes> = {

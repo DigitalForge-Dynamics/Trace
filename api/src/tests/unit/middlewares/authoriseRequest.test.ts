@@ -7,9 +7,9 @@ import Logger from "../../../utils/Logger";
 import { AccessTokenPayload, TokenUse } from "../../../utils/types/authenticationTypes";
 
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-	info: jest.fn(),
-	warn: jest.fn(),
-	error: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;

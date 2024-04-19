@@ -17,9 +17,9 @@ import { PaginationResult } from "../../../utils/Paginator";
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-	info: jest.fn(),
-	warn: jest.fn(),
-	error: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;

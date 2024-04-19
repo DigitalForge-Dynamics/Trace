@@ -1,32 +1,32 @@
 export interface AssetCreationAttributes {
-	assetTag: string;
-	name: string;
-	serialNumber?: string;
-	modelNumber?: string;
-	nextAuditDate?: Date;
-	createdAt?: Date;
-	updatedAt?: Date;
+  assetTag: string;
+  name: string;
+  serialNumber?: string;
+  modelNumber?: string;
+  nextAuditDate?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UserCreationAttributes {
-	firstName: string;
-	lastName: string;
-	username: string;
-	password: string;
-	email: string;
-	isActive: boolean;
-	scope: Scope[];
-	createdAt?: Date;
-	updatedAt?: Date;
-	mfaSecret?: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+  email: string;
+  isActive: boolean;
+  scope: Scope[];
+  createdAt?: Date;
+  updatedAt?: Date;
+  mfaSecret?: string;
 }
 
 export interface LocationCreationAttributes {
-	locationName: string;
-	geoLocation?: JSON;
-	primaryLocation: boolean;
-	createdAt?: Date;
-	updatedAt?: Date;
+  locationName: string;
+  geoLocation?: JSON;
+  primaryLocation: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // Convert optional properties from `[K]?: T` or `[K]: T | undefined`, into `[K]: T | null`.

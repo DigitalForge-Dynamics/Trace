@@ -5,9 +5,9 @@ import { MockedLogger } from "../../helpers/mockLogger";
 import Asset from "../../../database/models/asset.model";
 
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-	info: jest.fn(),
-	warn: jest.fn(),
-	error: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }));
 
 const MockedModel: jest.Mocked<ModelStatic<Asset>> =
