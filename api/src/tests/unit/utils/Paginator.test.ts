@@ -1,10 +1,14 @@
 import { ModelStatic } from "sequelize";
 import Paginator from "../../../utils/Paginator";
 import { testPaginationAssets } from "../../helpers/testData";
-import { mockLogger } from "../../helpers/mockLogger";
+import { MockedLogger } from "../../helpers/mockLogger";
 import Asset from "../../../database/models/asset.model";
 
-jest.mock("../../../utils/Logger.ts", mockLogger);
+jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
+	info: jest.fn(),
+	warn: jest.fn(),
+	error: jest.fn(),
+}));
 
 const MockedModel: jest.Mocked<ModelStatic<Asset>> =
   jest.createMockFromModule("sequelize");

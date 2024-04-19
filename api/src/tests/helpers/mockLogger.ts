@@ -13,8 +13,3 @@ export const resetMockLogger = (logger: MockedLogger) => {
   logger.error.mockReset();
 };
 
-export const mockLogger = (): MockedLogger => ({
-	info: jest.fn(),
-	warn: jest.fn(),
-	error: jest.fn(),
-});

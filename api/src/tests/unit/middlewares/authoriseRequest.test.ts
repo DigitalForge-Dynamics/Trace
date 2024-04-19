@@ -2,11 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { authoriseRequest } from "../../../middlewares/authoriseRequest";
 import { Scope } from "../../../utils/types/attributeTypes";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
-import { MockedLogger, mockLogger, resetMockLogger } from "../../helpers/mockLogger";
+import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import { AccessTokenPayload, TokenUse } from "../../../utils/types/authenticationTypes";
 
-jest.mock("../../../utils/Logger.ts", mockLogger);
+jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
+	info: jest.fn(),
+	warn: jest.fn(),
+	error: jest.fn(),
+}));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
