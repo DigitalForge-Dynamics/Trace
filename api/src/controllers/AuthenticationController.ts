@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UserAttributes } from "../utils/types/attributeTypes";
 import UserService from "../services/UserService";
-import { validate2FaCode, validateUser, validateUserLogin } from "../utils/Validator";
+import { parseMFACode, validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
@@ -92,7 +92,7 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.InternalServerError();
       }
       if (user.token_use !== TokenUse.Refresh) {
-       throw ErrorController.ForbiddenError("Unexpected token type.");
+        throw ErrorController.ForbiddenError("Unexpected token type.");
       }
       const userAttributes = await this.userService.getUser(user.username);
       if (userAttributes === null) {
@@ -107,11 +107,11 @@ export default class AuthenticationContoller extends ErrorController {
     }
   }
 
-  public async init2Fa(_: Request, res: Response, next: NextFunction) {
+  public async initMfa(_: Request, res: Response, next: NextFunction) {
     try {
       const user: TokenPayload | undefined = res.locals.user;
       if (user === undefined) {
-        Logger.error("Missing user locals within init2Fa controller.");
+        Logger.error("Missing user locals within initMFa controller.");
         throw ErrorController.InternalServerError();
       }
       if (user.token_use !== TokenUse.Access) {
@@ -122,45 +122,45 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.ForbiddenError();
       }
       if (userDetails.mfaSecret !== undefined) {
-        Logger.error(`User ${user.sub} attempted to override 2FA secret.`);
+        Logger.error(`User ${user.sub} attempted to override MFA secret.`);
         throw ErrorController.ForbiddenError();
       }
 
       const redis = getRedisClient();
       const secret = this.authService.generateSecret(20);
       await redis.set(user.sub, secret);
-      Logger.info(`Successfully generated secret for user: ${user.sub}`);
+      Logger.info(`Successfully generated MFA secret for user: ${user.sub}`);
       res.status(200).send(secret).end();
     } catch (err) {
       next(err);
     }
   }
 
-  public async enable2Fa(req: Request, res: Response, next: NextFunction) {
+  public async enableMfa(req: Request, res: Response, next: NextFunction) {
     try {
       const user: TokenPayload | undefined = res.locals.user;
       if (user === undefined) {
-        Logger.error("Missing user locals within enable2Fa controller.");
+        Logger.error("Missing user locals within enableMFa controller.");
         throw ErrorController.InternalServerError();
       }
       if (user.token_use !== TokenUse.Access) {
         throw ErrorController.ForbiddenError("Unexpected token type.");
       }
-      const code = validate2FaCode(req.body);
+      const code = parseMFACode(req.body);
 
       const redis = getRedisClient();
       const secret = await redis.get(user.sub);
-      await redis.del(user.sub);
       if (secret === null) {
-        Logger.error("Attempted to enable 2FA for an account that has not initialised it.");
+        Logger.error("Attempted to enable MFA for an account that has not initialised it.");
         throw ErrorController.BadRequestError();
       }
+      await redis.del(user.sub);
       const userDetails: UserAttributes | null = await this.userService.getUser(user.sub);
       if (userDetails === null) {
         throw ErrorController.ForbiddenError();
       }
       if (userDetails.mfaSecret !== undefined) {
-        Logger.error(`User ${user.sub} attempted to override 2FA secret.`);
+        Logger.error(`User ${user.sub} attempted to override MFA secret.`);
         throw ErrorController.ForbiddenError();
       }
       if (!this.authService.mfaVerification(secret, code)) {
@@ -171,7 +171,7 @@ export default class AuthenticationContoller extends ErrorController {
       if (!valid) {
         throw ErrorController.InternalServerError();
       }
-      Logger.info(`Successfully enabled 2FA for user: ${userDetails.username}`);
+      Logger.info(`Successfully enabled MFA for user: ${userDetails.username}`);
       res.status(204).end();
     } catch (err) {
       next(err);

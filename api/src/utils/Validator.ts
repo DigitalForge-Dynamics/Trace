@@ -68,7 +68,7 @@ export const validateUserLogin = (data: unknown): UserLogin => {
     throw ErrorController.BadRequestError();
   }
   if ("mfaCode" in data) {
-    mfaCode = validate2FaCode(data.mfaCode);
+    mfaCode = parseMFACode(data.mfaCode);
   }
   const permitted: Array<keyof UserLogin> = ["username", "password", "mfaCode"];
   for (const key in data) {
@@ -83,7 +83,7 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   return { username, password };
 };
 
-export const validate2FaCode = (data: unknown): string => {
+export const parseMFACode = (data: unknown): string => {
   if (typeof data !== "string") {
     throw ErrorController.BadRequestError();
   }
