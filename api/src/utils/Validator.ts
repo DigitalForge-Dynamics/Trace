@@ -76,6 +76,16 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   return { username, password };
 };
 
+export const validate2FaCode = (data: unknown): string => {
+	if (typeof data !== "string") {
+		throw ErrorController.BadRequestError();
+	}
+	if (!/^[0-9]{6}$/.test(data)) {
+		throw ErrorController.BadRequestError();
+	}
+	return data;
+};
+
 const reviveAsset = (data: JsonNetworkType<AssetAttributes>): AssetAttributes => {
   const reviver = <T>(key: string, value: T): T | Date => {
     const dates = ["nextAuditDate", "createdAt", "updatedAt"];

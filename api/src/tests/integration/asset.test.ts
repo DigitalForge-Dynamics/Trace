@@ -21,7 +21,7 @@ describe("POST /assets", () => {
   });
 
   afterEach(async () => {
-    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_ASSET_DELETE" as Scope])}`;
+    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_ASSET_DELETE" as Scope], "TEST_USER")}`;
     await fetch(`${API_URL}/assets/${testAsset.id}`, {
       method: 'DELETE',
       headers,
@@ -30,7 +30,7 @@ describe("POST /assets", () => {
 
   it('It creates an Asset', async () => {
     // Given
-    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_READ" as Scope, "TRACE_ASSET_CREATE" as Scope])}`;
+    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_READ" as Scope, "TRACE_ASSET_CREATE" as Scope], "TEST_USER")}`;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {
@@ -64,7 +64,7 @@ describe("POST /assets", () => {
 
   it('Sets a 403 status when the user is unauthorised', async () => {
     // Given
-    headers.authorization = `Bearer ${authService.generateAccessToken([])}`;
+    headers.authorization = `Bearer ${authService.generateAccessToken([], "TEST_USER")}`;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {

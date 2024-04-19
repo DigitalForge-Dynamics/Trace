@@ -29,6 +29,7 @@ export interface UserAttributes {
   scope: Scope[];
   createdAt?: Date;
   updatedAt?: Date;
+  mfaSecret?: string;
 }
 
 export const enum Scope {

@@ -31,4 +31,14 @@ export default class UserService extends BaseService<User> implements IUserServi
     }
     return true;
   }
+
+  public async setMfaSecret(username: string, mfaSecret: string): Promise<boolean> {
+    const updates: Partial<UserAttributes> = { mfaSecret };
+    const filter = { where: { username: username } };
+    const [affectedCount] = await User.update(updates, filter);
+    if (affectedCount === 0) {
+      return false;
+    }
+    return true;
+  }
 }

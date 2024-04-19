@@ -6,7 +6,7 @@ import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTy
 
 class AuthService {
   public generateIdToken(user: UserAttributes): string {
-    const tokenClaims = this.generateClaims(TokenUse.Id);
+    const tokenClaims = this.generateClaims(TokenUse.Id, user.username);
     return jwt.sign(
       {
         ...tokenClaims,
@@ -19,8 +19,8 @@ class AuthService {
     );
   }
 
-  public generateAccessToken(scopes: Scope[]): string {
-    const tokenClaims = this.generateClaims(TokenUse.Access);
+  public generateAccessToken(scopes: Scope[], username: string): string {
+    const tokenClaims = this.generateClaims(TokenUse.Access, username);
     return jwt.sign(
       {
         ...tokenClaims,
@@ -32,7 +32,7 @@ class AuthService {
   }
   
   public generateRefreshToken(username: string): string {
-    const tokenClaims = this.generateClaims(TokenUse.Refresh);
+    const tokenClaims = this.generateClaims(TokenUse.Refresh, username);
     return jwt.sign(
       {
         ...tokenClaims,
@@ -63,14 +63,14 @@ class AuthService {
     let signingKey = process.env.EXPRESS_SECRET_KEY;
 
     if (!signingKey) {
-      signingKey = crypto.randomBytes(256).toString('base64');
+      signingKey = this.generateSecret(256);
       process.env.EXPRESS_SECRET_KEY = signingKey;
       return signingKey;
     }
     return signingKey;
   }
 
-  private generateClaims(token_use: TokenUse): GenericClaimStructure {
+  private generateClaims(token_use: TokenUse, username: string): GenericClaimStructure {
     const timestamp = Math.floor(Date.now() / 1000);
     const duration_mins: number = {
       [TokenUse.Access]: 2,
@@ -79,12 +79,23 @@ class AuthService {
     }[token_use];
     return {
       iss: "urn:trace-api",
-      sub: crypto.randomUUID(),
+      sub: username,
       aud: "urn:trace-consumer",
       exp: timestamp + duration_mins * 60,
       iat: timestamp,
       token_use,
     };
+  }
+
+  public generateSecret(byte_count: number): string {
+    const bytes = crypto.randomBytes(byte_count);
+    return bytes.toString("base64");
+  }
+
+  public async mfaVerification(secret: string, code: string): Promise<boolean> {
+    void secret;
+    void code;
+    return true;
   }
 }
 
