@@ -1,6 +1,7 @@
 import React, {
   createContext,
   useReducer,
+  useEffect,
   useCallback,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -53,7 +54,10 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     }
   };
 
-  setInterval(tokenMonitor, 60*1000);
+  useEffect(() => {
+    const interval = setInterval(tokenMonitor, 60*1000);
+	return () => clearInterval(interval);
+  }, [tokenMonitor]);
 
   return (
     <AuthContext.Provider value={{ authState, login, logout }}>
