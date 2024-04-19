@@ -1,3 +1,4 @@
+import { PaginationResult } from "../../utils/Paginator";
 import { AssetAttributes } from "../../utils/types/attributeTypes";
 
 export const testAsset: AssetAttributes = {
@@ -11,7 +12,7 @@ export const testAsset: AssetAttributes = {
   updatedAt: new Date(),
 };
 
-export const testPaginationAssets = {
+export const testPaginationAssets: PaginationResult<AssetAttributes> = {
   lastPage: 1,
   totalRecords: 3,
   hasMorePages: false,
@@ -20,31 +21,31 @@ export const testPaginationAssets = {
       id: 1,
       assetTag: "testAssetTag",
       name: "testAsset",
-      serialNumber: null,
-      modelNumber: null,
-      nextAuditDate: null,
-      createdAt: "2024-04-18T20:25:51.816Z",
-      updatedAt: "2024-04-18T20:25:51.816Z",
+      serialNumber: "",
+      modelNumber: "",
+      nextAuditDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       id: 2,
       assetTag: "testAssetTag1",
       name: "testAsset1",
-      serialNumber: null,
-      modelNumber: null,
-      nextAuditDate: null,
-      createdAt: "2024-04-18T20:26:47.631Z",
-      updatedAt: "2024-04-18T20:26:47.631Z",
+      serialNumber: "",
+      modelNumber: "",
+      nextAuditDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       id: 3,
       assetTag: "testAssetTag2",
       name: "testAsset2",
-      serialNumber: null,
-      modelNumber: null,
-      nextAuditDate: null,
-      createdAt: "2024-04-18T20:26:53.547Z",
-      updatedAt: "2024-04-18T20:26:53.547Z",
+      serialNumber: "",
+      modelNumber: "",
+      nextAuditDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   ],
 };
