@@ -31,7 +31,7 @@ describe("getAllAssets", () => {
   let request: Request;
   let response: Response;
   let next: NextFunction;
-  let findAllMock: jest.MockedFunction<
+  let findAllPaginatedMock: jest.MockedFunction<
     (page: number, pageSize: number) => Promise<PaginationResult<Asset>>
   >;
 
@@ -39,7 +39,7 @@ describe("getAllAssets", () => {
     request = mockRequest();
     response = mockResponse({});
     next = mockNext();
-    findAllMock = AssetService.prototype
+    findAllPaginatedMock = AssetService.prototype
       .findAllPaginated as jest.MockedFunction<
       typeof AssetService.prototype.findAllPaginated
     >;
@@ -47,14 +47,14 @@ describe("getAllAssets", () => {
 
   afterEach(() => {
     jest.resetAllMocks();
-    findAllMock.mockReset();
+    findAllPaginatedMock.mockReset();
     resetMockLogger(logger);
   });
 
   it("Returns found asssets with a status code of 200", async () => {
     // Given
     request.query = { page: "1", pageSize: "5" };
-    findAllMock.mockResolvedValue(
+    findAllPaginatedMock.mockResolvedValue(
       testPaginationAssets as PaginationResult<Asset>
     );
 
@@ -72,7 +72,7 @@ describe("getAllAssets", () => {
   it("Calls next middleware with an NotFoundError with message when no assets are found", async () => {
     // Given
     request.query = { page: "1", pageSize: "5" };
-    findAllMock.mockResolvedValue({
+    findAllPaginatedMock.mockResolvedValue({
       lastPage: 1,
       hasMorePages: false,
       totalRecords: 0,
@@ -90,16 +90,14 @@ describe("getAllAssets", () => {
   });
 
   it.each([
-    [
-      { page: "0", pageSize: "1" },
-      { page: "1", pageSize: "0" },
-    ],
+    { page: "0", pageSize: "1" },
+    { page: "1", pageSize: "0" },
   ])(
     "Calls next middleware with an BadRequestError when invalid query",
     async (query) => {
       // Given
       request.query = query;
-      findAllMock.mockResolvedValue({
+      findAllPaginatedMock.mockResolvedValue({
         lastPage: 1,
         hasMorePages: false,
         totalRecords: 0,

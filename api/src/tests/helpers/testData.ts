@@ -19,16 +19,6 @@ export const testPaginationAssets: PaginationResult<AssetAttributes> = {
   data: [
     {
       id: 1,
-      assetTag: "testAssetTag",
-      name: "testAsset",
-      serialNumber: "",
-      modelNumber: "",
-      nextAuditDate: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
       assetTag: "testAssetTag1",
       name: "testAsset1",
       serialNumber: "",
@@ -38,9 +28,19 @@ export const testPaginationAssets: PaginationResult<AssetAttributes> = {
       updatedAt: new Date(),
     },
     {
-      id: 3,
+      id: 2,
       assetTag: "testAssetTag2",
       name: "testAsset2",
+      serialNumber: "",
+      modelNumber: "",
+      nextAuditDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 3,
+      assetTag: "testAssetTag3",
+      name: "testAsset3",
       serialNumber: "",
       modelNumber: "",
       nextAuditDate: new Date(),

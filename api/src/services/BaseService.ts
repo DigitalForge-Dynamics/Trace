@@ -28,7 +28,7 @@ export abstract class BaseService<TEntity extends Model>
   }
 
   public async findAllPaginated(page: number, pageSize: number) {
-      return await this.paginator.paginate(page, pageSize)
+    return await this.paginator.paginate(page, pageSize);
   }
 }
 export { IService };

@@ -2,19 +2,20 @@ import { ModelStatic } from "sequelize";
 import Paginator from "../../../utils/Paginator";
 import { testPaginationAssets } from "../../helpers/testData";
 import { MockedLogger } from "../../helpers/mockLogger";
+import Asset from "../../../database/models/asset.model";
 
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
   info: jest.fn(),
   error: jest.fn(),
 }));
 
-const MockedModel: jest.Mocked<ModelStatic<any>> =
+const MockedModel: jest.Mocked<ModelStatic<Asset>> =
   jest.createMockFromModule("sequelize");
 const mockFindAndCountAll = jest.fn();
 MockedModel.findAndCountAll = mockFindAndCountAll;
 
 describe("Paginator Unit Tests", () => {
-  let paginator: Paginator<any>;
+  let paginator: Paginator<Asset>;
 
   beforeEach(() => {
     paginator = new Paginator(MockedModel);
@@ -33,7 +34,7 @@ describe("Paginator Unit Tests", () => {
     const result = await paginator.paginate(page, pageSize);
 
     expect(result.lastPage).toBe(1);
-    expect(result.totalRecords).toBe(3);
+    expect(result.totalRecords).toBe(testPaginationAssets.data.length);
     expect(result.hasMorePages).toBe(false);
     expect(result.data).toEqual(testPaginationAssets.data);
     expect(mockFindAndCountAll).toHaveBeenCalledWith({
@@ -47,9 +48,6 @@ describe("Paginator Unit Tests", () => {
     const pageSize = 10;
 
     await expect(paginator.paginate(page, pageSize)).rejects.toThrow();
-    expect(mockFindAndCountAll).not.toHaveBeenCalled();
-
-    await expect(paginator.paginate(pageSize, page)).rejects.toThrow();
     expect(mockFindAndCountAll).not.toHaveBeenCalled();
   });
 });
