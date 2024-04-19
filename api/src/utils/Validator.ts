@@ -8,6 +8,7 @@ import ErrorController from "../controllers/ErrorController";
 import { AssetAttributes, JsonNetworkType, LocationAttributes, UserAttributes } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
+import type { ParsedQs } from "qs";
 
 export const ajv = new Ajv2020();
 
@@ -16,16 +17,29 @@ ajv.addSchema(schema_location, "location");
 ajv.addSchema(schema_settings, "settings");
 ajv.addSchema(schema_user, "user");
 
-export const getId = (request: Request): number => {
-  const { id } = request.params;
-  if (id === undefined) {
+type QueryValue = string | string[] | ParsedQs | ParsedQs[] | undefined;
+
+export const getOptString = (value: QueryValue): string | undefined => {
+  if (value === undefined || typeof value === 'string') {
+    return value;
+  }
+  throw ErrorController.BadRequestError();
+};
+
+export const getInt = (value: string | undefined): number => {
+  if (value === undefined) {
     throw ErrorController.BadRequestError();
   }
-  const result = parseInt(id);
+  const result = parseInt(value);
   if (isNaN(result)) {
     throw ErrorController.BadRequestError()
   }
   return result;
+};
+
+export const getId = (request: Request): number => {
+  const { id } = request.params;
+  return getInt(id);
 };
 
 const isAsset = (data: unknown): data is JsonNetworkType<AssetAttributes> => ajv.validate("asset", data);
