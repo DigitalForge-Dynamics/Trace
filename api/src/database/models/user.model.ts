@@ -19,6 +19,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare scope: Scope[];
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
+  declare mfaSecret: CreationOptional<string>;
 }
 
 export const init = () => {
@@ -63,6 +64,10 @@ export const init = () => {
       },
       updatedAt: {
         type: DataTypes.DATE,
+        allowNull: true,
+      },
+      mfaSecret: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
     },

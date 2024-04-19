@@ -28,13 +28,13 @@ router.route("/register").post(
 );
 
 router.route("/totp/init").post(
-	authenticateRequest,
-	(req, res, next) => authController.init2Fa(req, res, next),
+  authenticateRequest,
+  (req, res, next) => authController.init2Fa(req, res, next),
 );
 
 router.route("/totp/enable").post(
-	authenticateRequest,
-	(req, res, next) => authController.enable2Fa(req, res, next),
+  authenticateRequest,
+  (req, res, next) => authController.enable2Fa(req, res, next),
 );
 
 export default router;
