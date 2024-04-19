@@ -261,7 +261,7 @@ describe("refresh", () => {
 
   beforeEach(() => {
     request = mockRequest();
-    const locals = { user: { token_use: TokenUse.Refresh } };
+    const locals = { user: { token_use: TokenUse.Refresh, username: "USERNAME" } };
     response = mockResponse({ locals });
     next = mockNext();
     getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
@@ -319,7 +319,7 @@ describe("refresh", () => {
     await authController.refresh(request, response, next);
 
     // Then
-    expect(generateAccessTokenSpy).toHaveBeenCalledWith(scope);
+    expect(generateAccessTokenSpy).toHaveBeenCalledWith(scope, "USERNAME");
     generateAccessTokenSpy.mockRestore();
   });
 

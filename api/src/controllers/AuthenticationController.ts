@@ -32,16 +32,17 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.ForbiddenError();
       }
 
-      if (userDetails.mfaSecret !== undefined) {
+      if (userDetails.mfaSecret !== undefined && userDetails.mfaSecret !== null) {
+        Logger.warn(`MFA Secret:${userDetails.mfaSecret}|`);
         if (data.mfaCode === undefined) {
           Logger.error(`Missing mfa code for user '${data.username}' with MFA enabled.`);
           throw ErrorController.ForbiddenError();
         }
-        const isValid2Fa = await this.authService.mfaVerification(
+        const isValidMfa = await this.authService.mfaVerification(
           userDetails.mfaSecret,
           data.mfaCode,
         );
-        if (!isValid2Fa) {
+        if (!isValidMfa) {
           Logger.error(`Invalid MFA code provided for user '${data.username}`);
           throw ErrorController.ForbiddenError();
         }
