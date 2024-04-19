@@ -29,6 +29,7 @@ export interface LocationCreationAttributes {
 	updatedAt?: Date;
 }
 
+// Convert optional properties from `[K]?: T` or `[K]: T | undefined`, into `[K]: T | null`.
 type StoredAttributes<TCreation> = { id: number }
 & { [K in keyof TCreation]-?: undefined extends TCreation[K] ? Exclude<TCreation[K], undefined> | null : TCreation[K] };
 

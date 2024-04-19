@@ -33,7 +33,6 @@ export default class AuthenticationContoller extends ErrorController {
       }
 
       if (userDetails.mfaSecret !== null) {
-        Logger.warn(`MFA Secret:${userDetails.mfaSecret}|`);
         if (data.mfaCode === undefined) {
           Logger.error(`Missing mfa code for user '${data.username}' with MFA enabled.`);
           throw ErrorController.ForbiddenError();

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ErrorController from "../../../controllers/ErrorController";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
-import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
+import { MockedLogger, mockLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import AuthenticationController from "../../../controllers/AuthenticationController";
 import { TokenUse } from "../../../utils/types/authenticationTypes";
@@ -11,11 +11,7 @@ import { Scope, UserCreationAttributes, UserLoginAttributes, UserStoredAttribute
 
 jest.mock("../../../services/UserService.ts");
 jest.mock("../../../services/BaseService.ts");
-jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-} as MockedLogger));
+jest.mock("../../../utils/Logger.ts", mockLogger);
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 

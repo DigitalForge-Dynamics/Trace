@@ -10,19 +10,13 @@ import ErrorController from "../../../controllers/ErrorController";
 import { testCreationAsset, testPaginationAssets, testStoredAsset } from "../../helpers/testData";
 import AssetService from "../../../services/AssetService";
 import Asset from "../../../database/models/asset.model";
-import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
+import { MockedLogger, mockLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import { PaginationResult } from "../../../utils/Paginator";
 
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");
-jest.mock(
-  "../../../utils/Logger.ts",
-  (): MockedLogger => ({
-    info: jest.fn(),
-    error: jest.fn(),
-  })
-);
+jest.mock("../../../utils/Logger.ts", mockLogger);
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
