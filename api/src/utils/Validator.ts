@@ -57,6 +57,7 @@ export const validateLocation = (data: unknown): LocationAttributes => {
 };
 
 export const validateUserLogin = (data: unknown): UserLogin => {
+  let mfaCode: string | undefined;
   if (typeof data !== 'object' || data === null) {
     throw ErrorController.BadRequestError();
   }
@@ -66,24 +67,30 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   if (!("password" in data) || typeof data.password !== "string") {
     throw ErrorController.BadRequestError();
   }
-  const permitted: Array<keyof UserLogin> = ["username", "password"];
+  if ("mfaCode" in data) {
+    mfaCode = validate2FaCode(data.mfaCode);
+  }
+  const permitted: Array<keyof UserLogin> = ["username", "password", "mfaCode"];
   for (const key in data) {
     if (!permitted.includes(key as any)) {
       throw ErrorController.BadRequestError();
     }
   }
   const { username, password } = data;
+  if (mfaCode !== undefined) {
+    return { username, password, mfaCode };
+  }
   return { username, password };
 };
 
 export const validate2FaCode = (data: unknown): string => {
-	if (typeof data !== "string") {
-		throw ErrorController.BadRequestError();
-	}
-	if (!/^[0-9]{6}$/.test(data)) {
-		throw ErrorController.BadRequestError();
-	}
-	return data;
+  if (typeof data !== "string") {
+    throw ErrorController.BadRequestError();
+  }
+  if (!/^[0-9]{6}$/.test(data)) {
+    throw ErrorController.BadRequestError();
+  }
+  return data;
 };
 
 const reviveAsset = (data: JsonNetworkType<AssetAttributes>): AssetAttributes => {
