@@ -23,6 +23,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
     if (loginInformation.username.length === 0) return;
     if (loginInformation.password.length === 0) return;
     if (![0, 6].includes(loginInformation.mfaCode.length)) return;
+    if (!/^[0-9]{0,6}$/.test(loginInformation.mfaCode)) return;
     loginData(loginInformation);
   };
 

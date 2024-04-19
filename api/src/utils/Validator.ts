@@ -89,7 +89,7 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   const { username, password } = data;
   if ("mfaCode" in data) {
     const mfaCode = parseMFACode(data.mfaCode);
-	return { username, password, mfaCode };
+    return { username, password, mfaCode };
   }
   return { username, password };
 };
