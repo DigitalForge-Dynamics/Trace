@@ -5,6 +5,7 @@ const API_URL = "http://localhost:3000";
 export interface UserLoginData {
   username: string;
   password: string;
+  mfaCode: string;
 }
 
 export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
@@ -14,6 +15,7 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
     body: JSON.stringify({
       username: userData.username,
       password: userData.password,
+      ...(userData.mfaCode ? { mfaCode: userData.mfaCode } : {}),
     }),
   });
   if (res.status !== 200) {

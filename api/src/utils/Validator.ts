@@ -71,7 +71,6 @@ export const validateLocation = (data: unknown): LocationCreationAttributes => {
 };
 
 export const validateUserLogin = (data: unknown): UserLogin => {
-  let mfaCode: string | undefined;
   if (typeof data !== 'object' || data === null) {
     throw ErrorController.BadRequestError();
   }
@@ -81,9 +80,6 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   if (!("password" in data) || typeof data.password !== "string") {
     throw ErrorController.BadRequestError();
   }
-  if ("mfaCode" in data) {
-    mfaCode = parseMFACode(data.mfaCode);
-  }
   const permitted: Array<keyof UserLogin> = ["username", "password", "mfaCode"];
   for (const key in data) {
     if (!permitted.includes(key as any)) {
@@ -91,8 +87,9 @@ export const validateUserLogin = (data: unknown): UserLogin => {
     }
   }
   const { username, password } = data;
-  if (mfaCode !== undefined) {
-    return { username, password, mfaCode };
+  if ("mfaCode" in data) {
+    const mfaCode = parseMFACode(data.mfaCode);
+	return { username, password, mfaCode };
   }
   return { username, password };
 };

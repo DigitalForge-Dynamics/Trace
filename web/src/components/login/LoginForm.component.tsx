@@ -4,6 +4,7 @@ import { Box, TextField, Button } from "@mui/material";
 interface ILoginFormInput {
   username: string;
   password: string;
+  mfaCode: string;
 }
 
 type LoginFormProps = {
@@ -14,13 +15,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
   const [loginInformation, setLoginInformation] = useState<ILoginFormInput>({
     username: "",
     password: "",
+    mfaCode: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginInformation.username.length > 0 && loginInformation.password.length > 0) {
-      loginData(loginInformation);
-    }
+    if (loginInformation.username.length === 0) return;
+    if (loginInformation.password.length === 0) return;
+    if (![0, 6].includes(loginInformation.mfaCode.length)) return;
+    loginData(loginInformation);
   };
 
   return (
@@ -47,6 +50,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
           setLoginInformation({
             ...loginInformation,
             password: e.target.value,
+          })
+        }
+      />
+      <TextField
+        id="mfaCodeTextField"
+        type="password"
+        data-testid="testid-mfaCodeTextField"
+        label="MFA Code"
+        onChange={(e) => 
+          setLoginInformation({
+            ...loginInformation,
+            mfaCode: e.target.value,
           })
         }
       />
