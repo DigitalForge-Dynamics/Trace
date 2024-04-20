@@ -82,7 +82,7 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   }
   const permitted: Array<keyof UserLogin> = ["username", "password", "mfaCode"];
   for (const key in data) {
-    if (!permitted.includes(key as any)) {
+    if (!permitted.includes(key as keyof UserLogin)) {
       throw ErrorController.BadRequestError();
     }
   }

@@ -56,7 +56,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ loginData }) => {
       />
       <TextField
         id="mfaCodeTextField"
-        type="password"
+        type="number"
         data-testid="testid-mfaCodeTextField"
         label="MFA Code"
         onChange={(e) => 
