@@ -12,7 +12,7 @@ type FormState =
 
 const getUri = (secret: string): URL => {
 	return new URL(
-		`otpauth://totp/Trace?secret=${secret}&issuer=Trace%20Asset%20Management&algorithm=SHA1&digits=6&period=30`
+		`otpauth://totp/Trace?secret=${encodeURIComponent(secret)}&issuer=Trace%20Asset%20Management&algorithm=SHA1&digits=6&period=30`
 	);
 };
 
