@@ -74,3 +74,31 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
     expiry: accessTokenPayload.exp,
   };
 };
+
+export const initMfa = async (authData: AuthData): Promise<string | null> => {
+	const res = await fetch(`${API_URL}/auth/totp/init`, {
+		method: "POST",
+		headers: {
+			"Authorization": `Bearer ${authData.accessToken}`,
+		},
+	});
+	if (res.status !== 200) {
+		return null;
+	}
+	const secret: string = await res.text();
+	return secret;
+};
+
+export const enableMfa = async (authData: AuthData, mfaCode: string): Promise<boolean> => {
+	const res = await fetch(`${API_URL}/auth/totp/enable`, {
+		method: "POST",
+		headers: {
+			"Authorization": `Bearer ${authData.accessToken}`,
+		},
+		body: mfaCode,
+	});
+	if (res.status !== 204) {
+		return false;
+	}
+	return true;
+};
