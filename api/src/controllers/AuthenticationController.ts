@@ -119,6 +119,7 @@ export default class AuthenticationContoller extends ErrorController {
       }
       const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
       if (userDetails === null) {
+        Logger.error(`Unable to find user within database '${user.sub}'`);
         throw ErrorController.ForbiddenError();
       }
       if (userDetails.mfaSecret !== null) {
@@ -157,6 +158,7 @@ export default class AuthenticationContoller extends ErrorController {
       await redis.del(user.sub);
       const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
       if (userDetails === null) {
+        Logger.error(`Unable to find user within database '${user.sub}'`);
         throw ErrorController.ForbiddenError();
       }
       if (userDetails.mfaSecret !== null) {
@@ -169,6 +171,7 @@ export default class AuthenticationContoller extends ErrorController {
       }
       const valid = await this.userService.setMfaSecret(userDetails.username, secret);
       if (!valid) {
+        Logger.error(`Unexpected error when setting MFA secret for user '${user.sub}'`);
         throw ErrorController.InternalServerError();
       }
       Logger.info(`Successfully enabled MFA for user: ${userDetails.username}`);

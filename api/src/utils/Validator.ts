@@ -96,9 +96,11 @@ export const validateUserLogin = (data: unknown): UserLogin => {
 
 export const parseMFACode = (data: unknown): string => {
   if (typeof data !== "string") {
+    Logger.error(`Provided MFA code is not a string: ${typeof data} ${JSON.stringify(data)}`);
     throw ErrorController.BadRequestError();
   }
   if (!/^[0-9]{6}$/.test(data)) {
+    Logger.error(`Provided MFA code does not match regex: ${data}`);
     throw ErrorController.BadRequestError();
   }
   return data;
