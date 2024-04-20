@@ -94,16 +94,16 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   return { username, password };
 };
 
+// Checks for either a string literal, or an object of type `{ code: string }`.
 export const parseMFACode = (data: unknown): string => {
-  if (typeof data !== "string") {
-    Logger.error(`Provided MFA code is not a string: ${typeof data} ${JSON.stringify(data)}`);
-    throw ErrorController.BadRequestError();
+  if (typeof data === "string" && /^[0-9]{6}$/.test(data)) {
+    return data;
   }
-  if (!/^[0-9]{6}$/.test(data)) {
-    Logger.error(`Provided MFA code does not match regex: ${data}`);
-    throw ErrorController.BadRequestError();
+  if (typeof data === "object" && data !== null && "code" in data) {
+    return parseMFACode(data.code);
   }
-  return data;
+  Logger.error("Provided MFA code does not match format");
+  throw ErrorController.BadRequestError();
 };
 
 const reviveAsset = (data: JsonNetworkType<AssetCreationAttributes>): AssetCreationAttributes => {

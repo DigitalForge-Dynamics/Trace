@@ -93,9 +93,12 @@ export const enableMfa = async (authData: AuthData, mfaCode: string): Promise<bo
 	const res = await fetch(`${API_URL}/auth/totp/enable`, {
 		method: "POST",
 		headers: {
+			"Content-Type": "application/json",
 			"Authorization": `Bearer ${authData.accessToken}`,
 		},
-		body: mfaCode,
+		body: JSON.stringify({
+			code: mfaCode,
+		}),
 	});
 	if (res.status !== 204) {
 		return false;
