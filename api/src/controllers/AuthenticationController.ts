@@ -121,8 +121,8 @@ export default class AuthenticationContoller extends ErrorController {
       if (userDetails === null) {
         throw ErrorController.ForbiddenError();
       }
-      if (userDetails.mfaSecret !== undefined) {
-        Logger.error(`User ${user.sub} attempted to override MFA secret.`);
+      if (userDetails.mfaSecret !== null) {
+        Logger.error(`User ${user.sub} attempted to override MFA secret within initMfa.`);
         throw ErrorController.ForbiddenError();
       }
 
@@ -159,8 +159,8 @@ export default class AuthenticationContoller extends ErrorController {
       if (userDetails === null) {
         throw ErrorController.ForbiddenError();
       }
-      if (userDetails.mfaSecret !== undefined) {
-        Logger.error(`User ${user.sub} attempted to override MFA secret.`);
+      if (userDetails.mfaSecret !== null) {
+        Logger.error(`User ${user.sub} attempted to override MFA secret within enableMfa.`);
         throw ErrorController.ForbiddenError();
       }
       if (!this.authService.mfaVerification(secret, code)) {
