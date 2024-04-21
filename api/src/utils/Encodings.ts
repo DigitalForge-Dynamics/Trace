@@ -1,8 +1,11 @@
 export const encodeBase32 = (buffer: Buffer): string => {
+  if ((buffer.length * 8) % 5 !== 0) {
+    throw new Error("encodeBase32 does not support generating padding");
+  }
   let scratchpad: number = 0;
   let bitCount: number = 0;
   let result: string = "";
-  for (let i=0; i<buffer.length; i++) {
+  for (let i=0; i < buffer.length; ++i) {
     const byte: number = buffer.readUint8(i);
     scratchpad <<= 8;
     scratchpad |= byte;
@@ -21,8 +24,8 @@ export const decodeBase32 = (base32: string): Buffer => {
   let scratchpad: number = 0;
   let bitCount: number = 0;
   let byteCount: number = 0;
-  const bytes: Buffer = new Buffer(Math.ceil(base32.length * 8 / 5));
-  for (let i = base32.length; i >= 0; i--) {
+  const bytes: Buffer = new Buffer(Math.ceil(base32.length * 5 / 8));
+  for (let i = base32.length-1; i >= 0; i--) {
     const b: number = decodeBase32Char(base32.charAt(i));
     scratchpad |= (b << bitCount);
     bitCount += 5;
@@ -42,14 +45,15 @@ export const decodeBase32 = (base32: string): Buffer => {
   return bytes.reverse();
 };
 
-const decodeBase32Char = (char: string): number => {
+export const decodeBase32Char = (char: string): number => {
+  if (char.length !== 1) throw new Error("decodeBase32Char expects a single character");
   const c: number = char.charCodeAt(0);
   if ('A'.charCodeAt(0) <= c && c <= 'Z'.charCodeAt(0)) return c - 'A'.charCodeAt(0);
   if ('2'.charCodeAt(0) <= c && c <= '7'.charCodeAt(0)) return c - '2'.charCodeAt(0) + 26;
   throw new Error("Invalid Base32 character");
 };
 
-const encodeBase32Char = (value: number): string => {
+export const encodeBase32Char = (value: number): string => {
   if (0 <= value && value <= 25) return String.fromCharCode(value + 'A'.charCodeAt(0));
   if (26 <= value && value <= 31) return String.fromCharCode(value - 26 + '2'.charCodeAt(0));
   throw new Error("Invalid value for Base32");

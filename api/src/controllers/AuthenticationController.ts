@@ -7,7 +7,7 @@ import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authentication
 import AuthService from "../services/AuthenticationService";
 import { getRedisClient } from "../database/config/redisClient";
 import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
-import { encodeBase32 } from "../utils/encodings";
+import { encodeBase32 } from "../utils/Encodings";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
