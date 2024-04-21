@@ -24,7 +24,7 @@ export const decodeBase32 = (base32: string): Buffer => {
   let scratchpad: number = 0;
   let bitCount: number = 0;
   let byteCount: number = 0;
-  const bytes: Buffer = new Buffer(Math.ceil(base32.length * 5 / 8));
+  const bytes: Buffer = Buffer.alloc(Math.ceil(base32.length * 5 / 8));
   for (let i = base32.length-1; i >= 0; i--) {
     const b: number = decodeBase32Char(base32.charAt(i));
     scratchpad |= (b << bitCount);

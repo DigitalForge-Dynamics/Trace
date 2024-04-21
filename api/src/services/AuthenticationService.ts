@@ -3,6 +3,7 @@ import * as argon2 from "argon2";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
+import { decodeBase32 } from "../utils/Encodings";
 
 class AuthService {
   public generateIdToken(user: UserStoredAttributes): string {
@@ -91,11 +92,23 @@ class AuthService {
     return crypto.randomBytes(byte_count);
   }
 
-  public async mfaVerification(secret: string, code: string): Promise<boolean> {
-    // TODO: Check MFA Codes.
-    void secret;
-    void code;
-    return true;
+  public mfaVerification(secret: string, code: string): boolean {
+    const secretBytes: Buffer = decodeBase32(secret);
+    const index = Math.floor(Date.now() / 1000 / 30);
+    const generatedCode: string = this.generateMfaCode(secretBytes, index);
+    return generatedCode === code;
+  }
+
+  private generateMfaCode(secret: Buffer, index: number): string {
+    const buffer: Buffer = Buffer.alloc(8);
+    buffer.writeUInt32LE(index);
+    const digest: Buffer = crypto
+      .createHmac("sha1", secret)
+      .update(buffer)
+      .digest();
+    const offset: number = digest.readUInt8(digest.length - 2) & 0xF;
+    const resultNumber: number = digest.readUInt32BE(offset);
+    return resultNumber.toString().padStart(6, '0');
   }
 }
 

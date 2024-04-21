@@ -38,7 +38,7 @@ export default class AuthenticationContoller extends ErrorController {
           Logger.error(`Missing mfa code for user '${data.username}' with MFA enabled.`);
           throw ErrorController.ForbiddenError();
         }
-        const isValidMfa = await this.authService.mfaVerification(
+        const isValidMfa: boolean = this.authService.mfaVerification(
           userDetails.mfaSecret,
           data.mfaCode,
         );
@@ -166,7 +166,8 @@ export default class AuthenticationContoller extends ErrorController {
         Logger.error(`User ${user.sub} attempted to override MFA secret within enableMfa.`);
         throw ErrorController.ForbiddenError();
       }
-      if (!this.authService.mfaVerification(secretB32, code)) {
+      const isValidMfa: boolean = this.authService.mfaVerification(secretB32, code);
+      if (!isValidMfa) {
         Logger.error(`User ${user.sub} provided incorrect token. Rejecting to not lock-out.`);
         throw ErrorController.ForbiddenError();
       }
