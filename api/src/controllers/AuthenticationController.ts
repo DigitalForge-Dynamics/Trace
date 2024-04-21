@@ -129,10 +129,10 @@ export default class AuthenticationContoller extends ErrorController {
       }
 
       const redis = getRedisClient();
-      const secretB64: string = this.authService.generateSecret(20).toString("base64");
-      await redis.set(user.sub, secretB64);
+      const secretB32: string = encodeBase32(this.authService.generateSecret(20));
+      await redis.set(user.sub, secretB32);
       Logger.info(`Successfully generated MFA secret for user: ${user.sub}`);
-      res.status(200).send(secretB64).end();
+      res.status(200).send(secretB32).end();
     } catch (err) {
       next(err);
     }
@@ -151,14 +151,12 @@ export default class AuthenticationContoller extends ErrorController {
       const code = parseMFACode(req.body);
 
       const redis = getRedisClient();
-      const secretB64 = await redis.get(user.sub);
-      if (secretB64 === null) {
+      const secretB32 = await redis.get(user.sub);
+      if (secretB32 === null) {
         Logger.error("Attempted to enable MFA for an account that has not initialised it.");
         throw ErrorController.BadRequestError();
       }
       await redis.del(user.sub);
-      const secretBytes: Buffer = Buffer.from(secretB64, "base64");
-      const secretB32: string = encodeBase32(secretBytes);
       const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
       if (userDetails === null) {
         Logger.error(`Unable to find user within database '${user.sub}'`);
