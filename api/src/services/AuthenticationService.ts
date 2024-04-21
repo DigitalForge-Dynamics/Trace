@@ -96,7 +96,6 @@ class AuthService {
     const secretBytes: Buffer = decodeBase32(secret);
     const index = Math.floor(Date.now() / 1000 / 30);
     const generatedCode: string = this.generateMfaCode(secretBytes, index);
-    console.log(`Expected: ${generatedCode}| Provided ${code}`);
     return generatedCode === code;
   }
 

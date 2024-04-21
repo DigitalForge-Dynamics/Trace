@@ -6,6 +6,7 @@ import { IService } from "./IService";
 interface IUserService extends IService<User> {
   getUser(username: string): Promise<UserStoredAttributes | null>;
   createUser(data: UserCreationAttributes): Promise<boolean>;
+  setMfaSecret(username: string, mfaSecret: string): Promise<boolean>;
 }
 
 export default class UserService extends BaseService<User> implements IUserService {
