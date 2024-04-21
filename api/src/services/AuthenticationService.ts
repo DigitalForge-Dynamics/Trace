@@ -63,7 +63,7 @@ class AuthService {
     let signingKey = process.env.EXPRESS_SECRET_KEY;
 
     if (!signingKey) {
-      signingKey = this.generateSecret(256);
+      signingKey = this.generateSecret(256).toString("base64");
       process.env.EXPRESS_SECRET_KEY = signingKey;
       return signingKey;
     }
@@ -87,9 +87,8 @@ class AuthService {
     };
   }
 
-  public generateSecret(byte_count: number): string {
-    const bytes = crypto.randomBytes(byte_count);
-    return bytes.toString("base64");
+  public generateSecret(byte_count: number): Buffer {
+    return crypto.randomBytes(byte_count);
   }
 
   public async mfaVerification(secret: string, code: string): Promise<boolean> {

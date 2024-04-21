@@ -7,6 +7,7 @@ import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authentication
 import AuthService from "../services/AuthenticationService";
 import { getRedisClient } from "../database/config/redisClient";
 import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
+import { encodeBase32 } from "../utils/encodings";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
@@ -128,10 +129,10 @@ export default class AuthenticationContoller extends ErrorController {
       }
 
       const redis = getRedisClient();
-      const secret = this.authService.generateSecret(20);
-      await redis.set(user.sub, secret);
+      const secretB64: string = this.authService.generateSecret(20).toString("base64");
+      await redis.set(user.sub, secretB64);
       Logger.info(`Successfully generated MFA secret for user: ${user.sub}`);
-      res.status(200).send(secret).end();
+      res.status(200).send(secretB64).end();
     } catch (err) {
       next(err);
     }
@@ -150,12 +151,14 @@ export default class AuthenticationContoller extends ErrorController {
       const code = parseMFACode(req.body);
 
       const redis = getRedisClient();
-      const secret = await redis.get(user.sub);
-      if (secret === null) {
+      const secretB64 = await redis.get(user.sub);
+      if (secretB64 === null) {
         Logger.error("Attempted to enable MFA for an account that has not initialised it.");
         throw ErrorController.BadRequestError();
       }
       await redis.del(user.sub);
+      const secretBytes: Buffer = Buffer.from(secretB64, "base64");
+      const secretB32: string = encodeBase32(secretBytes);
       const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
       if (userDetails === null) {
         Logger.error(`Unable to find user within database '${user.sub}'`);
@@ -165,11 +168,11 @@ export default class AuthenticationContoller extends ErrorController {
         Logger.error(`User ${user.sub} attempted to override MFA secret within enableMfa.`);
         throw ErrorController.ForbiddenError();
       }
-      if (!this.authService.mfaVerification(secret, code)) {
+      if (!this.authService.mfaVerification(secretB32, code)) {
         Logger.error(`User ${user.sub} provided incorrect token. Rejecting to not lock-out.`);
         throw ErrorController.ForbiddenError();
       }
-      const valid = await this.userService.setMfaSecret(userDetails.username, secret);
+      const valid = await this.userService.setMfaSecret(userDetails.username, secretB32);
       if (!valid) {
         Logger.error(`Unexpected error when setting MFA secret for user '${user.sub}'`);
         throw ErrorController.InternalServerError();

@@ -101,12 +101,13 @@ export const parseMFACode = (data: unknown): string => {
   }
   if (
     typeof data === "object" && data !== null
+    && Object.keys(data).length === 1
     && "code" in data && typeof data.code === "string"
     && /^[0-9]{6}$/.test(data.code)
   ) {
     return data.code;
   }
-  Logger.error("Provided MFA code does not match format");
+  Logger.error("Provided MFA code does not match required format");
   throw ErrorController.BadRequestError();
 };
 
