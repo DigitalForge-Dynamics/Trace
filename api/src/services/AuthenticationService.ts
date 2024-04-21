@@ -96,18 +96,19 @@ class AuthService {
     const secretBytes: Buffer = decodeBase32(secret);
     const index = Math.floor(Date.now() / 1000 / 30);
     const generatedCode: string = this.generateMfaCode(secretBytes, index);
+    console.log(`Expected: ${generatedCode}| Provided ${code}`);
     return generatedCode === code;
   }
 
-  private generateMfaCode(secret: Buffer, index: number): string {
+  public generateMfaCode(secret: Buffer, index: number): string {
     const buffer: Buffer = Buffer.alloc(8);
     buffer.writeUInt32LE(index);
     const digest: Buffer = crypto
       .createHmac("sha1", secret)
       .update(buffer)
       .digest();
-    const offset: number = digest.readUInt8(digest.length - 2) & 0xF;
-    const resultNumber: number = digest.readUInt32BE(offset);
+    const offset: number = digest.readUInt8(digest.length - 1) & 0xF;
+    const resultNumber: number = digest.readUInt32BE(offset) % 1000000;
     return resultNumber.toString().padStart(6, '0');
   }
 }
