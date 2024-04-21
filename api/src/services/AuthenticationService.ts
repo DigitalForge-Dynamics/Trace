@@ -102,13 +102,18 @@ class AuthService {
 
   public generateMfaCode(secret: Buffer, index: number): string {
     const buffer: Buffer = Buffer.alloc(8);
-    buffer.writeUInt32LE(index);
+    buffer.writeUInt32BE(index, 4);
     const digest: Buffer = crypto
       .createHmac("sha1", secret)
       .update(buffer)
       .digest();
     const offset: number = digest.readUInt8(digest.length - 1) & 0xF;
-    const resultNumber: number = digest.readUInt32BE(offset) % 1000000;
+    const resultNumber: number =
+      ((digest.readUInt8(offset) & 0x7F) << 24
+      | (digest.readUInt8(offset+1) << 16)
+      | (digest.readUInt8(offset+2) << 8)
+      | (digest.readUInt8(offset+3) << 0))
+      % 1000000;
     return resultNumber.toString().padStart(6, '0');
   }
 }
