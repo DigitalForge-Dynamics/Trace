@@ -29,4 +29,5 @@ export type TokenPayload = GenericClaimStructure & (RefreshTokenPayload | Access
 export type UserLogin = {
   username: string;
   password: string;
+  mfaCode?: string;
 };

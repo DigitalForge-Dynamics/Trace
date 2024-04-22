@@ -7,6 +7,7 @@ describe('Tests Login Form Component', () => {
 
     expect(screen.getByTestId('testid-usernameTextField')).toBeTruthy();
     expect(screen.getByTestId("testid-passwordTextField")).toBeTruthy();
+    expect(screen.getByTestId("testid-mfaCodeTextField")).toBeTruthy();
     expect(screen.getByTestId("testid-loginButton")).toBeTruthy();
   })
 })

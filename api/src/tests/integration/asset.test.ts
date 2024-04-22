@@ -1,6 +1,6 @@
 import AuthService from "../../services/AuthenticationService";
-import { AssetAttributes, Scope } from "../../utils/types/attributeTypes";
-import { testAsset } from "../helpers/testData";
+import { Scope } from "../../utils/types/attributeTypes";
+import { testCreationAsset } from "../helpers/testData";
 const { API_PORT } = process.env;
 
 const API_URL = `http://localhost:${API_PORT}`;
@@ -11,31 +11,20 @@ const headers = {
 };
 
 describe("POST /assets", () => {
-  let asset: AssetAttributes;
   let authService: AuthService;
 
   beforeEach(() => {
-    asset = JSON.parse(JSON.stringify(testAsset));
-    asset.id = Math.floor(Math.random() * 10000);
     authService = new AuthService();
-  });
-
-  afterEach(async () => {
-    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_ASSET_DELETE" as Scope])}`;
-    await fetch(`${API_URL}/assets/${testAsset.id}`, {
-      method: 'DELETE',
-      headers,
-    });
   });
 
   it('It creates an Asset', async () => {
     // Given
-    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_READ" as Scope, "TRACE_ASSET_CREATE" as Scope])}`;
+    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_READ" as Scope, "TRACE_ASSET_CREATE" as Scope], "TEST_USER")}`;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {
       method: 'POST',
-      body: JSON.stringify(asset),
+      body: JSON.stringify(testCreationAsset),
       headers,
     });
 
@@ -52,7 +41,7 @@ describe("POST /assets", () => {
     // When
     const response = await fetch(`${API_URL}/assets`, {
       method: 'POST',
-      body: JSON.stringify(asset),
+      body: JSON.stringify(testCreationAsset),
       headers,
     });
 
@@ -64,12 +53,12 @@ describe("POST /assets", () => {
 
   it('Sets a 403 status when the user is unauthorised', async () => {
     // Given
-    headers.authorization = `Bearer ${authService.generateAccessToken([])}`;
+    headers.authorization = `Bearer ${authService.generateAccessToken([], "TEST_USER")}`;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {
       method: 'POST',
-      body: JSON.stringify(asset),
+      body: JSON.stringify(testCreationAsset),
       headers,
     });
 

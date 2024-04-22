@@ -13,10 +13,10 @@ class Location extends Model<
 > {
   declare id: CreationOptional<number>;
   declare locationName: string;
-  declare geoLocation: CreationOptional<JSON>;
+  declare geoLocation: CreationOptional<JSON | null>;
   declare primaryLocation: boolean;
-  declare createdAt: CreationOptional<Date>;
-  declare updatedAt: CreationOptional<Date>;
+  declare createdAt: CreationOptional<Date | null>;
+  declare updatedAt: CreationOptional<Date | null>;
 }
 
 export const init = () => {

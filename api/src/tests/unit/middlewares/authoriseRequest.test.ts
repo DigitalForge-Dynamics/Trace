@@ -8,6 +8,7 @@ import { AccessTokenPayload, TokenUse } from "../../../utils/types/authenticatio
 
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
   info: jest.fn(),
+  warn: jest.fn(),
   error: jest.fn(),
 }));
 

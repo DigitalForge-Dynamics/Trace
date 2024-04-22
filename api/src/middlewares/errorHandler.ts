@@ -27,7 +27,7 @@ export const errorHandler = (
 
 const sanitiseError = (error: Error): GenericError => {
   if (error instanceof HandleError) return error;
-  Logger.error(error);
+  Logger.error(error.message);
   return {
     statusCode: 500,
     message: "Internal Server Error",

@@ -7,12 +7,13 @@ import AuthenticationController from "../../../controllers/AuthenticationControl
 import { TokenUse } from "../../../utils/types/authenticationTypes";
 import AuthenticationService from "../../../services/AuthenticationService";
 import UserService from "../../../services/UserService";
-import { Scope, UserAttributes, UserLoginAttributes } from "../../../utils/types/attributeTypes";
+import { Scope, UserCreationAttributes, UserLoginAttributes, UserStoredAttributes } from "../../../utils/types/attributeTypes";
 
 jest.mock("../../../services/UserService.ts");
 jest.mock("../../../services/BaseService.ts");
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
   info: jest.fn(),
+  warn: jest.fn(),
   error: jest.fn(),
 }));
 
@@ -84,9 +85,9 @@ describe("signIn", () => {
 
   it("Calls the next middleware with a ForbiddenError if the password does not match", async () => {
     // Given
-    const user: UserAttributes = {
+    const user: UserStoredAttributes = {
         password: await authService.hashPassword("PASSWORD_OTHER"),
-    } as UserAttributes;
+    } as UserStoredAttributes;
     getUserMock.mockResolvedValue(user);
 
     // When
@@ -100,9 +101,10 @@ describe("signIn", () => {
 
   it("Sets a 200 status with a body of tokens when the user authenticates successfully", async () => {
     // Given
-    const user: UserAttributes = {
-        password: await authService.hashPassword("PASSWORD"),
-    } as UserAttributes;
+    const user: UserStoredAttributes = {
+      password: await authService.hashPassword("PASSWORD"),
+      mfaSecret: null,
+    } as UserStoredAttributes;
     getUserMock.mockResolvedValue(user);
 
     // When
@@ -112,9 +114,9 @@ describe("signIn", () => {
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.send).not.toHaveBeenCalled();
     expect(response.json).toHaveBeenCalledWith({
-        idToken: expect.any(String),
-        accessToken: expect.any(String),
-        refreshToken: expect.any(String),
+      idToken: expect.any(String),
+      accessToken: expect.any(String),
+      refreshToken: expect.any(String),
     });
     expect(response.end).toHaveBeenCalled();
   });
@@ -127,7 +129,7 @@ describe("signUp", () => {
   let next: NextFunction;
   let getUserMock: jest.MockedFunction<typeof UserService.prototype.getUser>;
   let createUserMock: jest.MockedFunction<typeof UserService.prototype.createUser>;
-  let user: UserAttributes;
+  let user: UserCreationAttributes;
 
   beforeEach(() => {
     user = {
@@ -155,9 +157,9 @@ describe("signUp", () => {
     resetMockLogger(logger);
   });
 
-  it.each<keyof UserAttributes>(["firstName", "lastName", "username", "password", "email", "isActive", "scope"])
+  it.each<keyof UserCreationAttributes>(["firstName", "lastName", "username", "password", "email", "isActive", "scope"])
   ("Calls the next middleware with a BadRequestError if the request data is missing %p",
-  async (fieldName: string) => {
+  async (fieldName: keyof UserCreationAttributes) => {
     // Given
     delete request.body[fieldName];
 
@@ -193,7 +195,7 @@ describe("signUp", () => {
 
   it("Calls the next middleware with a BadRequestError if the user already exists", async () => {
     // Given
-    getUserMock.mockResolvedValue(user);
+    getUserMock.mockResolvedValue(user as UserStoredAttributes);
 
     // When
     await authController.signUp(request, response, next);
@@ -261,7 +263,7 @@ describe("refresh", () => {
 
   beforeEach(() => {
     request = mockRequest();
-    const locals = { user: { token_use: TokenUse.Refresh } };
+    const locals = { user: { token_use: TokenUse.Refresh, username: "USERNAME" } };
     response = mockResponse({ locals });
     next = mockNext();
     getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
@@ -312,20 +314,20 @@ describe("refresh", () => {
   it("Generates a new access token with the user's scopes as read from the database", async () => {
     // Given
     const scope: Scope[] = [Scope.ASSET_CREATE, Scope.ASSET_RETURN];
-    getUserMock.mockResolvedValue({ scope } as UserAttributes);
+    getUserMock.mockResolvedValue({ scope } as UserStoredAttributes);
     const generateAccessTokenSpy = jest.spyOn(AuthenticationService.prototype, "generateAccessToken");
 
     // When
     await authController.refresh(request, response, next);
 
     // Then
-    expect(generateAccessTokenSpy).toHaveBeenCalledWith(scope);
+    expect(generateAccessTokenSpy).toHaveBeenCalledWith(scope, "USERNAME");
     generateAccessTokenSpy.mockRestore();
   });
 
   it("Sets a 200 response with the access token in the body when successful", async () => {
     // Given
-    getUserMock.mockResolvedValue({ scope: [Scope.ASSET_CREATE, Scope.ASSET_RETURN] } as UserAttributes);
+    getUserMock.mockResolvedValue({ scope: [Scope.ASSET_CREATE, Scope.ASSET_RETURN] } as UserStoredAttributes);
 
     // When
     await authController.refresh(request, response, next);

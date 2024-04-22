@@ -17,8 +17,9 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare email: string;
   declare isActive: boolean;
   declare scope: Scope[];
-  declare createdAt: CreationOptional<Date>;
-  declare updatedAt: CreationOptional<Date>;
+  declare createdAt: CreationOptional<Date | null>;
+  declare updatedAt: CreationOptional<Date | null>;
+  declare mfaSecret: CreationOptional<string | null>;
 }
 
 export const init = () => {
@@ -63,6 +64,10 @@ export const init = () => {
       },
       updatedAt: {
         type: DataTypes.DATE,
+        allowNull: true,
+      },
+      mfaSecret: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
     },

@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { UserAttributes } from "../utils/types/attributeTypes";
 import UserService from "../services/UserService";
-import { validateUser, validateUserLogin } from "../utils/Validator";
+import { parseMFACode, validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
 import AuthService from "../services/AuthenticationService";
+import { getRedisClient } from "../database/config/redisClient";
+import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
+import { encodeBase32 } from "../utils/Encodings";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
@@ -31,10 +33,25 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.ForbiddenError();
       }
 
+      if (userDetails.mfaSecret !== null) {
+        if (data.mfaCode === undefined) {
+          Logger.error(`Missing mfa code for user '${data.username}' with MFA enabled.`);
+          throw ErrorController.ForbiddenError();
+        }
+        const isValidMfa: boolean = this.authService.mfaVerification(
+          userDetails.mfaSecret,
+          data.mfaCode,
+        );
+        if (!isValidMfa) {
+          Logger.error(`Invalid MFA code provided for user '${data.username}`);
+          throw ErrorController.ForbiddenError();
+        }
+      }
+
       Logger.info('User signed in successfully');
       res.status(200).json({
         idToken: this.authService.generateIdToken(userDetails),
-        accessToken: this.authService.generateAccessToken(userDetails.scope),
+        accessToken: this.authService.generateAccessToken(userDetails.scope, userDetails.username),
         refreshToken: this.authService.generateRefreshToken(userDetails.username),
       }).end();
     } catch (err) {
@@ -44,14 +61,14 @@ export default class AuthenticationContoller extends ErrorController {
 
   public async signUp(req: Request<{}>, res: Response, next: NextFunction) {
     try {
-      const data: UserAttributes = validateUser(req.body);
+      const data: UserCreationAttributes = validateUser(req.body);
 
       const ensureUniqueUser = await this.userService.getUser(data.username);
       if(ensureUniqueUser !== null) {
         throw ErrorController.BadRequestError("User Already Exists");
       }
 
-      const userData: UserAttributes = {
+      const userData: UserCreationAttributes = {
         ...data,
         password: await this.authService.hashPassword(data.password),
       };
@@ -83,9 +100,84 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.NotFoundError("User not found");
       }
       const { scope } = userAttributes;
-      const accessToken = this.authService.generateAccessToken(scope);
+      const accessToken = this.authService.generateAccessToken(scope, user.username);
       Logger.info(`Successfully refreshed token for: ${user.username}`);
       res.status(200).send(accessToken).end();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async initMfa(_: Request, res: Response, next: NextFunction) {
+    try {
+      const user: TokenPayload | undefined = res.locals.user;
+      if (user === undefined) {
+        Logger.error("Missing user locals within initMFa controller.");
+        throw ErrorController.InternalServerError();
+      }
+      if (user.token_use !== TokenUse.Access) {
+        throw ErrorController.ForbiddenError("Unexpected token type.");
+      }
+      const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
+      if (userDetails === null) {
+        Logger.error(`Unable to find user within database '${user.sub}'`);
+        throw ErrorController.ForbiddenError();
+      }
+      if (userDetails.mfaSecret !== null) {
+        Logger.error(`User ${user.sub} attempted to override MFA secret within initMfa.`);
+        throw ErrorController.ForbiddenError();
+      }
+
+      const redis = getRedisClient();
+      const secretB32: string = encodeBase32(this.authService.generateSecret(20));
+      await redis.set(user.sub, secretB32);
+      Logger.info(`Successfully generated MFA secret for user: ${user.sub}`);
+      res.status(200).send(secretB32).end();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async enableMfa(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user: TokenPayload | undefined = res.locals.user;
+      if (user === undefined) {
+        Logger.error("Missing user locals within enableMFa controller.");
+        throw ErrorController.InternalServerError();
+      }
+      if (user.token_use !== TokenUse.Access) {
+        throw ErrorController.ForbiddenError("Unexpected token type.");
+      }
+      const code = parseMFACode(req.body);
+
+      const redis = getRedisClient();
+      const secretB32 = await redis.get(user.sub);
+      if (secretB32 === null) {
+        Logger.error("Attempted to enable MFA for an account that has not initialised it.");
+        throw ErrorController.BadRequestError();
+      }
+      await redis.del(user.sub);
+      const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
+      if (userDetails === null) {
+        Logger.error(`Unable to find user within database '${user.sub}'`);
+        throw ErrorController.ForbiddenError();
+      }
+      if (userDetails.mfaSecret !== null) {
+        Logger.error(`User ${user.sub} attempted to override MFA secret within enableMfa.`);
+        throw ErrorController.ForbiddenError();
+      }
+      const isValidMfa: boolean = this.authService.mfaVerification(secretB32, code);
+      if (!isValidMfa) {
+        Logger.error(`User ${user.sub} provided incorrect token. Rejecting to not lock-out.`);
+        throw ErrorController.ForbiddenError();
+      }
+      const valid = await this.userService.setMfaSecret(userDetails.username, secretB32);
+      if (!valid) {
+        Logger.error(`Unexpected error when setting MFA secret for user '${user.sub}'`);
+        throw ErrorController.InternalServerError();
+      }
+      Logger.info(`Successfully enabled MFA for user: ${userDetails.username}`);
+      res.status(204).end();
     } catch (err) {
       next(err);
     }

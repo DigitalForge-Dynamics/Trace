@@ -5,6 +5,7 @@ const API_URL = "http://localhost:3000";
 export interface UserLoginData {
   username: string;
   password: string;
+  mfaCode: string;
 }
 
 export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
@@ -14,6 +15,7 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
     body: JSON.stringify({
       username: userData.username,
       password: userData.password,
+      ...(userData.mfaCode ? { mfaCode: userData.mfaCode } : {}),
     }),
   });
   if (res.status !== 200) {
@@ -71,4 +73,35 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
     accessToken,
     expiry: accessTokenPayload.exp,
   };
+};
+
+export const initMfa = async (authData: AuthData): Promise<string | null> => {
+  const res = await fetch(`${API_URL}/auth/totp/init`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${authData.accessToken}`,
+    },
+  });
+  if (res.status !== 200) {
+    return null;
+  }
+  const secret: string = await res.text();
+  return secret;
+};
+
+export const enableMfa = async (authData: AuthData, mfaCode: string): Promise<boolean> => {
+  const res = await fetch(`${API_URL}/auth/totp/enable`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${authData.accessToken}`,
+    },
+    body: JSON.stringify({
+      code: mfaCode,
+    }),
+  });
+  if (res.status !== 204) {
+    return false;
+  }
+  return true;
 };

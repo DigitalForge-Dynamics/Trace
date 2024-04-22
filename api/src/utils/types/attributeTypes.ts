@@ -1,5 +1,4 @@
-export interface AssetAttributes {
-  id?: number;
+export interface AssetCreationAttributes {
   assetTag: string;
   name: string;
   serialNumber?: string;
@@ -9,17 +8,7 @@ export interface AssetAttributes {
   updatedAt?: Date;
 }
 
-export interface LocationAttributes {
-  id?: number;
-  locationName: string;
-  geoLocation?: JSON;
-  primaryLocation: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface UserAttributes {
-  id?: number;
+export interface UserCreationAttributes {
   firstName: string;
   lastName: string;
   username: string;
@@ -30,6 +19,24 @@ export interface UserAttributes {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface LocationCreationAttributes {
+  locationName: string;
+  geoLocation?: JSON;
+  primaryLocation: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// Convert optional properties from `[K]?: T` or `[K]: T | undefined`, into `[K]: T | null`.
+type StoredAttributes<TCreation> = { id: number }
+& { [K in keyof TCreation]-?: undefined extends TCreation[K] ? Exclude<TCreation[K], undefined> | null : TCreation[K] };
+
+export interface AssetStoredAttributes extends StoredAttributes<AssetCreationAttributes> {}
+export interface UserStoredAttributes extends StoredAttributes<UserCreationAttributes> {
+  mfaSecret: string | null;
+}
+export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
 
 export const enum Scope {
   READ = "TRACE_READ",

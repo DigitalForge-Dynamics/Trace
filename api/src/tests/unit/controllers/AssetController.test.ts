@@ -7,7 +7,7 @@ import {
   mockResponse,
 } from "../../helpers/mockExpress";
 import ErrorController from "../../../controllers/ErrorController";
-import { testAsset, testPaginationAssets } from "../../helpers/testData";
+import { testCreationAsset, testPaginationAssets, testStoredAsset } from "../../helpers/testData";
 import AssetService from "../../../services/AssetService";
 import Asset from "../../../database/models/asset.model";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
@@ -16,13 +16,11 @@ import { PaginationResult } from "../../../utils/Paginator";
 
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");
-jest.mock(
-  "../../../utils/Logger.ts",
-  (): MockedLogger => ({
-    info: jest.fn(),
-    error: jest.fn(),
-  })
-);
+jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+}));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
@@ -180,14 +178,14 @@ describe("getAssetById", () => {
   it("Sets a 200 status with the asset data when the asset is able to be found", async () => {
     // Given
     request.params = { id: "3" };
-    findByIdMock.mockResolvedValue(testAsset as Asset);
+    findByIdMock.mockResolvedValue(testStoredAsset as Asset);
 
     // When
     await assetController.getAssetById(request, response, next);
 
     // Then
     expect(response.status).toHaveBeenCalledWith(200);
-    expect(response.send).toHaveBeenCalledWith(testAsset);
+    expect(response.send).toHaveBeenCalledWith(testStoredAsset);
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(findByIdMock).toHaveBeenCalledWith(3);
@@ -235,7 +233,7 @@ describe("createAsset", () => {
   it("Calls the next middleware with an InternalServerError when the asset is unable to be created", async () => {
     // Given
     createMock.mockResolvedValue(false);
-    request.body = JSON.parse(JSON.stringify(testAsset));
+    request.body = JSON.parse(JSON.stringify(testCreationAsset));
 
     // When
     await assetController.createAsset(request, response, next);
@@ -245,13 +243,13 @@ describe("createAsset", () => {
       ErrorController.InternalServerError("Unable to create new asset")
     );
     expectNonFinal(response);
-    expect(createMock).toHaveBeenCalledWith(testAsset);
+    expect(createMock).toHaveBeenCalledWith(testCreationAsset);
   });
 
   it("Sends a 204 response when the asset is successfully created", async () => {
     // Given
     createMock.mockResolvedValue(true);
-    request.body = JSON.parse(JSON.stringify(testAsset));
+    request.body = JSON.parse(JSON.stringify(testCreationAsset));
 
     // When
     await assetController.createAsset(request, response, next);
@@ -275,7 +273,7 @@ describe("updateAsset", () => {
 
   beforeEach(() => {
     request = mockRequest({ id: "2" });
-    request.body = JSON.parse(JSON.stringify(testAsset));
+    request.body = JSON.parse(JSON.stringify(testCreationAsset));
     response = mockResponse({});
     next = mockNext();
     findByIdMock = AssetService.prototype.findById as jest.MockedFunction<
@@ -370,7 +368,7 @@ describe("updateAsset", () => {
     );
     expectNonFinal(response);
     expect(findByIdMock).toHaveBeenCalledWith(3);
-    expect(updateMock).toHaveBeenCalledWith(3, testAsset);
+    expect(updateMock).toHaveBeenCalledWith(3, testCreationAsset);
   });
 
   it("Sets a 204 status when updating an asset is successful", async () => {
@@ -388,7 +386,7 @@ describe("updateAsset", () => {
     expect(response.end).toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     expect(findByIdMock).toHaveBeenCalledWith(4);
-    expect(updateMock).toHaveBeenCalledWith(4, testAsset);
+    expect(updateMock).toHaveBeenCalledWith(4, testCreationAsset);
   });
 });
 

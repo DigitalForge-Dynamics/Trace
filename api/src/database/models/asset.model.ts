@@ -14,11 +14,11 @@ class Asset extends Model<
   declare id: CreationOptional<number>;
   declare assetTag: string;
   declare name: string;
-  declare serialNumber: CreationOptional<string>;
-  declare modelNumber: CreationOptional<string>;
-  declare nextAuditDate: CreationOptional<Date>;
-  declare createdAt: CreationOptional<Date>;
-  declare updatedAt: CreationOptional<Date>;
+  declare serialNumber: CreationOptional<string | null>;
+  declare modelNumber: CreationOptional<string | null>;
+  declare nextAuditDate: CreationOptional<Date | null>;
+  declare createdAt: CreationOptional<Date | null>;
+  declare updatedAt: CreationOptional<Date | null>;
 }
 
 export const init = () => {

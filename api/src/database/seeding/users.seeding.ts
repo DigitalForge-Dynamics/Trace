@@ -1,11 +1,11 @@
-import { Scope, UserAttributes } from "../../utils/types/attributeTypes";
+import { Scope, UserCreationAttributes } from "../../utils/types/attributeTypes";
 import AuthenticationService from "../../services/AuthenticationService";
 import type { Migration } from "../config/databaseClient";
 import User, { init } from "../models/user.model";
 
 export const up: Migration = async () => {
   const authService = new AuthenticationService();
-  const userAdmin: UserAttributes = {
+  const userAdmin: UserCreationAttributes = {
     firstName: "TEST_ADMIN",
     lastName: "TEST_ADMIN",
     username: "TEST_ADMIN",
@@ -14,7 +14,7 @@ export const up: Migration = async () => {
     isActive: true,
     scope: [Scope.USER_CREATE],
   };
-  const user: UserAttributes = {
+  const user: UserCreationAttributes = {
     firstName: "TEST_USER",
     lastName: "TEST_USER",
     username: "TEST_USER",

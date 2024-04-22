@@ -27,4 +27,14 @@ router.route("/register").post(
   (req, res, next) => authController.signUp(req, res, next),
 );
 
+router.route("/totp/init").post(
+  authenticateRequest,
+  (req, res, next) => authController.initMfa(req, res, next),
+);
+
+router.route("/totp/enable").post(
+  authenticateRequest,
+  (req, res, next) => authController.enableMfa(req, res, next),
+);
+
 export default router;
