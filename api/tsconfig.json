@@ -24,6 +24,7 @@
     "useUnknownInCatchVariables": true,
 
     // Modules
+    "module": "commonjs",
     "resolveJsonModule": true,
 
     // Emit
@@ -34,6 +35,9 @@
 
     // Interop Constraints
     "esModuleInterop": true,
+
+    // Language and Environment
+    "target": "es2016",
 
     // Completeness
     "skipLibCheck": true
