@@ -13,7 +13,7 @@ export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
   private readonly authService = new AuthService();
 
-  public async signIn(req: Request<{}>, res: Response, next: NextFunction) {
+  public async signIn(req: Request, res: Response, next: NextFunction) {
     try {
       const data: UserLogin = validateUserLogin(req.body);
 
@@ -59,7 +59,7 @@ export default class AuthenticationContoller extends ErrorController {
     }
   }
 
-  public async signUp(req: Request<{}>, res: Response, next: NextFunction) {
+  public async signUp(req: Request, res: Response, next: NextFunction) {
     try {
       const data: UserCreationAttributes = validateUser(req.body);
 

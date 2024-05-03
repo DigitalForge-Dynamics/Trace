@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 export const mockRequest = <T extends Record<string, any>>(params?: T): Request<T> => {
   if (params === undefined) {
-    return {} as any;
+    return {} as Request<T>;
   }
   return {
     params

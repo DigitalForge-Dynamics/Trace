@@ -6,7 +6,7 @@ import SystemService from "../services/SystemService";
 export default class SystemController extends ErrorController {
   private readonly systemService = new SystemService();
 
-  public healthCheck(_: Request<{}>, res: Response, next: NextFunction) {
+  public healthCheck(_: Request, res: Response, next: NextFunction) {
     try {
       const applicationHealth = this.systemService.healthCheck();
 
