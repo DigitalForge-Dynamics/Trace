@@ -21,6 +21,10 @@ jobs:
       run: npm run test:unit
       working-directory: api
 
+    - name: Linting
+      run: npm run lint
+      working-directory: api
+
   Web-Unit:
     runs-on: ubuntu-latest
     steps:
