@@ -9,7 +9,7 @@ export default class AssetController extends ErrorController {
   private readonly assetService = new AssetService();
 
   public async getAllAssets(
-    req: Request<{}>,
+    req: Request,
     res: Response,
     next: NextFunction
   ) {
@@ -55,7 +55,7 @@ export default class AssetController extends ErrorController {
   }
 
   public async createAsset(
-    req: Request<{}>,
+    req: Request,
     res: Response,
     next: NextFunction
   ) {

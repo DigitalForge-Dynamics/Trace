@@ -9,7 +9,7 @@ export default class LocationController extends ErrorController {
   private readonly locationService = new LocationService();
 
   public async getAllLocations(
-    _: Request<{}>,
+    _: Request,
     res: Response,
     next: NextFunction
   ) {
@@ -48,7 +48,7 @@ export default class LocationController extends ErrorController {
   }
 
   public async createLocation(
-    req: Request<{}>,
+    req: Request,
     res: Response,
     next: NextFunction
   ) {

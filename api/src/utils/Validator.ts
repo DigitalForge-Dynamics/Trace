@@ -117,7 +117,8 @@ const reviveAsset = (data: JsonNetworkType<AssetCreationAttributes>): AssetCreat
     if (dates.includes(key) && typeof value === "string") return new Date(value);
     return value;
   };
-  return JSON.parse(JSON.stringify(data), reviver);
+  const asset: AssetCreationAttributes = JSON.parse(JSON.stringify(data), reviver);
+  return asset;
 };
 
 const reviveUser = (data: JsonNetworkType<UserCreationAttributes>): UserCreationAttributes => {
@@ -126,7 +127,8 @@ const reviveUser = (data: JsonNetworkType<UserCreationAttributes>): UserCreation
     if (dates.includes(key) && typeof value === "string") return new Date(value);
     return value;
   };
-  return JSON.parse(JSON.stringify(data), reviver);
+  const user: UserCreationAttributes = JSON.parse(JSON.stringify(data), reviver);
+  return user;
 };
 
 const reviveLocation = (data: JsonNetworkType<LocationCreationAttributes>): LocationCreationAttributes => {
@@ -135,5 +137,6 @@ const reviveLocation = (data: JsonNetworkType<LocationCreationAttributes>): Loca
     if (dates.includes(key) && typeof value === "string") return new Date(value);
     return value;
   };
-  return JSON.parse(JSON.stringify(data), reviver);
+  const location: LocationCreationAttributes = JSON.parse(JSON.stringify(data), reviver);
+  return location;
 };
