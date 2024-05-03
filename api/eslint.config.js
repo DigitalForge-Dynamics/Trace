@@ -28,7 +28,7 @@ const config = tseslint.config(
     },
   },
   {
-    ignores: ["dist", "coverage", "jest.config.js", "eslint.config.js", "src/**/*.d.ts"],
+    ignores: ["dist", "coverage", "jest.config.ts", "eslint.config.js", "src/**/*.d.ts"],
   }
 );
 
