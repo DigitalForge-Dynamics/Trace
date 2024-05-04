@@ -9,7 +9,7 @@ export const up: Migration = async () => {
     firstName: name,
     lastName: name,
     username: name,
-    password: await authService.hashPassword(name),
+    password: await authService.hashPassword(`${name}_PASSWORD`),
     email: "",
     isActive: true,
     scope: scopes,
