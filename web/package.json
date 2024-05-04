@@ -6,7 +6,8 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "test": "vitest src",
+    "test": "vitest run src",
+    "test:watch": "vitest src",
     "test:coverage": "vitest run src --coverage",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",

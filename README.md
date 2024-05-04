@@ -36,3 +36,8 @@ e.g.
 EXPRESS_SECRET_KEY="trace" npm start
 EXPRESS_SECRET_KEY="trace" npm run test:integration
 ```
+
+## Git Hooks
+```sh
+git config core.hooksPath hooks
+```
