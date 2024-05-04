@@ -5,7 +5,7 @@ import User, { init } from "../models/user.model";
 
 export const up: Migration = async () => {
   const authService = new AuthenticationService();
-  const createUser = async (name: string, scopes: Scope[]): Promise<UserCreationAttributes> => ({
+  const generateUser = async (name: string, scopes: Scope[]): Promise<UserCreationAttributes> => ({
     firstName: name,
     lastName: name,
     username: name,
@@ -14,12 +14,16 @@ export const up: Migration = async () => {
     isActive: true,
     scope: scopes,
   });
+  const createUser = async (name: string, scopes: Scope[]): Promise<void> => {
+    const user = await generateUser(name, scopes);
+    await User.create(user);
+  };
   init();
   await Promise.all([
-    createUser("TEST_ADMIN", [Scope.USER_CREATE]).then((user) => User.create(user)),
-    createUser("TEST_USER", [Scope.READ]).then((user) => User.create(user)),
-    createUser("TEST_USER_CREATE", [Scope.READ, Scope.ASSET_CREATE]).then((user) => User.create(user)),
-    createUser("TEST_USER_NONE", []).then((user) => User.create(user)),
+    createUser("TEST_ADMIN", [Scope.USER_CREATE]),
+    createUser("TEST_USER", [Scope.READ]),
+    createUser("TEST_USER_CREATE", [Scope.READ, Scope.ASSET_CREATE]),
+    createUser("TEST_USER_NONE", []),
   ]);
 };
 

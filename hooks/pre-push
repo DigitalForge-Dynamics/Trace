@@ -6,5 +6,5 @@ npm run test --prefix web
 npm run lint --prefix api
 npm run lint --prefix web
 
-EXPRESS_SECRET_KEY="trace" npm run test:integration --prefix api
+npm run test:integration --prefix api
 npm run e2e --prefix web
