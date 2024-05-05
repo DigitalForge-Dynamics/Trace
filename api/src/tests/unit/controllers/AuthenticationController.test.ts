@@ -102,7 +102,7 @@ describe("signIn", () => {
   it("Sets a 200 status with a body of tokens when the user authenticates successfully", async () => {
     // Given
     const user: UserStoredAttributes = {
-	  username: "USERNAME",
+      username: "USERNAME",
       password: await authService.hashPassword("PASSWORD"),
       mfaSecret: null,
     } as UserStoredAttributes;
@@ -112,7 +112,7 @@ describe("signIn", () => {
     await authController.signIn(request, response, next);
 
     // Then
-	expect(next).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.send).not.toHaveBeenCalled();
     expect(response.json).toHaveBeenCalledWith({

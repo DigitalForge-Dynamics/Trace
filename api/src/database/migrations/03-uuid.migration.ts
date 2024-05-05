@@ -11,9 +11,9 @@ export const up: Migration = async ({ context: queryInterface }) => {
   const promises: Promise<unknown>[] = [];
   for (const user of users) {
     const { username } = user;
-	const uuid = authService.generateUuid(username);
-	const promise = user.update({ uuid });
-	promises.push(promise);
+    const uuid = authService.generateUuid(username);
+    const promise = user.update({ uuid });
+    promises.push(promise);
   }
   await Promise.all(promises);
 };

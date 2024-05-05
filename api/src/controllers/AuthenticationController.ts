@@ -6,9 +6,8 @@ import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
 import AuthService from "../services/AuthenticationService";
 import { getRedisClient } from "../database/config/redisClient";
-import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
+import { UserCreationAttributes, UserStoredAttributes, WithUuid } from "../utils/types/attributeTypes";
 import { encodeBase32 } from "../utils/Encodings";
-import { UUID } from "crypto";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
@@ -23,7 +22,6 @@ export default class AuthenticationContoller extends ErrorController {
         Logger.error(`User does not exist: '${data.username}'`);
         throw ErrorController.ForbiddenError();
       }
-
 
       const isValid = await this.authService.passwordVerification(
         userDetails.password,
@@ -51,11 +49,10 @@ export default class AuthenticationContoller extends ErrorController {
       }
 
       Logger.info('User signed in successfully');
-	  this.authService.generateIdToken(userDetails);
       res.status(200).json({
-        idToken: "", //this.authService.generateIdToken(userDetails),
-        accessToken: "", //this.authService.generateAccessToken(userDetails.scope, userDetails.username),
-        refreshToken: "", //this.authService.generateRefreshToken(userDetails.username),
+        idToken: this.authService.generateIdToken(userDetails),
+        accessToken: this.authService.generateAccessToken(userDetails.scope, userDetails.username),
+        refreshToken: this.authService.generateRefreshToken(userDetails.username),
       }).end();
     } catch (err) {
       next(err);
@@ -71,7 +68,7 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.BadRequestError("User Already Exists");
       }
 
-      const userData: UserCreationAttributes & { uuid: UUID } = {
+      const userData: WithUuid<UserCreationAttributes> = {
         ...data,
         password: await this.authService.hashPassword(data.password),
         uuid: this.authService.generateUuid(data.username),

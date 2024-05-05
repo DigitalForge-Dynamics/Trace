@@ -1,6 +1,6 @@
 import { UUID } from "crypto";
 import User, { init } from "../database/models/user.model";
-import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
+import { UserCreationAttributes, UserStoredAttributes, WithUuid } from "../utils/types/attributeTypes";
 import { BaseService } from "./BaseService";
 import { IService } from "./IService";
 
@@ -35,7 +35,7 @@ export default class UserService extends BaseService<User> implements IUserServi
     return null;
   }
 
-  public async createUser(data: UserCreationAttributes & { uuid: UUID }): Promise<boolean> {
+  public async createUser(data: WithUuid<UserCreationAttributes>): Promise<boolean> {
     const isCreated = await User.create(data);
 
     if (isCreated.id <= 0) {
