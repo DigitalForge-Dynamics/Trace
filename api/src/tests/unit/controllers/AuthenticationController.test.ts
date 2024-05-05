@@ -102,6 +102,7 @@ describe("signIn", () => {
   it("Sets a 200 status with a body of tokens when the user authenticates successfully", async () => {
     // Given
     const user: UserStoredAttributes = {
+	  username: "USERNAME",
       password: await authService.hashPassword("PASSWORD"),
       mfaSecret: null,
     } as UserStoredAttributes;
@@ -111,6 +112,7 @@ describe("signIn", () => {
     await authController.signIn(request, response, next);
 
     // Then
+	expect(next).not.toHaveBeenCalled();
     expect(response.status).toHaveBeenCalledWith(200);
     expect(response.send).not.toHaveBeenCalled();
     expect(response.json).toHaveBeenCalledWith({
@@ -220,7 +222,25 @@ describe("signUp", () => {
     expect(request.body.password).toBe("PASSWORD");
     expect(createUserMock).toHaveBeenCalledWith({
       ...request.body,
-      password: expect.stringMatching(/^\$argon2id\$v=19\$m=65536\,t=3\,p=[A-Za-z0-9\$\+\/]{68}$/)
+      password: expect.stringMatching(/^\$argon2id\$v=19\$m=65536\,t=3\,p=[A-Za-z0-9\$\+\/]{68}$/),
+      uuid: expect.any(String),
+    });
+  });
+
+  it("Creates the user, adding the UUID from the username", async () => {
+    // Given
+    getUserMock.mockResolvedValue(null);
+    createUserMock.mockResolvedValue(true);
+
+    // When
+    await authController.signUp(request, response, next);
+
+    // Then
+    expect(next).not.toHaveBeenCalled();
+    expect(createUserMock).toHaveBeenCalledWith({
+      ...request.body,
+      password: expect.any(String),
+      uuid: expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/),
     });
   });
 

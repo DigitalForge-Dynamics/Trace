@@ -2,10 +2,11 @@ import { Scope, UserCreationAttributes } from "../../utils/types/attributeTypes"
 import AuthenticationService from "../../services/AuthenticationService";
 import type { Migration } from "../config/databaseClient";
 import User, { init } from "../models/user.model";
+import { UUID } from "crypto";
 
 export const up: Migration = async () => {
   const authService = new AuthenticationService();
-  const userAdmin: UserCreationAttributes = {
+  const userAdmin: UserCreationAttributes & { uuid: UUID } = {
     firstName: "TEST_ADMIN",
     lastName: "TEST_ADMIN",
     username: "TEST_ADMIN",
@@ -13,8 +14,9 @@ export const up: Migration = async () => {
     email: "email",
     isActive: true,
     scope: [Scope.USER_CREATE],
+    uuid: authService.generateUuid("TEST_ADMIN"),
   };
-  const user: UserCreationAttributes = {
+  const user: UserCreationAttributes & { uuid: UUID } = {
     firstName: "TEST_USER",
     lastName: "TEST_USER",
     username: "TEST_USER",
@@ -22,6 +24,7 @@ export const up: Migration = async () => {
     email: "",
     isActive: true,
     scope: [Scope.READ],
+    uuid: authService.generateUuid("TEST_USER"),
   };
   init();
   await Promise.all([

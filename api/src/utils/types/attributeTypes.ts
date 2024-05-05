@@ -1,3 +1,5 @@
+import { UUID } from "crypto";
+
 export interface AssetCreationAttributes {
   assetTag: string;
   name: string;
@@ -35,6 +37,7 @@ type StoredAttributes<TCreation> = { id: number }
 export interface AssetStoredAttributes extends StoredAttributes<AssetCreationAttributes> {}
 export interface UserStoredAttributes extends StoredAttributes<UserCreationAttributes> {
   mfaSecret: string | null;
+  uuid: UUID;
 }
 export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
 

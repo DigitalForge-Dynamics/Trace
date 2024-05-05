@@ -8,6 +8,7 @@ import AuthService from "../services/AuthenticationService";
 import { getRedisClient } from "../database/config/redisClient";
 import { UserCreationAttributes, UserStoredAttributes } from "../utils/types/attributeTypes";
 import { encodeBase32 } from "../utils/Encodings";
+import { UUID } from "crypto";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
@@ -22,6 +23,7 @@ export default class AuthenticationContoller extends ErrorController {
         Logger.error(`User does not exist: '${data.username}'`);
         throw ErrorController.ForbiddenError();
       }
+
 
       const isValid = await this.authService.passwordVerification(
         userDetails.password,
@@ -49,10 +51,11 @@ export default class AuthenticationContoller extends ErrorController {
       }
 
       Logger.info('User signed in successfully');
+	  this.authService.generateIdToken(userDetails);
       res.status(200).json({
-        idToken: this.authService.generateIdToken(userDetails),
-        accessToken: this.authService.generateAccessToken(userDetails.scope, userDetails.username),
-        refreshToken: this.authService.generateRefreshToken(userDetails.username),
+        idToken: "", //this.authService.generateIdToken(userDetails),
+        accessToken: "", //this.authService.generateAccessToken(userDetails.scope, userDetails.username),
+        refreshToken: "", //this.authService.generateRefreshToken(userDetails.username),
       }).end();
     } catch (err) {
       next(err);
@@ -68,9 +71,10 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.BadRequestError("User Already Exists");
       }
 
-      const userData: UserCreationAttributes = {
+      const userData: UserCreationAttributes & { uuid: UUID } = {
         ...data,
         password: await this.authService.hashPassword(data.password),
+        uuid: this.authService.generateUuid(data.username),
       };
 
       const user = await this.userService.createUser(userData);
@@ -118,20 +122,20 @@ export default class AuthenticationContoller extends ErrorController {
       if (user.token_use !== TokenUse.Access) {
         throw ErrorController.ForbiddenError("Unexpected token type.");
       }
-      const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
+      const userDetails: UserStoredAttributes | null = await this.userService.getUserByUuid(user.sub);
       if (userDetails === null) {
-        Logger.error(`Unable to find user within database '${user.sub}'`);
+        Logger.error(`Unable to find user within database with Uuid '${user.sub}'`);
         throw ErrorController.ForbiddenError();
       }
       if (userDetails.mfaSecret !== null) {
-        Logger.error(`User ${user.sub} attempted to override MFA secret within initMfa.`);
+        Logger.error(`User with Uuid ${userDetails.uuid} attempted to override MFA secret within initMfa.`);
         throw ErrorController.ForbiddenError();
       }
 
       const redis = getRedisClient();
       const secretB32: string = encodeBase32(this.authService.generateSecret(20));
-      await redis.set(user.sub, secretB32);
-      Logger.info(`Successfully generated MFA secret for user: ${user.sub}`);
+      await redis.set(userDetails.uuid, secretB32);
+      Logger.info(`Successfully generated MFA secret for user with Uuid: ${user.sub}`);
       res.status(200).send(secretB32).end();
     } catch (err) {
       next(err);
@@ -157,23 +161,23 @@ export default class AuthenticationContoller extends ErrorController {
         throw ErrorController.BadRequestError();
       }
       await redis.del(user.sub);
-      const userDetails: UserStoredAttributes | null = await this.userService.getUser(user.sub);
+      const userDetails: UserStoredAttributes | null = await this.userService.getUserByUuid(user.sub);
       if (userDetails === null) {
-        Logger.error(`Unable to find user within database '${user.sub}'`);
+        Logger.error(`Unable to find user within database with Uuid '${user.sub}'`);
         throw ErrorController.ForbiddenError();
       }
       if (userDetails.mfaSecret !== null) {
-        Logger.error(`User ${user.sub} attempted to override MFA secret within enableMfa.`);
+        Logger.error(`User ${userDetails.username} attempted to override MFA secret within enableMfa.`);
         throw ErrorController.ForbiddenError();
       }
       const isValidMfa: boolean = this.authService.mfaVerification(secretB32, code);
       if (!isValidMfa) {
-        Logger.error(`User ${user.sub} provided incorrect token. Rejecting to not lock-out.`);
+        Logger.error(`User ${userDetails.username} provided incorrect token. Rejecting to not lock-out.`);
         throw ErrorController.ForbiddenError();
       }
       const valid = await this.userService.setMfaSecret(userDetails.username, secretB32);
       if (!valid) {
-        Logger.error(`Unexpected error when setting MFA secret for user '${user.sub}'`);
+        Logger.error(`Unexpected error when setting MFA secret for user '${userDetails.username}'`);
         throw ErrorController.InternalServerError();
       }
       Logger.info(`Successfully enabled MFA for user: ${userDetails.username}`);
