@@ -1,8 +1,9 @@
+import type { UUID } from "crypto";
 import { Scope } from "./attributeTypes";
 
 export type GenericClaimStructure = {
   iss: string;
-  sub: string;
+  sub: UUID;
   aud: string;
   exp: number;
   iat: number;

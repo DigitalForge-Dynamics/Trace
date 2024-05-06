@@ -1,6 +1,6 @@
 import { Scope, UserStoredAttributes } from "../utils/types/attributeTypes";
 import * as argon2 from "argon2";
-import crypto from "crypto";
+import crypto, { UUID } from "node:crypto";
 import jwt from "jsonwebtoken";
 import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
 import { decodeBase32 } from "../utils/Encodings";
@@ -31,7 +31,7 @@ class AuthService {
       { algorithm: "HS512" }
     );
   }
-  
+
   public generateRefreshToken(username: string): string {
     const tokenClaims = this.generateClaims(TokenUse.Refresh, username);
     return jwt.sign(
@@ -80,7 +80,7 @@ class AuthService {
     }[token_use];
     return {
       iss: "urn:trace-api",
-      sub: username,
+      sub: this.generateUuid(username),
       aud: "urn:trace-consumer",
       exp: timestamp + duration_mins * 60,
       iat: timestamp,
@@ -114,6 +114,21 @@ class AuthService {
       | (digest.readUInt8(offset+3) << 0))
       % 1000000;
     return resultNumber.toString().padStart(6, '0');
+  }
+
+  public generateUuid(seed: string): UUID {
+    const hash = crypto
+    .createHash("sha256")
+    .update(seed)
+    .digest("hex");
+    const uuidParts = [
+        hash.substring(0, 8),
+        hash.substring(8, 12),
+        '4'+hash.substring(12, 15), // Version 4
+        '8'+hash.substring(15, 18), // Variant 8 (RFC 4122)
+        hash.substring(18, 30),
+    ];
+    return `${uuidParts[0]}-${uuidParts[1]}-${uuidParts[2]}-${uuidParts[3]}-${uuidParts[4]}`;
   }
 }
 

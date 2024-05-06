@@ -1,11 +1,12 @@
-import { Scope, UserCreationAttributes } from "../../utils/types/attributeTypes";
+import { Scope, UserCreationAttributes, WithUuid } from "../../utils/types/attributeTypes";
 import AuthenticationService from "../../services/AuthenticationService";
 import type { Migration } from "../config/databaseClient";
 import User, { init } from "../models/user.model";
+import Logger from "../../utils/Logger";
 
 export const up: Migration = async () => {
   const authService = new AuthenticationService();
-  const generateUser = async (name: string, scopes: Scope[]): Promise<UserCreationAttributes> => ({
+  const generateUser = async (name: string, scopes: Scope[]): Promise<WithUuid<UserCreationAttributes>> => ({
     firstName: name,
     lastName: name,
     username: name,
@@ -13,6 +14,7 @@ export const up: Migration = async () => {
     email: "",
     isActive: true,
     scope: scopes,
+    uuid: authService.generateUuid(name),
   });
   const createUser = async (name: string, scopes: Scope[]): Promise<void> => {
     const user = await generateUser(name, scopes);
@@ -25,6 +27,7 @@ export const up: Migration = async () => {
     createUser("TEST_USER_CREATE", [Scope.READ, Scope.ASSET_CREATE]),
     createUser("TEST_USER_NONE", []),
   ]);
+  Logger.info("Users: Seeded Up");
 };
 
 export const down: Migration = async () => {
@@ -35,4 +38,5 @@ export const down: Migration = async () => {
     User.destroy({ where: { username: "TEST_USER_CREATE" } }),
     User.destroy({ where: { username: "TEST_USER_NONE" } }),
   ]);
+  Logger.info("Users: Seeded Down");
 };

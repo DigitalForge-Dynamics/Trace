@@ -7,6 +7,7 @@ import {
 } from "sequelize";
 import { getSequelizeConnection } from "../config/databaseClient";
 import { Scope } from "../../utils/types/attributeTypes";
+import { UUID } from "crypto";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
@@ -20,6 +21,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare createdAt: CreationOptional<Date | null>;
   declare updatedAt: CreationOptional<Date | null>;
   declare mfaSecret: CreationOptional<string | null>;
+  declare uuid: UUID;
 }
 
 export const init = () => {
@@ -69,6 +71,10 @@ export const init = () => {
       mfaSecret: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      uuid: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
     },
     {

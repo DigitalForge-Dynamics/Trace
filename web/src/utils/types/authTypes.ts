@@ -1,3 +1,5 @@
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
+
 export enum AuthOption {
   LOGIN = "LOGIN",
   LOGOUT = "LOGOUT",
@@ -35,7 +37,7 @@ export type Tokens = {
 
 export type GenericClaimStructure = {
   iss: string;
-  sub: string;
+  sub: UUID;
   aud: string;
   exp: number;
   iat: number;
