@@ -1,3 +1,4 @@
+import Logger from "../../utils/Logger";
 import type { Migration } from "../config/databaseClient";
 import { DataTypes } from "sequelize";
 
@@ -130,6 +131,7 @@ export const up: Migration = async ({ context: queryInterface }) => {
   await Promise.all([
     assets, locations, settings, users,
   ]);
+  Logger.info("Initial: Up");
 };
 
 export const down: Migration = async ({ context: queryInterface }) => {
@@ -139,4 +141,5 @@ export const down: Migration = async ({ context: queryInterface }) => {
     queryInterface.dropTable("settings"),
     queryInterface.dropTable("users"),
   ]);
+  Logger.info("Initial: Down");
 };

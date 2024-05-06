@@ -12,7 +12,7 @@ import systemRouter from "./routes/SystemRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
-import { isDevelopment } from "./utils";
+import { isSeedDatabase } from "./utils";
 
 const app: Express = express();
 const port = process.env.API_PORT;
@@ -48,10 +48,6 @@ const server = app.listen(port, async () => {
 
 process.on("SIGINT", async () => {
   console.log("Shutting down server...");
-  if (isDevelopment()) {
-    const seeder = getSeeder();
-    await seeder.down();
-  }
   server.close(() => {
     console.log("Server has shutdown");
   });
