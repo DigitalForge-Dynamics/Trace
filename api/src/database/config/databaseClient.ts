@@ -3,7 +3,7 @@ import { QueryInterface, Sequelize } from "sequelize";
 import { SequelizeStorage, Umzug } from "umzug";
 import ErrorController from "../../controllers/ErrorController";
 import Logger from "../../utils/Logger";
-import { isSeedDatabase } from "../../utils";
+import { getDatabaseHost, getDatabaseName, getDatabasePassword, getDatabaseUsername, isSeedDatabase } from "../../utils/Environment";
 
 interface DatabaseClient {
   sequelize: Sequelize;
@@ -18,10 +18,10 @@ let seeder: Umzug<QueryInterface> | undefined;
 
 const getConnectionUrl = (): string => {
   if (connectionUrl !== undefined) return connectionUrl;
-  const database = process.env.API_DATABASE_NAME;
-  const username = process.env.API_DATABASE_USERNAME;
-  const password = process.env.API_DATABASE_PASSWORD;
-  const host = process.env.API_DATABASE_HOST;
+  const database = getDatabaseName();
+  const username = getDatabaseUsername();
+  const password = getDatabasePassword();
+  const host = getDatabaseHost();
   if (!database || !username || !password || !host) {
     Logger.error("Unable to load database credentials");
     throw ErrorController.InternalServerError();

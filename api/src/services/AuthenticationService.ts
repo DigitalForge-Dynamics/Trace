@@ -4,6 +4,7 @@ import crypto, { UUID } from "node:crypto";
 import jwt from "jsonwebtoken";
 import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
 import { decodeBase32 } from "../utils/Encodings";
+import { getSigningKey, setSigningKey } from "../utils/Environment";
 
 class AuthService {
   public generateIdToken(user: UserStoredAttributes): string {
@@ -61,11 +62,11 @@ class AuthService {
   }
 
   public getJWTSecretKey(): string {
-    let signingKey = process.env.EXPRESS_SECRET_KEY;
+    let signingKey = getSigningKey();
 
     if (!signingKey) {
       signingKey = this.generateSecret(256).toString("base64");
-      process.env.EXPRESS_SECRET_KEY = signingKey;
+      setSigningKey(signingKey);
       return signingKey;
     }
     return signingKey;

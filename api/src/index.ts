@@ -12,9 +12,10 @@ import systemRouter from "./routes/SystemRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
+import { getApiPort } from "./utils/Environment";
 
 const app: Express = express();
-const port = process.env.API_PORT;
+const port = getApiPort();
 
 app.use(cors());
 app.use(express.json());
