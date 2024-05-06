@@ -5,28 +5,25 @@ import User, { init } from "../models/user.model";
 
 export const up: Migration = async () => {
   const authService = new AuthenticationService();
-  const userAdmin: UserCreationAttributes = {
-    firstName: "TEST_ADMIN",
-    lastName: "TEST_ADMIN",
-    username: "TEST_ADMIN",
-    password: await authService.hashPassword("TEST_ADMIN_PASSWORD"),
-    email: "email",
-    isActive: true,
-    scope: [Scope.USER_CREATE],
-  };
-  const user: UserCreationAttributes = {
-    firstName: "TEST_USER",
-    lastName: "TEST_USER",
-    username: "TEST_USER",
-    password: await authService.hashPassword("TEST_USER_PASSWORD"),
+  const generateUser = async (name: string, scopes: Scope[]): Promise<UserCreationAttributes> => ({
+    firstName: name,
+    lastName: name,
+    username: name,
+    password: await authService.hashPassword(`${name}_PASSWORD`),
     email: "",
     isActive: true,
-    scope: [Scope.READ],
+    scope: scopes,
+  });
+  const createUser = async (name: string, scopes: Scope[]): Promise<void> => {
+    const user = await generateUser(name, scopes);
+    await User.create(user);
   };
   init();
   await Promise.all([
-    User.create(userAdmin),
-    User.create(user),
+    createUser("TEST_ADMIN", [Scope.USER_CREATE]),
+    createUser("TEST_USER", [Scope.READ]),
+    createUser("TEST_USER_CREATE", [Scope.READ, Scope.ASSET_CREATE]),
+    createUser("TEST_USER_NONE", []),
   ]);
 };
 
@@ -35,5 +32,7 @@ export const down: Migration = async () => {
   await Promise.all([
     User.destroy({ where: { username: "TEST_ADMIN" } }),
     User.destroy({ where: { username: "TEST_USER" } }),
+    User.destroy({ where: { username: "TEST_USER_CREATE" } }),
+    User.destroy({ where: { username: "TEST_USER_NONE" } }),
   ]);
 };

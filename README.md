@@ -29,10 +29,13 @@ API_SEED_DATABASE="true" # Only to be set if in a trusted environment. Has secur
 ```
 
 ## API Integration Tests
-The integration tests require to be using the same token signing key as the API is using to validate.
-This can be achieved by setting the environment variable ```EXPRESS_SECRET_KEY``` to the same non-falsy value on both.
-e.g.
 ```sh
-EXPRESS_SECRET_KEY="trace" npm start
-EXPRESS_SECRET_KEY="trace" npm run test:integration
+API_SEED_DATABASE=true npm start
+npm run test:integration
+```
+
+## Git Hooks
+In order to configure the running of existing `pre-commit` and `pre-push` hooks, run within the Git Repository
+```sh
+git config core.hooksPath hooks
 ```

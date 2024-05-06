@@ -84,6 +84,7 @@ export const startup = async () => {
     Logger.warn("Database seeding is enabled. This results in public admin credentials.");
     Logger.info("Seeding database");
     const seeder = getSeeder();
+    await seeder.down();
     await seeder.up();
     Logger.info("Seeded database");
   }

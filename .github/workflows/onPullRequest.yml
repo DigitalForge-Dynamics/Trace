@@ -85,7 +85,6 @@ jobs:
         run: npm run start & sleep 10
         working-directory: api
         env:
-          EXPRESS_SECRET_KEY: pipeline
           API_PORT: 7071
           API_DATABASE_NAME: pipeline
           API_DATABASE_USERNAME: pipeline
@@ -99,7 +98,6 @@ jobs:
         run: npm run test:integration
         working-directory: api
         env:
-          EXPRESS_SECRET_KEY: pipeline
           API_PORT: 7071
 
   Web-E2E:
@@ -150,7 +148,6 @@ jobs:
         run: npm run start & sleep 10
         working-directory: api
         env:
-          EXPRESS_SECRET_KEY: pipeline
           API_PORT: 3000
           API_DATABASE_NAME: pipeline
           API_DATABASE_USERNAME: pipeline
