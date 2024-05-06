@@ -1,5 +1,4 @@
-import AuthService from "../../services/AuthenticationService";
-import { Scope } from "../../utils/types/attributeTypes";
+import { signIn } from "../helpers/accounts";
 import { testCreationAsset } from "../helpers/testData";
 const { API_PORT } = process.env;
 
@@ -11,15 +10,10 @@ const headers = {
 };
 
 describe("POST /assets", () => {
-  let authService: AuthService;
-
-  beforeEach(() => {
-    authService = new AuthService();
-  });
-
   it('It creates an Asset', async () => {
     // Given
-    headers.authorization = `Bearer ${authService.generateAccessToken(["TRACE_READ" as Scope, "TRACE_ASSET_CREATE" as Scope], "TEST_USER")}`;
+    const { accessToken } = await signIn("TEST_USER_CREATE", "TEST_USER_CREATE_PASSWORD");
+    headers.authorization = `Bearer ${accessToken}`;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {
@@ -53,7 +47,8 @@ describe("POST /assets", () => {
 
   it('Sets a 403 status when the user is unauthorised', async () => {
     // Given
-    headers.authorization = `Bearer ${authService.generateAccessToken([], "TEST_USER")}`;
+    const { accessToken } = await signIn("TEST_USER_NONE", "TEST_USER_NONE_PASSWORD");
+    headers.authorization = `Bearer ${accessToken}`;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {
