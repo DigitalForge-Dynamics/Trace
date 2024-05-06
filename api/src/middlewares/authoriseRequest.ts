@@ -3,7 +3,7 @@ import { Scope } from "../utils/types/attributeTypes";
 import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse } from "../utils/types/authenticationTypes";
 
-export const authoriseRequest = async (
+export const authoriseRequest = (
   _: Request,
   res: Response,
   next: NextFunction

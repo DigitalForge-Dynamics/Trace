@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export const mockRequest = <T extends Record<string, any>>(params?: T): Request<T> => {
+export const mockRequest = <T extends Record<string, unknown>>(params?: T): Request<T> => {
   if (params === undefined) {
     return {} as Request<T>;
   }
@@ -10,7 +10,7 @@ export const mockRequest = <T extends Record<string, any>>(params?: T): Request<
 };
 
 export interface MockResponseParams {
-  readonly locals?: Record<string, any>;
+  readonly locals?: Record<string, unknown>;
 }
 
 export const mockResponse = ({ locals }: MockResponseParams): Response => {

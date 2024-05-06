@@ -15,16 +15,8 @@ const config = tseslint.config(
   },
   {
     rules: {
-      "@typescript-eslint/no-misused-promises": "off",
-      "@typescript-eslint/require-await": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-floating-promises": "off",
-      "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/unbound-method": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
       "no-unexpected-multiline": "off",
-      "no-useless-escape": "off",
     },
   },
   {

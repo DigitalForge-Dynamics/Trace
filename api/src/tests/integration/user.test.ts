@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import type { Tokens } from "../../utils/types/authenticationTypes";
+
 const { API_PORT } = process.env;
 
 const API_URL = `http://localhost:${API_PORT}`;
@@ -27,7 +31,7 @@ describe("POST /auth", () => {
 
     // Then
     expect(response.status).toBe(200);
-    const tokens = await response.json();
+    const tokens = await response.json() as Tokens;
     expect(tokens).toEqual({
       accessToken: expect.any(String),
       idToken: expect.any(String),
@@ -47,7 +51,7 @@ describe("POST /auth", () => {
       body: body_1,
     });
     expect(response_1.status).toBe(200);
-    const { refreshToken } = await response_1.json();
+    const { refreshToken } = await response_1.json() as Tokens;
 
     // When
     const response = await fetch(`${API_URL}/auth/refresh`, {

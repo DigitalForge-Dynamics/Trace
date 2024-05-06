@@ -40,13 +40,14 @@ const startupConfiguration = async () => {
   ]);
 };
 
-const server = app.listen(port, async () => {
+const server = app.listen(port, () => {
   console.log(`Server is starting on port: ${port}`);
-  await startupConfiguration();
-  console.log(`Server has started on port: ${port}`);
+  void startupConfiguration().then(() => {
+    console.log(`Server has started on port: ${port}`);
+  });
 });
 
-process.on("SIGINT", async () => {
+process.on("SIGINT", () => {
   console.log("Shutting down server...");
   server.close(() => {
     console.log("Server has shutdown");

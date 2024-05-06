@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable no-useless-escape */
+
 import { NextFunction, Request, Response } from "express";
 import ErrorController from "../../../controllers/ErrorController";
 import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpers/mockExpress";
@@ -45,7 +49,7 @@ describe("signIn", () => {
   it.each<keyof UserLoginAttributes>(["username", "password"])
   ("Calls the next middleware with a BadRequestError if the request does not contain %p", async (fieldName: string) => {
     // Given
-    delete request.body[fieldName];
+	delete request.body[fieldName];
 
     // When
     await authController.signIn(request, response, next);

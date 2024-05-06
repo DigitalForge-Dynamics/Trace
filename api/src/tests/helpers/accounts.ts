@@ -1,11 +1,6 @@
+import type { Tokens } from "../../utils/types/authenticationTypes";
 const { API_PORT } = process.env;
 const API_URL = `http://localhost:${API_PORT}`;
-
-export interface Tokens {
-  accessToken: string;
-  idToken: string;
-  refreshToken: string;
-}
 
 export const signIn = async (username: string, password: string): Promise<Tokens> => {
   const options = {
@@ -19,6 +14,6 @@ export const signIn = async (username: string, password: string): Promise<Tokens
     }),
   };
   const res = await fetch(`${API_URL}/auth/login`, options);
-  const data: Tokens = await res.json();
+  const data: Tokens = await res.json() as Tokens;
   return data;
 }
