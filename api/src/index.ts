@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, { Express } from "express";
-import { startup as databaseStartup, getSeeder } from "./database/config/databaseClient";
+import { startup as databaseStartup } from "./database/config/databaseClient";
 import { getRedisClient } from "./database/config/redisClient";
 import cors from "cors";
 import helmet from "helmet";
@@ -12,7 +12,6 @@ import systemRouter from "./routes/SystemRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
-import { isSeedDatabase } from "./utils";
 
 const app: Express = express();
 const port = process.env.API_PORT;
