@@ -32,3 +32,9 @@ export type UserLogin = {
   password: string;
   mfaCode?: string;
 };
+
+export interface Tokens {
+  accessToken: string;
+  idToken: string;
+  refreshToken: string;
+}

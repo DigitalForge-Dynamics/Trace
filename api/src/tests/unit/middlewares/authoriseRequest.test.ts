@@ -34,12 +34,12 @@ describe('authoriseRequest', () => {
     resetMockLogger(logger);
   });
 
-  it('Returns a 500 error response, logging the cause if the user is not present from authenticateRequest', async () => {
+  it('Returns a 500 error response, logging the cause if the user is not present from authenticateRequest', () => {
     // Given
-    response.locals = {} as any;
+    response.locals = {};
 
     // When
-    await authoriseRequest(request, response, next);
+    authoriseRequest(request, response, next);
 
     // Then
     expect(response.status).toHaveBeenCalledWith(500);
@@ -49,12 +49,12 @@ describe('authoriseRequest', () => {
     expect(logger.error).toHaveBeenCalledWith("Missing user within authoriseRequest from authenticateRequest.");
   });
 
-  it('Returns a 500 error response if no required scopes are defined for a path', async () => {
+  it('Returns a 500 error response if no required scopes are defined for a path', () => {
     // Given
     delete response.locals.required_scopes;
 
     // When
-    await authoriseRequest(request, response, next);
+    authoriseRequest(request, response, next);
 
     // Then
     expect(response.status).toHaveBeenCalledWith(500);
@@ -64,12 +64,12 @@ describe('authoriseRequest', () => {
     expect(logger.error).toHaveBeenCalledWith("No required_scopes defined for route.");
   });
 
-  it('Returns a 401 error response if the token_use is not access', async () => {
+  it('Returns a 401 error response if the token_use is not access', () => {
     // Given
     response.locals.user!.token_use = 'Another value' as TokenUse;
 
     // When
-    await authoriseRequest(request, response, next);
+    authoriseRequest(request, response, next);
 
     // Then
     expect(response.status).toHaveBeenCalledWith(401);
@@ -79,13 +79,13 @@ describe('authoriseRequest', () => {
     expect(logger.error).toHaveBeenCalledWith("Invalid token_use: Another value provided. Expected access.");
   });
 
-  it('Returns a 403 error response if a required scope is not present in the user attributes', async () => {
+  it('Returns a 403 error response if a required scope is not present in the user attributes', () => {
     // Given
     (response.locals.user as AccessTokenPayload).scope = [];
     response.locals.required_scopes = [Scope.READ];
 
     // When
-    await authoriseRequest(request, response, next);
+    authoriseRequest(request, response, next);
 
     // Then
     expect(response.status).toHaveBeenCalledWith(403);
@@ -95,13 +95,13 @@ describe('authoriseRequest', () => {
     expect(logger.error).not.toHaveBeenCalled();
   });
 
-  it('Proceeds to next middleware layer if all required scopes are present in the user attributes', async () => {
+  it('Proceeds to next middleware layer if all required scopes are present in the user attributes', () => {
     // Given
     (response.locals.user as AccessTokenPayload).scope = [Scope.READ, Scope.ASSET_CREATE];
     response.locals.required_scopes = [Scope.READ];
 
     // When
-    await authoriseRequest(request, response, next);
+    authoriseRequest(request, response, next);
 
     // Then
     expect(next).toHaveBeenCalled();

@@ -13,6 +13,7 @@ import Asset from "../../../database/models/asset.model";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import { PaginationResult } from "../../../utils/Paginator";
+import { AssetCreationAttributes, JsonNetworkType } from "../../../utils/types/attributeTypes";
 
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");
@@ -233,7 +234,7 @@ describe("createAsset", () => {
   it("Calls the next middleware with an InternalServerError when the asset is unable to be created", async () => {
     // Given
     createMock.mockResolvedValue(false);
-    request.body = JSON.parse(JSON.stringify(testCreationAsset));
+    request.body = JSON.parse(JSON.stringify(testCreationAsset)) as JsonNetworkType<AssetCreationAttributes>;
 
     // When
     await assetController.createAsset(request, response, next);
@@ -249,7 +250,7 @@ describe("createAsset", () => {
   it("Sends a 204 response when the asset is successfully created", async () => {
     // Given
     createMock.mockResolvedValue(true);
-    request.body = JSON.parse(JSON.stringify(testCreationAsset));
+    request.body = JSON.parse(JSON.stringify(testCreationAsset)) as JsonNetworkType<AssetCreationAttributes>;
 
     // When
     await assetController.createAsset(request, response, next);
@@ -273,7 +274,7 @@ describe("updateAsset", () => {
 
   beforeEach(() => {
     request = mockRequest({ id: "2" });
-    request.body = JSON.parse(JSON.stringify(testCreationAsset));
+    request.body = JSON.parse(JSON.stringify(testCreationAsset)) as JsonNetworkType<AssetCreationAttributes>;
     response = mockResponse({});
     next = mockNext();
     findByIdMock = AssetService.prototype.findById as jest.MockedFunction<

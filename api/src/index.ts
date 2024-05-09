@@ -12,9 +12,10 @@ import systemRouter from "./routes/SystemRouter";
 import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
+import { getApiPort } from "./utils/Environment";
 
 const app: Express = express();
-const port = process.env.API_PORT;
+const port = getApiPort();
 
 app.use(cors());
 app.use(express.json());
@@ -39,13 +40,14 @@ const startupConfiguration = async () => {
   ]);
 };
 
-const server = app.listen(port, async () => {
+const server = app.listen(port, () => {
   console.log(`Server is starting on port: ${port}`);
-  await startupConfiguration();
-  console.log(`Server has started on port: ${port}`);
+  void startupConfiguration().then(() => {
+    console.log(`Server has started on port: ${port}`);
+  });
 });
 
-process.on("SIGINT", async () => {
+process.on("SIGINT", () => {
   console.log("Shutting down server...");
   server.close(() => {
     console.log("Server has shutdown");

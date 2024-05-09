@@ -29,8 +29,11 @@ describe("POST /assets", () => {
   });
 
   it('Sets a 401 status when the user is unauthenticated', async () => {
+    interface Headers {
+	  authorization?: string;
+	}
     // Given
-    delete (headers as any).authorization;
+    delete (headers as Headers).authorization;
 
     // When
     const response = await fetch(`${API_URL}/assets`, {

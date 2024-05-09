@@ -14,6 +14,7 @@ router.route("/").get(
     res.locals.required_scopes = [Scope.READ];
     authoriseRequest(req, res, next);
   },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   (req, res, next) => assetController.getAllAssets(req, res, next),
 );
 
@@ -22,6 +23,7 @@ router.route("/").post(
     res.locals.required_scopes = [Scope.READ, Scope.ASSET_CREATE];
     authoriseRequest(req, res, next);
   },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   (req, res, next) => assetController.createAsset(req, res, next),
 );
 
@@ -30,6 +32,7 @@ router.route("/:id").get(
     res.locals.required_scopes = [Scope.READ];
     authoriseRequest(req, res, next);
   },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   (req, res, next) => assetController.getAssetById(req, res, next),
 );
 
@@ -38,6 +41,7 @@ router.route("/:id").put(
     res.locals.required_scopes = [Scope.READ, Scope.ASSET_CREATE];
     authoriseRequest(req, res, next);
   },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   (req, res, next) => assetController.updateAsset(req, res, next),
 );
 
@@ -46,6 +50,7 @@ router.route("/:id").delete(
     res.locals.required_scopes = [Scope.READ, Scope.ASSET_DELETE];
     authoriseRequest(req, res, next);
   },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   (req, res, next) => assetController.deleteAsset(req, res, next),
 );
 

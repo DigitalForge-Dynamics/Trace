@@ -9,8 +9,10 @@ type GenericError = {
 
 export const errorHandler = (
   err: Error,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ) => {
   const { statusCode, message } = sanitiseError(err);

@@ -1,5 +1,5 @@
 import winston from "winston";
-import { isDevelopment } from "./index";
+import { isDevelopment } from "./Environment";
 
 const Logger = winston.createLogger({
   level: isDevelopment() ? "debug" : "warn",

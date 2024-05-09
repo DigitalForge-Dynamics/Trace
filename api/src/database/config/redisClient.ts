@@ -1,14 +1,15 @@
 import { RedisClientType, createClient } from "redis";
 import ErrorController from "../../controllers/ErrorController";
 import Logger from "../../utils/Logger";
+import { getCacheHost, getCachePassword } from "../../utils/Environment";
 
 let connectionUrl: string | undefined;
 let redisClient: RedisClientType | undefined;
 
 const getConnectionUrl = (): string => {
   if (connectionUrl !== undefined) return connectionUrl;
-  const password = process.env.API_REDIS_PASSWORD;
-  const host = process.env.API_REDIS_HOST;
+  const password = getCachePassword();
+  const host = getCacheHost();
   if (host === undefined || password === undefined) {
     Logger.error("Missing Redis Credentials");
     throw ErrorController.InternalServerError();
