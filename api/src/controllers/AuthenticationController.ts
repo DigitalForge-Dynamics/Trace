@@ -122,6 +122,9 @@ export default class AuthenticationContoller extends ErrorController {
       if (userAttributes === null) {
         throw ErrorController.NotFoundError("User not found");
       }
+      if (!userAttributes.isActive) {
+        throw ErrorController.ForbiddenError("User disabled.");
+      }
       const { scope } = userAttributes;
       const accessToken = this.authService.generateAccessToken(scope, user.username);
       Logger.info(`Successfully refreshed token for: ${user.username}`);
