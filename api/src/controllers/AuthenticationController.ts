@@ -5,6 +5,7 @@ import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
 import AuthService from "../services/AuthenticationService";
+import SystemService from "../services/SystemService";
 import { getRedisClient } from "../database/config/redisClient";
 import { UserCreationAttributes, UserStoredAttributes, WithUuid } from "../utils/types/attributeTypes";
 import { encodeBase32 } from "../utils/Encodings";
@@ -12,14 +13,25 @@ import { encodeBase32 } from "../utils/Encodings";
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
   private readonly authService = new AuthService();
+  private readonly systemService = new SystemService();
 
   public async signIn(req: Request, res: Response, next: NextFunction) {
     try {
       const data: UserLogin = validateUserLogin(req.body);
+      const settings = await this.systemService.loadSettings();
+      if (!settings.setup && data.username !== "TRACE_SETUP") {
+        Logger.error("System has not been initialised.");
+        throw ErrorController.ForbiddenError();
+      }
 
       const userDetails = await this.userService.getUser(data.username);
       if (userDetails === null) {
         Logger.error(`User does not exist: '${data.username}'`);
+        throw ErrorController.ForbiddenError();
+      }
+
+      if (!userDetails.isActive) {
+        Logger.error(`Attempted to sign in to inactive account: '${userDetails.username}'`);
         throw ErrorController.ForbiddenError();
       }
 
@@ -45,6 +57,16 @@ export default class AuthenticationContoller extends ErrorController {
         if (!isValidMfa) {
           Logger.error(`Invalid MFA code provided for user '${data.username}`);
           throw ErrorController.ForbiddenError();
+        }
+      }
+
+      if (data.username === "TRACE_SETUP") {
+        Logger.info("Disabling the 'TRACE_SETUP' account.");
+        await this.systemService.setSettings({ ...settings, setup: true });
+        const isSuccess = await this.userService.disableUser(data.username);
+        if (!isSuccess) {
+          Logger.error("Failure to disable 'TRACE_SETUP' user.");
+          throw ErrorController.InternalServerError();
         }
       }
 

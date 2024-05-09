@@ -1,7 +1,10 @@
+import { Settings } from "../utils/types/settings";
 import { HealthCheckType } from "../utils/types/attributeTypes";
 
 interface ISystemService {
   healthCheck(): HealthCheckType;
+  loadSettings(): Promise<Settings>;
+  setSettings(settings: Settings): void;
 }
 
 export default class SystemService implements ISystemService {
@@ -14,5 +17,17 @@ export default class SystemService implements ISystemService {
       message: "OK",
       timestamp: new Date(Date.now()),
     };
+  }
+
+  public async loadSettings(): Promise<Settings> {
+    // TODO: loadSettings
+    await Promise.resolve();
+    return {};
+  }
+
+  public async setSettings(settings: Settings): Promise<void> {
+    // TODO: setSettings
+    await Promise.resolve();
+    void settings;
   }
 }
