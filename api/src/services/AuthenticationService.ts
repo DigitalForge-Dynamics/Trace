@@ -1,6 +1,6 @@
 import { Scope, UserStoredAttributes } from "../utils/types/attributeTypes";
 import * as argon2 from "argon2";
-import crypto, { UUID } from "node:crypto";
+import crypto, { UUID } from "crypto";
 import jwt from "jsonwebtoken";
 import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
 import { decodeBase32 } from "../utils/Encodings";
