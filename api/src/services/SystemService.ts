@@ -35,13 +35,13 @@ export default class SystemService implements ISystemService {
   }
 
   public async generateQuickStartUser(authService: AuthService): Promise<[WithUuid<WithMfa<UserCreationAttributes>>, string]> {
-    const password = authService.generateSecret(32).toString("base64");
+    const credential = authService.generateSecret(32).toString("base64");
     const mfaSecret = encodeBase32(authService.generateSecret(20));
     const user: WithUuid<WithMfa<UserCreationAttributes>> = {
       firstName: "SETUP",
       lastName: "SETUP",
       username: "SETUP",
-      password: await authService.hashPassword(password),
+      password: await authService.hashPassword(credential),
       email: "admin@localhost",
       isActive: true,
       scope: [Scope.READ,
@@ -53,6 +53,6 @@ export default class SystemService implements ISystemService {
       mfaSecret,
       uuid: authService.generateUuid("SETUP"),
     };
-    return [user, password];
+    return [user, credential];
   }
 }
