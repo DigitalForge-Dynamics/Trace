@@ -51,7 +51,7 @@ export default class SystemService implements ISystemService {
         Scope.SETTINGS_ADMIN,
       ],
       mfaSecret,
-      uuid: await authService.generateUuid("SETUP"),
+      uuid: authService.generateUuid("SETUP"),
     };
     return [user, password];
   }
