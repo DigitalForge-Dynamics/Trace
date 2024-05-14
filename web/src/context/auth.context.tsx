@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
 import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
 import { refreshToken } from "../data/api";
-import { getSessionUser } from "../data/storage";
+import { getSessionAuthState, getSessionUser } from "../data/storage";
 
 export const AuthContext = createContext<AuthContextProps>({
   authState: defaultAuthState,
@@ -19,7 +19,7 @@ export const AuthContext = createContext<AuthContextProps>({
 const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [authState, authDispatch] = useReducer(
     authStateReducer,
-    defaultAuthState
+    getSessionAuthState()
   );
   const navigate = useNavigate();
   const activeUser: AuthData | null = getSessionUser();
