@@ -13,6 +13,9 @@ import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
 import { getApiPort } from "./utils/Environment";
+import SystemService from "./services/SystemService";
+import AuthService from "./services/AuthenticationService";
+import UserService from "./services/UserService";
 
 const app: Express = express();
 const port = getApiPort();
@@ -38,6 +41,17 @@ const startupConfiguration = async () => {
     databaseStartup(),
     redisClient.connect(),
   ]);
+  const systemService = new SystemService();
+  const settings = await systemService.loadSettings();
+  if (!settings.setup) {
+    console.log("Generating quick start user:...");
+    const authService = new AuthService();
+    const userService = new UserService();
+    const [user, password] = await systemService.generateQuickStartUser(authService);
+    await userService.createUser(user);
+    console.log(`Username: ${user.username}, Password: ${password}, MFA: ${user.mfaSecret}`);
+    systemService.setSettings({ ...settings, setup: true });
+  }
 };
 
 const server = app.listen(port, () => {

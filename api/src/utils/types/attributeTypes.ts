@@ -41,6 +41,7 @@ export interface UserStoredAttributes extends StoredAttributes<UserCreationAttri
 }
 export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
 export type WithUuid<T> = T & { uuid: UUID };
+export type WithMfa<T> = T & { mfaSecret: string };
 
 export const enum Scope {
   READ = "TRACE_READ",
