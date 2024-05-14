@@ -47,10 +47,11 @@ const startupConfiguration = async () => {
     console.log("Generating quick start user:...");
     const authService = new AuthService();
     const userService = new UserService();
+    // Strict ordering
     const [user, password] = await systemService.generateQuickStartUser(authService);
     await userService.createUser(user);
+    await systemService.setSettings({ ...settings, setup: true });
     console.log(`Username: ${user.username}, Password: ${password}, MFA: ${user.mfaSecret}`);
-    systemService.setSettings({ ...settings, setup: true });
   }
 };
 

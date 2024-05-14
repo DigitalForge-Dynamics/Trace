@@ -60,6 +60,8 @@ export const enum Scope {
   LOCATION_CREATE = "TRACE_LOCATION_CREATE",
   LOCATION_DELETE = "TRACE_LOCATION_DELETE",
   LOCATION_AUDIT = "TRACE_LOCATION_AUDIT",
+  // Settings
+  SETTINGS_ADMIN = "TRACE_SETTINGS_ADMIN",
 }
 
 export interface UserLoginAttributes {

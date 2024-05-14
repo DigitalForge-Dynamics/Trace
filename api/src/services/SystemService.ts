@@ -6,7 +6,7 @@ import { encodeBase32 } from "../utils/Encodings";
 interface ISystemService {
   healthCheck(): HealthCheckType;
   loadSettings(): Promise<Settings>;
-  setSettings(settings: Settings): void;
+  setSettings(settings: Settings): Promise<void>;
   generateQuickStartUser(authService: AuthService): Promise<[WithUuid<WithMfa<UserCreationAttributes>>, string]>;
 }
 
@@ -37,16 +37,21 @@ export default class SystemService implements ISystemService {
   public async generateQuickStartUser(authService: AuthService): Promise<[WithUuid<WithMfa<UserCreationAttributes>>, string]> {
     const password = authService.generateSecret(32).toString("base64");
     const mfaSecret = encodeBase32(authService.generateSecret(20));
-      const user: WithUuid<WithMfa<UserCreationAttributes>> = {
-        firstName: "SETUP",
-        lastName: "SETUP",
-        username: "SETUP",
-        password: await authService.hashPassword(password),
-        email: "admin@localhost",
-        isActive: true,
-        scope: [Scope.USER_CREATE],
-        mfaSecret,
-        uuid: await authService.generateUuid("SETUP"),
+    const user: WithUuid<WithMfa<UserCreationAttributes>> = {
+      firstName: "SETUP",
+      lastName: "SETUP",
+      username: "SETUP",
+      password: await authService.hashPassword(password),
+      email: "admin@localhost",
+      isActive: true,
+      scope: [Scope.READ,
+        Scope.ASSET_CREATE, Scope.ASSET_DELETE, Scope.ASSET_RETURN, Scope.ASSET_AUDIT, Scope.ASSET_MOVE,
+        Scope.USER_CREATE, Scope.USER_DELETE, Scope.USER_AUDIT,
+        Scope.LOCATION_CREATE, Scope.LOCATION_DELETE, Scope.LOCATION_AUDIT,
+        Scope.SETTINGS_ADMIN,
+      ],
+      mfaSecret,
+      uuid: await authService.generateUuid("SETUP"),
     };
     return [user, password];
   }
