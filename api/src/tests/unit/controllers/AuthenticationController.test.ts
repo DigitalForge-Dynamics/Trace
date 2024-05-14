@@ -12,10 +12,8 @@ import { TokenUse } from "../../../utils/types/authenticationTypes";
 import AuthenticationService from "../../../services/AuthenticationService";
 import UserService from "../../../services/UserService";
 import { Scope, UserCreationAttributes, UserLoginAttributes, UserStoredAttributes } from "../../../utils/types/attributeTypes";
-import SystemService from "../../../services/SystemService";
 
 jest.mock("../../../services/UserService.ts");
-jest.mock("../../../services/SystemService.ts");
 jest.mock("../../../services/BaseService.ts");
 jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
   info: jest.fn(),
@@ -32,7 +30,6 @@ describe("signIn", () => {
   let response: Response;
   let next: NextFunction;
   let getUserMock: jest.MockedFunction<typeof UserService.prototype.getUser>;
-  let loadSettingsMock: jest.MockedFunction<typeof SystemService.prototype.loadSettings>;
 
   beforeEach(() => {
     request = mockRequest();
@@ -41,14 +38,11 @@ describe("signIn", () => {
     response = mockResponse({ locals });
     next = mockNext();
     getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
-    loadSettingsMock = SystemService.prototype.loadSettings as jest.MockedFunction<typeof SystemService.prototype.loadSettings>;
-    loadSettingsMock.mockResolvedValue({ setup: true });
   });
 
   afterEach(() => {
     jest.resetAllMocks();
     getUserMock.mockReset();
-    loadSettingsMock.mockReset();
     resetMockLogger(logger);
   });
 
