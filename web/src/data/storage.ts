@@ -1,4 +1,4 @@
-import { AuthData } from "../utils/types/authTypes";
+import { AuthData, AuthState } from "../utils/types/authTypes";
 
 export const setSessionUser = (user: AuthData): void => {
   sessionStorage.setItem("trace_user", JSON.stringify(user));
@@ -12,4 +12,10 @@ export const getSessionUser = (): AuthData | null => {
 
 export const removeSessionUser = (): void => {
   sessionStorage.removeItem("trace_user");
+};
+
+export const getSessionAuthState = (): AuthState => {
+  const data = getSessionUser();
+  if (data === null) return { isLoggedIn: false };
+  return { isLoggedIn: true, data };
 };
