@@ -335,13 +335,13 @@ describe("refresh", () => {
     await authController.refresh(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("User not found"));
+    expect(next).toHaveBeenCalledWith(ErrorController.NotFoundError("User not found."));
   });
 
   it("Generates a new access token with the user's scopes as read from the database", async () => {
     // Given
     const scope: Scope[] = [Scope.ASSET_CREATE, Scope.ASSET_RETURN];
-    getUserMock.mockResolvedValue({ scope } as UserStoredAttributes);
+    getUserMock.mockResolvedValue({ scope, isActive: true } as UserStoredAttributes);
     const generateAccessTokenSpy = jest.spyOn(AuthenticationService.prototype, "generateAccessToken");
 
     // When
@@ -354,7 +354,7 @@ describe("refresh", () => {
 
   it("Sets a 200 response with the access token in the body when successful", async () => {
     // Given
-    getUserMock.mockResolvedValue({ scope: [Scope.ASSET_CREATE, Scope.ASSET_RETURN] } as UserStoredAttributes);
+    getUserMock.mockResolvedValue({ scope: [Scope.ASSET_CREATE, Scope.ASSET_RETURN], isActive: true } as UserStoredAttributes);
 
     // When
     await authController.refresh(request, response, next);
