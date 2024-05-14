@@ -51,7 +51,9 @@ const startupConfiguration = async () => {
     const [user, credential] = await systemService.generateQuickStartUser(authService);
     await userService.createUser(user);
     await systemService.setSettings({ ...settings, setup: true });
-    console.log(`Username: ${user.username}, Password: ${credential}, MFA: ${user.mfaSecret}`);
+    // Intentional display of credentials, for quick start, to allow only Administrator to sign in.
+    // Purposefully not using Logger, to avoid being stored in plain-text files.
+    console.log(`Username: ${user.username}, Credential: ${credential}, MFA: ${user.mfaSecret}`);
   }
 };
 
