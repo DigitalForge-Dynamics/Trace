@@ -23,13 +23,13 @@ export default class SystemService implements ISystemService {
   }
 
   public async loadSettings(): Promise<Settings> {
-    // TODO: loadSettings
+    // TODO: loadSettings: Issue #110
     await Promise.resolve();
     return {};
   }
 
   public async setSettings(settings: Settings): Promise<void> {
-    // TODO: setSettings
+    // TODO: setSettings: Issue #110
     await Promise.resolve();
     void settings;
   }

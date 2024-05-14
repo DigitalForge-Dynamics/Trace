@@ -3,18 +3,23 @@ import React, {
   useReducer,
   useEffect,
   useCallback,
+  useContext,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContextProps, AuthData, AuthOption } from "../utils/types/authTypes";
-import authStateReducer, { defaultAuthState } from "../hooks/authReducer";
+import authStateReducer from "../hooks/authReducer";
 import { refreshToken } from "../data/api";
 import { getSessionAuthState, getSessionUser } from "../data/storage";
 
-export const AuthContext = createContext<AuthContextProps>({
-  authState: defaultAuthState,
-  login: () => {},
-  logout: () => {},
-});
+const AuthContext = createContext<AuthContextProps | null>(null);
+
+export const useAuthContext = () => {
+  const auth = useContext(AuthContext);
+  if (auth === null) {
+    throw new Error("Must be used within a <AuthProvider>");
+  }
+  return auth;
+};
 
 const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [authState, authDispatch] = useReducer(
