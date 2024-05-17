@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { ZodSchema, z } from "zod";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
 import { AssetCreationAttributes, LocationCreationAttributes, UserCreationAttributes, Scope } from "./types/attributeTypes";
@@ -62,9 +62,9 @@ const locationCreationSchema = z.object({
 }).strict();
 
 const mfaCodeSchema = z.union([
-  z.string().refine((val) => /^[0-9]{6}$/.test(val)),
+  z.string().length(6).refine((val) => /^[0-9]*$/.test(val)),
   z.object({
-    code: z.string().refine((val) => /^[0-9]{6}$/.test(val)),
+    code: z.string().length(6).refine((val) => /^[0-9]*$/.test(val)),
   }).strict(),
 ]);
 
@@ -74,50 +74,23 @@ const userLoginSchema = z.object({
   mfaCode: z.any().refine((val) => parseMFACode(val)).optional(),
 }).strict();
 
-export const validateAsset = (data: unknown): AssetCreationAttributes => {
-  const result = assetCreationSchema.safeParse(data);
-  if (!result.success) {
-    //Logger.error(result.error);
-    throw ErrorController.BadRequestError("Invalid Request");
-  }
-  return result.data;
-};
-
-export const validateUser = (data: unknown): UserCreationAttributes => {
-  const result = userCreationSchema.safeParse(data);
-  if (!result.success) {
+const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
+  const result = schema.safeParse(data);
+  if (result.success !== true) {
     Logger.error(result.error);
     throw ErrorController.BadRequestError("Invalid Request");
   }
   return result.data;
 };
 
-export const validateLocation = (data: unknown): LocationCreationAttributes => {
-  const result = locationCreationSchema.safeParse(data);
-  if (!result.success) {
-    Logger.error(result.error);
-    throw ErrorController.BadRequestError("Invalid Request");
-  }
-  return result.data;
-};
-
-export const validateUserLogin = (data: unknown): UserLogin => {
-  const result = userLoginSchema.safeParse(data);
-  if (!result.success) {
-    Logger.error(result.error);
-    throw ErrorController.BadRequestError();
-  }
-  return result.data;
-};
+export const validateAsset = (data: unknown): AssetCreationAttributes => validate<AssetCreationAttributes>(data, assetCreationSchema);
+export const validateUser = (data: unknown): UserCreationAttributes => validate<UserCreationAttributes>(data, userCreationSchema);
+export const validateLocation = (data: unknown): LocationCreationAttributes => validate<LocationCreationAttributes>(data, locationCreationSchema);
+export const validateUserLogin = (data: unknown): UserLogin => validate<UserLogin>(data, userLoginSchema);
 
 // Checks for either a string literal, or an object of type `{ code: string }`.
 export const parseMFACode = (data: unknown): string => {
-  const result = mfaCodeSchema.safeParse(data);
-  if (!result.success) {
-    Logger.error("Provided MFA code does not match required format");
-    throw ErrorController.BadRequestError();
-  }
-  const union = result.data;
+  const union = validate(data, mfaCodeSchema);
   if (typeof union === "string") {
     return union;
   }
