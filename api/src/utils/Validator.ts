@@ -77,7 +77,7 @@ const userLoginSchema = z.object({
 export const validateAsset = (data: unknown): AssetCreationAttributes => {
   const result = assetCreationSchema.safeParse(data);
   if (!result.success) {
-    Logger.error(result.error);
+    //Logger.error(result.error);
     throw ErrorController.BadRequestError("Invalid Request");
   }
   return result.data;
@@ -105,7 +105,7 @@ export const validateUserLogin = (data: unknown): UserLogin => {
   const result = userLoginSchema.safeParse(data);
   if (!result.success) {
     Logger.error(result.error);
-  throw ErrorController.BadRequestError();
+    throw ErrorController.BadRequestError();
   }
   return result.data;
 };
@@ -114,7 +114,7 @@ export const validateUserLogin = (data: unknown): UserLogin => {
 export const parseMFACode = (data: unknown): string => {
   const result = mfaCodeSchema.safeParse(data);
   if (!result.success) {
-      Logger.error("Provided MFA code does not match required format");
+    Logger.error("Provided MFA code does not match required format");
     throw ErrorController.BadRequestError();
   }
   const union = result.data;

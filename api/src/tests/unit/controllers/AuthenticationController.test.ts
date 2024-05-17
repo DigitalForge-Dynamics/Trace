@@ -143,7 +143,7 @@ describe("signUp", () => {
       lastName: "LAST_NAME",
       username: "USERNAME",
       password: "PASSWORD",
-      email: "EMAIL",
+      email: "email@example.com",
       isActive: true,
       scope: [],
     };
@@ -174,9 +174,15 @@ describe("signUp", () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
-    expect(logger.error).toHaveBeenCalledWith([expect.objectContaining({
-      params: { "missingProperty": fieldName }
-    })]);
+    expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "invalid_type",
+          path: [ fieldName ],
+          message: "Required",
+        })
+      ])
+    }));
     expect(getUserMock).not.toHaveBeenCalled();
     expect(createUserMock).not.toHaveBeenCalled();
     expectNonFinal(response);
@@ -191,9 +197,14 @@ describe("signUp", () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
-    expect(logger.error).toHaveBeenCalledWith([expect.objectContaining({
-      params: { "additionalProperty": "extra" }
-    })]);
+    expect(logger.error).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "unrecognized_keys",
+          keys: [ "extra" ],
+        }),
+      ]),
+    }));
     expect(getUserMock).not.toHaveBeenCalled();
     expect(createUserMock).not.toHaveBeenCalled();
     expectNonFinal(response);
