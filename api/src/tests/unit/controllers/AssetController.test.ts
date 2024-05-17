@@ -13,7 +13,8 @@ import Asset from "../../../database/models/asset.model";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import { PaginationResult } from "../../../utils/Paginator";
-import { AssetCreationAttributes, JsonNetworkType } from "../../../utils/types/attributeTypes";
+import { AssetCreationAttributes } from "../../../utils/types/attributeTypes";
+import type { JsonNetworkType } from "../../helpers/types";
 
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");

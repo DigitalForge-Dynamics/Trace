@@ -42,7 +42,7 @@ export interface UserStoredAttributes extends StoredAttributes<UserCreationAttri
 export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
 export type WithUuid<T> = T & { uuid: UUID };
 
-export const enum Scope {
+export enum Scope {
   READ = "TRACE_READ",
   // Asset
   ASSET_CREATE = "TRACE_ASSET_CREATE",
@@ -65,26 +65,6 @@ export interface UserLoginAttributes {
   username: string;
   password: string;
 }
-
-export type JsonNetworkType<T> =
-  // Types with manual reviving
-  T extends Date
-    ? string
-    : // Carry these through
-    T extends number
-    ? T
-    : T extends boolean
-    ? T
-    : T extends string
-    ? T
-    : T extends JSON
-    ? T
-    : T extends object
-    ? { [K in keyof T]?: JsonNetworkType<T[K]> }
-    : T extends Array<infer E>
-    ? Array<JsonNetworkType<E>>
-    : // Unknown case
-      T;
 
 export type HealthCheckType = {
   uptime: string;
