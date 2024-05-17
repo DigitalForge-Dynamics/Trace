@@ -56,6 +56,15 @@ describe("signIn", () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(Logger.error).toHaveBeenCalledWith(expect.objectContaining({
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "invalid_type",
+          path: [ fieldName ],
+          message: "Required",
+        }),
+      ]),
+    }));
     expect(getUserMock).not.toHaveBeenCalled();
     expectNonFinal(response);
   });
@@ -173,7 +182,7 @@ describe("signUp", () => {
     await authController.signUp(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({
       issues: expect.arrayContaining([
         expect.objectContaining({
@@ -196,8 +205,8 @@ describe("signUp", () => {
     await authController.signUp(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
-    expect(logger.error).toHaveBeenNthCalledWith(1, expect.objectContaining({
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({
       issues: expect.arrayContaining([
         expect.objectContaining({
           code: "unrecognized_keys",

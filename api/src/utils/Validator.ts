@@ -78,7 +78,7 @@ const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   const result = schema.safeParse(data);
   if (result.success !== true) {
     Logger.error(result.error);
-    throw ErrorController.BadRequestError("Invalid Request");
+    throw ErrorController.BadRequestError();
   }
   return result.data;
 };

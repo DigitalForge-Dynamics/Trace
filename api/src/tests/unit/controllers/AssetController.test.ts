@@ -225,9 +225,7 @@ describe("createAsset", () => {
     await assetController.createAsset(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(
-      ErrorController.BadRequestError("Invalid Request")
-    );
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(createMock).not.toHaveBeenCalled();
   });
@@ -330,9 +328,7 @@ describe("updateAsset", () => {
     await assetController.updateAsset(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(
-      ErrorController.BadRequestError("Invalid Request")
-    );
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
