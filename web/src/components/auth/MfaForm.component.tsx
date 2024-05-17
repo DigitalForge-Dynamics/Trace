@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, } from "react";
+import React, { ReactNode, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import QRCode from "react-qr-code";

@@ -90,9 +90,9 @@ describe("signIn", () => {
   it("Calls the next middleware with a ForbiddenError if the password does not match", async () => {
     // Given
     const user: UserStoredAttributes = {
-        username: "USERNAME_OTHER",
-        password: await authService.hashPassword("PASSWORD_OTHER"),
-        isActive: true,
+      username: "USERNAME_OTHER",
+      password: await authService.hashPassword("PASSWORD_OTHER"),
+      isActive: true,
     } as UserStoredAttributes;
     getUserMock.mockResolvedValue(user);
 
