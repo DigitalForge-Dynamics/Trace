@@ -1,4 +1,4 @@
-import { ZodSchema, z } from "zod";
+import { ParseInput, ParseReturnType, ZodObject, ZodOptional, ZodRawShape, ZodSchema, ZodType, ZodTypeAny, z } from "zod";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
 import { AssetCreationAttributes, LocationCreationAttributes, UserCreationAttributes, Scope } from "./types/attributeTypes";
@@ -31,6 +31,33 @@ export const getId = (request: Request): number => {
   return getInt(id);
 };
 
+// Strict optional, fixing zod issue #510, where .optional infers `K?: T | undefined`, rather than `K?: T`.
+
+declare module "zod" {
+  interface ZodObject<T> {
+    exactOptions(): any;
+  }
+}
+
+ZodObject.prototype.exactOptions = function(this) {
+  const safeParse = (input: ParseInput) => {
+    const result = ZodObject.prototype.safeParse.bind(this)(input);
+    if (!result.success) { return result; }
+    for (const key in this.shape) {
+      if (!(this.shape[key] instanceof ZodOptional)) {continue;}
+      if (result.data[key] !== undefined) {continue;}
+      return { state: "dirty" };
+    }
+    return result;
+  };
+
+  return {
+    safeParse,
+  };
+};
+
+// Schemas
+
 const assetCreationSchema = z.object({
   assetTag: z.string(),
   name: z.string(),
@@ -39,7 +66,9 @@ const assetCreationSchema = z.object({
   nextAuditDate: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-}).strict();
+}).strict().exactOptions();
+
+type G = z.infer<typeof assetCreationSchema>;
 
 const userCreationSchema = z.object({
   firstName: z.string(),
@@ -76,16 +105,17 @@ const userLoginSchema = z.object({
 
 const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   const result = schema.safeParse(data);
-  if (result.success !== true) {
+  if (!result.success) {
     Logger.error(result.error);
     throw ErrorController.BadRequestError();
   }
   return result.data;
 };
 
-export const validateAsset = (data: unknown): AssetCreationAttributes => validate<AssetCreationAttributes>(data, assetCreationSchema);
-export const validateUser = (data: unknown): UserCreationAttributes => validate<UserCreationAttributes>(data, userCreationSchema);
-export const validateLocation = (data: unknown): LocationCreationAttributes => validate<LocationCreationAttributes>(data, locationCreationSchema);
+// FIXME: Remove as any, once have fix for exactOptionalTypes
+export const validateAsset = (data: unknown): AssetCreationAttributes => validate<AssetCreationAttributes>(data, assetCreationSchema as any);
+export const validateUser = (data: unknown): UserCreationAttributes => validate<UserCreationAttributes>(data, userCreationSchema as any);
+export const validateLocation = (data: unknown): LocationCreationAttributes => validate<LocationCreationAttributes>(data, locationCreationSchema as any);
 export const validateUserLogin = (data: unknown): UserLogin => validate<UserLogin>(data, userLoginSchema);
 
 // Checks for either a string literal, or an object of type `{ code: string }`.
@@ -96,3 +126,6 @@ export const parseMFACode = (data: unknown): string => {
   }
   return union.code;
 };
+
+
+
