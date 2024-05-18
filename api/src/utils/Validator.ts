@@ -1,9 +1,10 @@
-import { ParseInput, ParseReturnType, ZodObject, ZodOptional, ZodRawShape, ZodSchema, ZodType, ZodTypeAny, z } from "zod";
+import { ParseInput, ParseReturnType, SafeParseReturnType, ZodError, ZodIssue, ZodObject, ZodOptional, ZodSchema, ZodRawShape, z, ZodType } from "zod";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
 import { AssetCreationAttributes, LocationCreationAttributes, UserCreationAttributes, Scope } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
+import { ZodObjectExactOption } from "./ZodExtend";
 import type { ParsedQs } from "qs";
 
 type QueryValue = string | string[] | ParsedQs | ParsedQs[] | undefined;
@@ -35,30 +36,17 @@ export const getId = (request: Request): number => {
 
 declare module "zod" {
   interface ZodObject<T> {
-    exactOptions(): any;
+    exactOptions(): ZodSchema<T>;
   }
 }
 
 ZodObject.prototype.exactOptions = function(this) {
-  const safeParse = (input: ParseInput) => {
-    const result = ZodObject.prototype.safeParse.bind(this)(input);
-    if (!result.success) { return result; }
-    for (const key in this.shape) {
-      if (!(this.shape[key] instanceof ZodOptional)) {continue;}
-      if (result.data[key] !== undefined) {continue;}
-      return { state: "dirty" };
-    }
-    return result;
-  };
-
-  return {
-    safeParse,
-  };
+  return new ZodObjectExactOption(this._def);
 };
 
 // Schemas
 
-const assetCreationSchema = z.object({
+const assetCreationSchema: ZodSchema<AssetCreationAttributes> = z.object({
   assetTag: z.string(),
   name: z.string(),
   serialNumber: z.string().optional(),
@@ -68,9 +56,7 @@ const assetCreationSchema = z.object({
   updatedAt: z.coerce.date().optional(),
 }).strict().exactOptions();
 
-type G = z.infer<typeof assetCreationSchema>;
-
-const userCreationSchema = z.object({
+const userCreationSchema: ZodSchema<UserCreationAttributes> = z.object({
   firstName: z.string(),
   lastName: z.string(),
   username: z.string(),
@@ -80,15 +66,15 @@ const userCreationSchema = z.object({
   scope: z.array(z.nativeEnum(Scope)),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-}).strict();
+}).strict().exactOptions() as any; // FIXME
 
-const locationCreationSchema = z.object({
+const locationCreationSchema: ZodSchema<LocationCreationAttributes> = z.object({
   locationName: z.string(),
   geoLocation: z.any().optional(),
   primaryLocation: z.boolean(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-}).strict();
+}).strict().exactOptions() as any; // FIXME
 
 const mfaCodeSchema = z.union([
   z.string().length(6).refine((val) => /^[0-9]*$/.test(val)),
@@ -101,7 +87,7 @@ const userLoginSchema = z.object({
   username: z.string(),
   password: z.string(),
   mfaCode: z.any().refine((val) => parseMFACode(val)).optional(),
-}).strict();
+}).strict().exactOptions() as any; // FIXME
 
 const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   const result = schema.safeParse(data);
@@ -112,10 +98,9 @@ const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   return result.data;
 };
 
-// FIXME: Remove as any, once have fix for exactOptionalTypes
-export const validateAsset = (data: unknown): AssetCreationAttributes => validate<AssetCreationAttributes>(data, assetCreationSchema as any);
-export const validateUser = (data: unknown): UserCreationAttributes => validate<UserCreationAttributes>(data, userCreationSchema as any);
-export const validateLocation = (data: unknown): LocationCreationAttributes => validate<LocationCreationAttributes>(data, locationCreationSchema as any);
+export const validateAsset = (data: unknown): AssetCreationAttributes => validate<AssetCreationAttributes>(data, assetCreationSchema);
+export const validateUser = (data: unknown): UserCreationAttributes => validate<UserCreationAttributes>(data, userCreationSchema);
+export const validateLocation = (data: unknown): LocationCreationAttributes => validate<LocationCreationAttributes>(data, locationCreationSchema);
 export const validateUserLogin = (data: unknown): UserLogin => validate<UserLogin>(data, userLoginSchema);
 
 // Checks for either a string literal, or an object of type `{ code: string }`.
