@@ -1,7 +1,13 @@
-import { ParseInput, ParseReturnType, SafeParseReturnType, ZodError, ZodIssue, ZodObject, ZodOptional, ZodSchema, ZodRawShape, z, ZodType } from "zod";
+import {
+  ZodObject, ZodSchema, ZodRawShape, UnknownKeysParam, ZodTypeAny,
+  objectOutputType, objectInputType, z
+} from "zod";
 import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
-import { AssetCreationAttributes, LocationCreationAttributes, UserCreationAttributes, Scope } from "./types/attributeTypes";
+import {
+  AssetCreationAttributes, LocationCreationAttributes, UserCreationAttributes,
+  Scope, NonUndefinedOptional
+} from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
 import { ZodObjectExactOption } from "./ZodExtend";
@@ -35,8 +41,14 @@ export const getId = (request: Request): number => {
 // Strict optional, fixing zod issue #510, where .optional infers `K?: T | undefined`, rather than `K?: T`.
 
 declare module "zod" {
-  interface ZodObject<T> {
-    exactOptions(): ZodSchema<T>;
+  interface ZodObject<
+    T extends ZodRawShape,
+    UnknownKeys extends UnknownKeysParam = UnknownKeysParam,
+    Catchall extends ZodTypeAny = ZodTypeAny,
+    Output extends object = objectOutputType<T, Catchall, UnknownKeys>,
+    Input extends object = objectInputType<T, Catchall, UnknownKeys>,
+  > {
+    exactOptions(): ZodObjectExactOption<T, UnknownKeys, Catchall, NonUndefinedOptional<Output>, NonUndefinedOptional<Input>>;
   }
 }
 
@@ -66,7 +78,7 @@ const userCreationSchema: ZodSchema<UserCreationAttributes> = z.object({
   scope: z.array(z.nativeEnum(Scope)),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-}).strict().exactOptions() as any; // FIXME
+}).strict().exactOptions();
 
 const locationCreationSchema: ZodSchema<LocationCreationAttributes> = z.object({
   locationName: z.string(),
@@ -74,7 +86,7 @@ const locationCreationSchema: ZodSchema<LocationCreationAttributes> = z.object({
   primaryLocation: z.boolean(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-}).strict().exactOptions() as any; // FIXME
+}).strict().exactOptions();
 
 const mfaCodeSchema = z.union([
   z.string().length(6).refine((val) => /^[0-9]*$/.test(val)),
@@ -87,7 +99,7 @@ const userLoginSchema = z.object({
   username: z.string(),
   password: z.string(),
   mfaCode: z.any().refine((val) => parseMFACode(val)).optional(),
-}).strict().exactOptions() as any; // FIXME
+}).strict().exactOptions();
 
 const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   const result = schema.safeParse(data);

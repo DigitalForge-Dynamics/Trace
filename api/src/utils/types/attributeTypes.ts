@@ -71,3 +71,9 @@ export type HealthCheckType = {
   message: string;
   timestamp: Date;
 };
+
+// Converts from `[K]?: T | undefined` to `[K]?: T`.
+export type NonUndefinedOptional<T extends object> = {
+  [K in keyof T]: Omit<T, K> extends T ?
+    Exclude<T[K], undefined> : T[K];
+};

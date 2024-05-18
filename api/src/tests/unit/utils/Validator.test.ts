@@ -13,6 +13,7 @@ jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
 describe("validateAsset", () => {
   it("Throws a BadRequestError when an optional attribute is provided as undefined", () => {
     const data: AssetCreationAttributes = testCreationAsset;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     (data as any).nextAuditDate = undefined;
 
     expect(() => validateAsset(data)).toThrow(ErrorController.BadRequestError());
