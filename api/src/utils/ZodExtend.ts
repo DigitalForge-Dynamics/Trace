@@ -41,9 +41,8 @@ export class ZodObjectExactOption<
           fatal: true,
         };
         addIssueToContext(ctx, issue);
-        return INVALID;
       }
     }
-    return parsed;
+    return ctx.common.issues.length > 0 ? INVALID : parsed;
   }
 }
