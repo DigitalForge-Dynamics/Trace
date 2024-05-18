@@ -95,10 +95,10 @@ const mfaCodeSchema = z.union([
   }).strict(),
 ]);
 
-const userLoginSchema = z.object({
+const userLoginSchema: ZodSchema<UserLogin> = z.object({
   username: z.string(),
   password: z.string(),
-  mfaCode: z.any().refine((val) => parseMFACode(val)).optional(),
+  mfaCode: z.string().refine((val) => parseMFACode(val)).optional(),
 }).strict().exactOptions();
 
 const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
@@ -123,6 +123,3 @@ export const parseMFACode = (data: unknown): string => {
   }
   return union.code;
 };
-
-
-
