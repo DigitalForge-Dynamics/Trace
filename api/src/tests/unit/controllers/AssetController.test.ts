@@ -13,7 +13,8 @@ import Asset from "../../../database/models/asset.model";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import { PaginationResult } from "../../../utils/Paginator";
-import { AssetCreationAttributes, JsonNetworkType } from "../../../utils/types/attributeTypes";
+import { AssetCreationAttributes } from "../../../utils/types/attributeTypes";
+import type { JsonNetworkType } from "../../helpers/types";
 
 jest.mock("../../../services/AssetService.ts");
 jest.mock("../../../services/BaseService.ts");
@@ -224,9 +225,7 @@ describe("createAsset", () => {
     await assetController.createAsset(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(
-      ErrorController.BadRequestError("Invalid Request")
-    );
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(createMock).not.toHaveBeenCalled();
   });
@@ -329,9 +328,7 @@ describe("updateAsset", () => {
     await assetController.updateAsset(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(
-      ErrorController.BadRequestError("Invalid Request")
-    );
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
     expectNonFinal(response);
     expect(findByIdMock).not.toHaveBeenCalled();
     expect(updateMock).not.toHaveBeenCalled();
