@@ -56,6 +56,15 @@ describe("signIn", () => {
 
     // Then
     expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(Logger.error).toHaveBeenCalledWith(expect.objectContaining({
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "invalid_type",
+          path: [ fieldName ],
+          message: "Required",
+        }),
+      ]),
+    }));
     expect(getUserMock).not.toHaveBeenCalled();
     expectNonFinal(response);
   });
@@ -146,7 +155,7 @@ describe("signUp", () => {
       lastName: "LAST_NAME",
       username: "USERNAME",
       password: "PASSWORD",
-      email: "EMAIL",
+      email: "email@example.com",
       isActive: true,
       scope: [],
     };
@@ -176,10 +185,16 @@ describe("signUp", () => {
     await authController.signUp(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
-    expect(logger.error).toHaveBeenCalledWith([expect.objectContaining({
-      params: { "missingProperty": fieldName }
-    })]);
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "invalid_type",
+          path: [ fieldName ],
+          message: "Required",
+        })
+      ])
+    }));
     expect(getUserMock).not.toHaveBeenCalled();
     expect(createUserMock).not.toHaveBeenCalled();
     expectNonFinal(response);
@@ -193,10 +208,15 @@ describe("signUp", () => {
     await authController.signUp(request, response, next);
 
     // Then
-    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError("Invalid Request"));
-    expect(logger.error).toHaveBeenCalledWith([expect.objectContaining({
-      params: { "additionalProperty": "extra" }
-    })]);
+    expect(next).toHaveBeenCalledWith(ErrorController.BadRequestError());
+    expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "unrecognized_keys",
+          keys: [ "extra" ],
+        }),
+      ]),
+    }));
     expect(getUserMock).not.toHaveBeenCalled();
     expect(createUserMock).not.toHaveBeenCalled();
     expectNonFinal(response);
