@@ -1,87 +1,44 @@
 import React from "react";
-import {
-  AppBar as MuiAppBar,
-  Avatar,
-  Box,
-  IconButton,
-  Toolbar,
-  styled,
-  Drawer,
-} from "@mui/material";
+import { AppBar as MuiAppBar, Box, styled } from "@mui/material";
 import TraceIconLogo from "../../assets/trace-icon.png";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssetsIcon from "@mui/icons-material/ViewQuilt";
 import HomeIcon from "@mui/icons-material/Home";
-import { AuthData } from "../../utils/types/authTypes";
 import NavItem from "../ui/navItem";
-
-type MenuBarProps = {
-  user: AuthData;
-};
 
 const AppBar = styled(MuiAppBar)({
   backgroundColor: "whitesmoke",
+  width: 100,
+  height: "100vh",
+  top: 0,
   left: 0,
-  right: "auto",
-  minHeight: "100vh",
-  maxWidth: "5vw",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  paddingTop: 1,
+  paddingBottom: 1
 });
 
-const MenuBar: React.FC<MenuBarProps> = ({ user }) => {
-  const [open, setOpen] = React.useState<boolean>(false);
+const MenuBar: React.FC = () => {
   return (
-    <>
-      <AppBar position="sticky" sx={{ zIndex: 2 }}>
-        <Toolbar
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-            justifyContent: "space-between",
-          }}
-        >
-          <Box sx={{ alignItems: "center" }}>
-            <IconButton>
-              <img
-                src={TraceIconLogo}
-                alt="Trace Logo"
-                width="60vw"
-                height="60vh"
-              />
-            </IconButton>
-            <NavItem
-              icon={<HomeIcon />}
-              link="/"
-              onClickCallback={() => console.log("Hello")}
-            />
-            <NavItem
-              icon={<AssetsIcon />}
-              link="/assets"
-              onClickCallback={() => console.log("Hello")}
-            />
-          </Box>
-          <Box>
-            <NavItem
-              icon={<SettingsIcon />}
-              link="/settings"
-              onClickCallback={() => console.log("Hello")}
-            />
-            <Avatar>
-              {user.firstName.slice(0, 1)} {user.lastName.slice(0, 1)}
-            </Avatar>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      {open && (
-        <Drawer
-          open={open}
-          PaperProps={{ style: { marginLeft: "5vw" } }}
-          sx={{ zIndex: 1 }}
-        >
-          Hello World, I am a potato
-        </Drawer>
-      )}
-    </>
+    <AppBar>
+      <Box sx={{ display: "flex", justifyContent: "space-around", pt: 2 }}>
+        <img src={TraceIconLogo} alt="Trace Logo" width="60vw" height="60vh" />
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          pt: 2,
+          gap: 2,
+        }}
+      >
+        <NavItem icon={<HomeIcon />} name="Home" link="/" />
+        <NavItem icon={<AssetsIcon />} name="Assets" link="/assets" />
+        <NavItem icon={<SettingsIcon />} name="Settings" link="/settings" />
+      </Box>
+    </AppBar>
   );
 };
 
