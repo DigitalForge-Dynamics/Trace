@@ -6,7 +6,7 @@ import Layout from "../../components/layout/Layout";
 function HomePage() {
   const { authState } = useContext(AuthContext);
   if (!authState.isLoggedIn) return <Navigate to="/login" />;
-  return <Layout userData={authState.data}></Layout>;
+  return <Layout></Layout>;
 }
 
 export default HomePage;
