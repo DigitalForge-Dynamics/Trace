@@ -41,6 +41,7 @@ export interface UserStoredAttributes extends StoredAttributes<UserCreationAttri
 }
 export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
 export type WithUuid<T> = T & { uuid: UUID };
+export type WithMfa<T> = T & { mfaSecret: string };
 
 export enum Scope {
   READ = "TRACE_READ",
@@ -59,6 +60,8 @@ export enum Scope {
   LOCATION_CREATE = "TRACE_LOCATION_CREATE",
   LOCATION_DELETE = "TRACE_LOCATION_DELETE",
   LOCATION_AUDIT = "TRACE_LOCATION_AUDIT",
+  // Settings
+  SETTINGS_ADMIN = "TRACE_SETTINGS_ADMIN",
 }
 
 export interface UserLoginAttributes {

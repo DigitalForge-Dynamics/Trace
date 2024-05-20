@@ -9,6 +9,7 @@ interface IUserService extends IService<User> {
   getUserByUuid(uuid: UUID): Promise<UserStoredAttributes | null>;
   createUser(data: UserCreationAttributes): Promise<boolean>;
   setMfaSecret(username: string, mfaSecret: string): Promise<boolean>;
+  disableUser(username: string): Promise<boolean>;
 }
 
 export default class UserService extends BaseService<User> implements IUserService {
@@ -46,6 +47,16 @@ export default class UserService extends BaseService<User> implements IUserServi
 
   public async setMfaSecret(username: string, mfaSecret: string): Promise<boolean> {
     const updates: Partial<UserStoredAttributes> = { mfaSecret };
+    const filter = { where: { username: username } };
+    const [affectedCount] = await User.update(updates, filter);
+    if (affectedCount === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public async disableUser(username: string): Promise<boolean> {
+    const updates: Partial<UserStoredAttributes> = { isActive: false };
     const filter = { where: { username: username } };
     const [affectedCount] = await User.update(updates, filter);
     if (affectedCount === 0) {

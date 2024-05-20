@@ -13,6 +13,9 @@ import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
 import { getApiPort } from "./utils/Environment";
+import SystemService from "./services/SystemService";
+import AuthService from "./services/AuthenticationService";
+import UserService from "./services/UserService";
 
 const app: Express = express();
 const port = getApiPort();
@@ -38,6 +41,20 @@ const startupConfiguration = async () => {
     databaseStartup(),
     redisClient.connect(),
   ]);
+  const systemService = new SystemService();
+  const settings = await systemService.loadSettings();
+  if (!settings.setup) {
+    console.log("Generating quick start user:...");
+    const authService = new AuthService();
+    const userService = new UserService();
+    // Strict ordering
+    const [user, credential] = await systemService.generateQuickStartUser(authService);
+    await userService.createUser(user);
+    await systemService.setSettings({ ...settings, setup: true });
+    // Intentional display of credentials, for quick start, to allow only Administrator to sign in.
+    // Purposefully not using Logger, to avoid being stored in plain-text files.
+    console.log(`Username: ${user.username}, Credential: ${credential}, MFA: ${user.mfaSecret}`);
+  }
 };
 
 const server = app.listen(port, () => {

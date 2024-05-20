@@ -1,8 +1,8 @@
-import React, { ReactNode, useState, useContext } from "react";
+import React, { ReactNode, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import QRCode from "react-qr-code";
-import { AuthContext } from "../../context/auth.context";
+import { useAuthContext } from "../../context/auth.context";
 import { initMfa, enableMfa } from "../../data/api";
 
 type FormState =
@@ -22,7 +22,7 @@ interface MfaFormProps {
 
 const MfaForm: React.FC<MfaFormProps> = ({ initialState }): ReactNode => {
   const [state, setState] = useState<FormState>({ tag: initialState });
-  const { authState } = useContext(AuthContext);
+  const { authState } = useAuthContext();
   const navigate = useNavigate();
   if (authState.isLoggedIn === false) return <Navigate to="/login"/>;
 

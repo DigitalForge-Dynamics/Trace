@@ -16,10 +16,14 @@ export default class AuthenticationContoller extends ErrorController {
   public async signIn(req: Request, res: Response, next: NextFunction) {
     try {
       const data: UserLogin = validateUserLogin(req.body);
-
       const userDetails = await this.userService.getUser(data.username);
       if (userDetails === null) {
         Logger.error(`User does not exist: '${data.username}'`);
+        throw ErrorController.ForbiddenError();
+      }
+
+      if (!userDetails.isActive) {
+        Logger.error(`Attempted to sign in to inactive account: '${userDetails.username}'`);
         throw ErrorController.ForbiddenError();
       }
 
@@ -47,7 +51,6 @@ export default class AuthenticationContoller extends ErrorController {
           throw ErrorController.ForbiddenError();
         }
       }
-
       Logger.info('User signed in successfully');
       res.status(200).json({
         idToken: this.authService.generateIdToken(userDetails),
@@ -98,7 +101,10 @@ export default class AuthenticationContoller extends ErrorController {
       }
       const userAttributes = await this.userService.getUser(user.username);
       if (userAttributes === null) {
-        throw ErrorController.NotFoundError("User not found");
+        throw ErrorController.NotFoundError("User not found.");
+      }
+      if (!userAttributes.isActive) {
+        throw ErrorController.ForbiddenError("User disabled.");
       }
       const { scope } = userAttributes;
       const accessToken = this.authService.generateAccessToken(scope, user.username);
