@@ -15,6 +15,11 @@ class DashboardService implements IDashboardService {
 
   public async getTotalInventoryCount(): Promise<number> {
     const total = await Asset.findAndCountAll();
+
+    if (total.count < 0) {
+      return 0;
+    }
+
     return total.count;
   }
 
@@ -30,15 +35,13 @@ class DashboardService implements IDashboardService {
   }
 
   public async getRecentlyAddedInventory(): Promise<Asset[]> {
-    const recentlyAdded = await Asset.findAll({
+    return await Asset.findAll({
       where: {
         createdAt: {
           [Op.gt]: new Date(Date.now() - 30 * 24 * 3600 * 1000),
         },
       },
     });
-
-    return recentlyAdded;
   }
 }
 
