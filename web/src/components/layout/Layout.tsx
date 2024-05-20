@@ -1,14 +1,12 @@
-import { Box } from "@mui/material";
 import React from "react";
-import Header from "../ui/header";
-import Footer from "../ui/footer";
+import { Box } from "@mui/material";
+import Menu from "../menu/MenuBar";
 
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: '100vh' }}>
-      <Header />
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Menu />
       <Box sx={{ flexGrow: 1 }}>{children}</Box>
-      <Footer />
     </Box>
   );
 };
