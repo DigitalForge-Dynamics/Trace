@@ -1,15 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import icon from "../../assets/trace-icon.png";
 import { AuthData, Tokens } from "../../utils/types/authTypes";
-import { AuthContext } from "../../context/auth.context";
+import { useAuthContext } from "../../context/auth.context";
 import { UserLoginData, loginUser, decodeUserAuth } from "../../data/api";
 import background from "../../assets/login-background.jpg";
 import LoginForm from "../../components/login/LoginForm.component";
 
 function LoginPage() {
   const [authData, setAuthData] = useState<AuthData>();
-  const { login } = useContext(AuthContext);
+  const { login } = useAuthContext();
 
   useEffect(() => {
     if (authData !== undefined) {
