@@ -5,6 +5,7 @@ export interface AssetCreationAttributes {
   name: string;
   serialNumber?: string;
   modelNumber?: string;
+  status: Status;
   nextAuditDate?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -77,3 +78,10 @@ export type NonUndefinedOptional<T extends object> = {
   [K in keyof T]: Omit<T, K> extends T ?
     Exclude<T[K], undefined> : T[K];
 };
+
+export enum Status {
+  SERVICEABLE = "SERVICEABLE",
+  IN_MAINTAINCE = "IN_MAINTAINCE",
+  UNSERVICEABLE = "UNSERVICEABLE",
+  UNKNOWN = "UNKNOWN"
+}
