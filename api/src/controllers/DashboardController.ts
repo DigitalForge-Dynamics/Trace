@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ErrorController from "./ErrorController";
 import DashboardService from "../services/DashboardService";
+import { DashboardData } from "../utils/types/attributeTypes";
 
 export default class DashboardController extends ErrorController {
   private readonly dashboardService = new DashboardService();
@@ -11,11 +12,11 @@ export default class DashboardController extends ErrorController {
     next: NextFunction
   ) {
     try {
-      const dashboardStats = {
-        totalInventoryCount:
-          await this.dashboardService.getTotalInventoryCount(),
+      const dashboardStats: DashboardData = {
         totalInventoryStatuses:
           await this.dashboardService.getTotalInventoryStatus(),
+        totalInventoryCount:
+          await this.dashboardService.getTotalInventoryCount(),
         recentlyAddedInventory:
           await this.dashboardService.getRecentlyAddedInventory(),
       };

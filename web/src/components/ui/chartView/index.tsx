@@ -1,30 +1,32 @@
 import React from "react";
 import { ArcElement, Chart, Legend, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
+import { TotalInventoryCount } from "../../../../../api/src/utils/types/attributeTypes";
+
+type ChartViewProps = {
+  data: TotalInventoryCount[];
+};
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const ChartView: React.FC = () => {
+const ChartView: React.FC<ChartViewProps> = ({ data }) => {
   return (
     <>
-      <Paper sx={{ maxWidth: "20vw", maxHeight: "20vh" }}>
+      <Box sx={{ maxWidth: "50vw", maxHeight: "50vh" }}>
         <Doughnut
           data={{
-            labels: ["Assets", "Licenses"],
+            labels: ["Assets"],
             datasets: [
               {
                 label: "Total Assets",
-                data: [1, 2],
-                backgroundColor: [
-                  "rgba(255, 99, 132, 0.2)",
-                  "rgba(54, 162, 235, 0.2)",
-                ],
+                data: data.map((i) => i.assets),
+                backgroundColor: ["green", "blue"],
               },
             ],
           }}
         />
-      </Paper>
+      </Box>
     </>
   );
 };

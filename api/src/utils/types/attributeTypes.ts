@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import Asset from "../../database/models/asset.model";
 
 export interface AssetCreationAttributes {
   assetTag: string;
@@ -32,15 +33,21 @@ export interface LocationCreationAttributes {
 }
 
 // Convert optional properties from `[K]?: T` or `[K]: T | undefined`, into `[K]: T | null`.
-type StoredAttributes<TCreation> = { id: number }
-& { [K in keyof TCreation]-?: undefined extends TCreation[K] ? Exclude<TCreation[K], undefined> | null : TCreation[K] };
+type StoredAttributes<TCreation> = { id: number } & {
+  [K in keyof TCreation]-?: undefined extends TCreation[K]
+    ? Exclude<TCreation[K], undefined> | null
+    : TCreation[K];
+};
 
-export interface AssetStoredAttributes extends StoredAttributes<AssetCreationAttributes> {}
-export interface UserStoredAttributes extends StoredAttributes<UserCreationAttributes> {
+export interface AssetStoredAttributes
+  extends StoredAttributes<AssetCreationAttributes> {}
+export interface UserStoredAttributes
+  extends StoredAttributes<UserCreationAttributes> {
   mfaSecret: string | null;
   uuid: UUID;
 }
-export interface LocationStoredAttributes extends StoredAttributes<LocationCreationAttributes> {}
+export interface LocationStoredAttributes
+  extends StoredAttributes<LocationCreationAttributes> {}
 export type WithUuid<T> = T & { uuid: UUID };
 export type WithMfa<T> = T & { mfaSecret: string };
 
@@ -78,13 +85,26 @@ export type HealthCheckType = {
 
 // Converts from `[K]?: T | undefined` to `[K]?: T`.
 export type NonUndefinedOptional<T extends object> = {
-  [K in keyof T]: Omit<T, K> extends T ?
-    Exclude<T[K], undefined> : T[K];
+  [K in keyof T]: Omit<T, K> extends T ? Exclude<T[K], undefined> : T[K];
 };
 
 export enum Status {
   SERVICEABLE = "SERVICEABLE",
   IN_MAINTAINCE = "IN_MAINTAINCE",
   UNSERVICEABLE = "UNSERVICEABLE",
-  UNKNOWN = "UNKNOWN"
+  UNKNOWN = "UNKNOWN",
 }
+
+export type TotalInventoryCount = {
+  assets: number;
+};
+
+export type TotalInventoryStatuses = [status: Status, statusCount: number][];
+
+export type RecentlyAddedInventory = Asset[];
+
+export type DashboardData = {
+  totalInventoryCount: TotalInventoryCount[];
+  totalInventoryStatuses: TotalInventoryStatuses[];
+  recentlyAddedInventory: RecentlyAddedInventory;
+};
