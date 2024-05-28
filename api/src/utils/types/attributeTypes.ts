@@ -99,8 +99,7 @@ export type TotalInventoryCount = {
   assets: number;
 };
 
-export type TotalInventoryStatuses = [status: Status, statusCount: number][];
-
+export type TotalInventoryStatuses = Array<{ status: Status, total: number }>;
 export type RecentlyAddedInventory = Asset[];
 
 export type DashboardData = {

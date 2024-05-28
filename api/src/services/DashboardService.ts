@@ -26,11 +26,11 @@ class DashboardService implements IDashboardService {
     const assetStatus = await Asset.findAll({
       attributes: [
         "status",
-        [sequelize.fn("COUNT", sequelize.col("status")), "statusCount"],
+        [sequelize.fn("COUNT", sequelize.col("status")), "total"],
       ],
       group: "status",
-    });
-    return [[assetStatus] as any];
+    }) as Array<unknown> as Array<TotalInventoryStatuses>;
+    return assetStatus;
   }
 
   public async getRecentlyAddedInventory(): Promise<RecentlyAddedInventory> {
