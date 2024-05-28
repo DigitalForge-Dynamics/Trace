@@ -2,21 +2,17 @@ import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../../context/auth.context";
 import Layout from "../../components/layout/Layout";
 import ChartView from "../../components/ui/chartView";
-import useSWR from "swr";
-import { fetcher } from "../../data/api";
 import { Box, Divider, Typography } from "@mui/material";
 import { DashboardData } from "../../../../api/src/utils/types/attributeTypes";
+import { useAuthFetcher } from "../../hooks/useAuthFetcher";
+import StatusView from "../../components/views/statusView";
 
 function HomePage() {
   const { authState } = useAuthContext();
   if (!authState.isLoggedIn) return <Navigate to="/login" />;
-  const fetcherWithToken = (url: string) => fetcher(url, authState.data);
 
-  const { data } = useSWR<DashboardData>("/dashboard", fetcherWithToken);
-
-  console.log(data);
-  if (!data) return null;
-
+  const { data } = useAuthFetcher<DashboardData>("/dashboard");
+  
   return (
     <Layout>
       <Box sx={{ m: 5 }}>
@@ -25,7 +21,10 @@ function HomePage() {
         </Typography>
       </Box>
       <Divider variant="middle" />
-        <ChartView data={data.totalInventoryCount} />
+      <ChartView data={data?.totalInventoryCount || []} />
+      <Box>
+        <StatusView />
+      </Box>
     </Layout>
   );
 }
