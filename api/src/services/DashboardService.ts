@@ -4,6 +4,7 @@ import {
   RecentlyAddedInventory,
   TotalInventoryCount,
   TotalInventoryStatuses,
+  Status,
 } from "../utils/types/attributeTypes";
 
 interface IDashboardService {
@@ -29,8 +30,21 @@ class DashboardService implements IDashboardService {
         [sequelize.fn("COUNT", sequelize.col("status")), "total"],
       ],
       group: "status",
-    }) as Array<unknown> as TotalInventoryStatuses;
-    return assetStatus;
+    }) as Array<unknown> as Array<{ status: Status; total: number}>;
+    const initial: TotalInventoryStatuses = {
+      [Status.IN_MAINTAINCE]: 0,
+      [Status.SERVICEABLE]: 0,
+      [Status.UNKNOWN]: 0,
+      [Status.UNSERVICEABLE]: 0,
+    };
+    return assetStatus.reduce(
+      (prev, current) => {
+        const { total } = JSON.parse(JSON.stringify(current)) as { total: string };
+        return {...prev, [current.status]: parseInt(total) };
+      },
+      initial,
+    );
+
   }
 
   public async getRecentlyAddedInventory(): Promise<RecentlyAddedInventory> {

@@ -1,4 +1,4 @@
-import { Box, Icon, Typography } from "@mui/material";
+import { Box, Icon, Typography, Skeleton } from "@mui/material";
 import React from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -7,7 +7,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import { Status } from "../../../utils/types/attributes";
 
 interface StatusItemProps {
-  statusTotal: number;
+  statusTotal: number | undefined;
   statusType: Status;
 }
 
@@ -22,7 +22,7 @@ const StatusItem: React.FC<StatusItemProps> = ({ statusTotal, statusType }) => {
         }}
       >
         <Icon>{StatusIcon(statusType)}</Icon>
-        <Typography>{statusTotal}</Typography>
+        <Typography>{statusTotal ?? <Skeleton/>}</Typography>
         <Typography>{statusType}</Typography>
       </Box>
     </>

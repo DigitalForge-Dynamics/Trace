@@ -66,7 +66,7 @@ export type TotalInventoryCount = {
   assets: number;
 };
 
-export type TotalInventoryStatuses = Array<{ status: Status, total: number }>;
+export type TotalInventoryStatuses = Record<Status, number>;
 export type RecentlyAddedInventory = AssetStoredAttributes[];
 
 export type DashboardData = {
