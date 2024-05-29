@@ -24,7 +24,7 @@ const StatusView: React.FC<StatusViewProps> = ({ data }) => {
       <Typography>Inventory Status</Typography>
       {data?.map((item, index) => {
         return (
-          <Box id={index.toString()}>
+          <Box id={index.toString()} key={index}>
             <StatusItem statusTotal={item.total} statusType={item.status} />
           </Box>
         );

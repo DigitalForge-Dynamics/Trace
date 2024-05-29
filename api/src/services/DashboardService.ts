@@ -7,7 +7,7 @@ import {
 } from "../utils/types/attributeTypes";
 
 interface IDashboardService {
-  getTotalInventoryCount(): Promise<TotalInventoryCount[]>;
+  getTotalInventoryCount(): Promise<TotalInventoryCount>;
   getTotalInventoryStatus(): Promise<TotalInventoryStatuses>;
   getRecentlyAddedInventory(): Promise<RecentlyAddedInventory>;
 }
@@ -17,9 +17,9 @@ class DashboardService implements IDashboardService {
     init();
   }
 
-  public async getTotalInventoryCount(): Promise<TotalInventoryCount[]> {
+  public async getTotalInventoryCount(): Promise<TotalInventoryCount> {
     const assetTotalCount = await Asset.findAndCountAll();
-    return [{ assets: assetTotalCount.count }];
+    return { assets: assetTotalCount.count };
   }
 
   public async getTotalInventoryStatus(): Promise<TotalInventoryStatuses> {

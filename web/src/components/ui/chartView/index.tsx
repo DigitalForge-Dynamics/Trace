@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import type { TotalInventoryCount } from "../../../utils/types/attributes";
 
 interface ChartViewProps {
-  data: TotalInventoryCount[] | undefined;
+  data: TotalInventoryCount | undefined;
 }
 
 Chart.register(ArcElement, Tooltip, Legend);
@@ -20,7 +20,7 @@ const ChartView: React.FC<ChartViewProps> = ({ data }) => {
             datasets: [
               {
                 label: "Total Assets",
-                data: data?.map((i) => i.assets),
+                data: data ? [data.assets] : undefined,
                 backgroundColor: ["green", "blue"],
               },
             ],
