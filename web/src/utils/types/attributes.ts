@@ -62,4 +62,15 @@ export type PaginationResult<T> = {
     data: T[];
 };
 
+export type TotalInventoryCount = {
+  assets: number;
+};
 
+export type TotalInventoryStatuses = Array<{ status: Status, total: number }>;
+export type RecentlyAddedInventory = AssetStoredAttributes[];
+
+export type DashboardData = {
+  totalInventoryCount: TotalInventoryCount[];
+  totalInventoryStatuses: TotalInventoryStatuses[];
+  recentlyAddedInventory: RecentlyAddedInventory;
+};

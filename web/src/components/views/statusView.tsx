@@ -4,7 +4,7 @@ import StatusItem from "../ui/statusItem";
 import {
   Status,
   TotalInventoryStatuses,
-} from "../../../../api/src/utils/types/attributeTypes";
+} from "../../utils/types/attributes";
 
 type StatusViewProps = {
   data?: TotalInventoryStatuses;

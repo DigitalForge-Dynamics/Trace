@@ -55,7 +55,6 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       }
       if (activeUser.expiry < now + 30) {
         // Access will expire within 30 seconds. Refreshing
-		console.log("Refreshing");
         const newAuthData: AuthData = await refreshToken(activeUser)
         return authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
       }

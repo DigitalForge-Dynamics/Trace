@@ -1,5 +1,4 @@
 import { UUID } from "crypto";
-import Asset from "../../database/models/asset.model";
 
 export interface AssetCreationAttributes {
   assetTag: string;
@@ -100,7 +99,7 @@ export type TotalInventoryCount = {
 };
 
 export type TotalInventoryStatuses = Array<{ status: Status, total: number }>;
-export type RecentlyAddedInventory = Asset[];
+export type RecentlyAddedInventory = AssetStoredAttributes[];
 
 export type DashboardData = {
   totalInventoryCount: TotalInventoryCount[];

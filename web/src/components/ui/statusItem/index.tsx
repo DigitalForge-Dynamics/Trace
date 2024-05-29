@@ -4,7 +4,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import HelpIcon from "@mui/icons-material/Help";
-import { Status } from "../../../../../api/src/utils/types/attributeTypes";
+import { Status } from "../../../utils/types/attributes";
 
 type StatusItemProps = {
   statusTotal: number;
