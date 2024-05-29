@@ -6,10 +6,10 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import HelpIcon from "@mui/icons-material/Help";
 import { Status } from "../../../utils/types/attributes";
 
-type StatusItemProps = {
+interface StatusItemProps {
   statusTotal: number;
   statusType: Status;
-};
+}
 
 const StatusItem: React.FC<StatusItemProps> = ({ statusTotal, statusType }) => {
   return (

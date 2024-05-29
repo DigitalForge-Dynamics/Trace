@@ -19,7 +19,7 @@ function HomePage() {
         </Typography>
       </Box>
       <Divider variant="middle" />
-      <ChartView data={data?.totalInventoryCount ?? []} />
+      <ChartView data={data?.totalInventoryCount} />
       <Box>
         <StatusView data={data?.totalInventoryStatuses} />
       </Box>

@@ -6,7 +6,7 @@ import {
   TotalInventoryStatuses,
 } from "../../utils/types/attributes";
 
-type StatusViewProps = {
+interface StatusViewProps {
   data: TotalInventoryStatuses | undefined;
 };
 
@@ -22,7 +22,7 @@ const StatusView: React.FC<StatusViewProps> = ({ data }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "row" }}>
       <Typography>Inventory Status</Typography>
-	  {data?.map((item, index) => {
+      {data?.map((item, index) => {
         return (
           <Box id={index.toString()}>
             <StatusItem statusTotal={item.total} statusType={item.status} />
