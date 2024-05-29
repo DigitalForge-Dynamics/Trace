@@ -8,7 +8,7 @@ import {
 
 interface IDashboardService {
   getTotalInventoryCount(): Promise<TotalInventoryCount[]>;
-  getTotalInventoryStatus(): Promise<TotalInventoryStatuses[]>;
+  getTotalInventoryStatus(): Promise<TotalInventoryStatuses>;
   getRecentlyAddedInventory(): Promise<RecentlyAddedInventory>;
 }
 
@@ -22,14 +22,14 @@ class DashboardService implements IDashboardService {
     return [{ assets: assetTotalCount.count }];
   }
 
-  public async getTotalInventoryStatus(): Promise<TotalInventoryStatuses[]> {
+  public async getTotalInventoryStatus(): Promise<TotalInventoryStatuses> {
     const assetStatus = await Asset.findAll({
       attributes: [
         "status",
         [sequelize.fn("COUNT", sequelize.col("status")), "total"],
       ],
       group: "status",
-    }) as Array<unknown> as Array<TotalInventoryStatuses>;
+    }) as Array<unknown> as TotalInventoryStatuses;
     return assetStatus;
   }
 

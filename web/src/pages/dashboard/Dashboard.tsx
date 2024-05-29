@@ -8,9 +8,8 @@ import StatusView from "../../components/views/statusView";
 
 function HomePage() {
   const { authState } = useAuthContext();
-  if (!authState.isLoggedIn) return <Navigate to="/login" />;
-
   const { data } = useDashboardData();
+  if (!authState.isLoggedIn) return <Navigate to="/login" />;
   
   return (
     <Layout>
@@ -20,9 +19,9 @@ function HomePage() {
         </Typography>
       </Box>
       <Divider variant="middle" />
-      <ChartView data={data?.totalInventoryCount || []} />
+      <ChartView data={data?.totalInventoryCount ?? []} />
       <Box>
-        <StatusView />
+        <StatusView data={data?.totalInventoryStatuses} />
       </Box>
     </Layout>
   );

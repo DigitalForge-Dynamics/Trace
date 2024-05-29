@@ -5,7 +5,7 @@ import {
   GenericClaimStructure,
 } from "../utils/types/authTypes";
 
-export const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3000";
 
 export interface UserLoginData {
   username: string;
@@ -23,7 +23,7 @@ export const fetcher = async <T>(url: string, auth: AuthData): Promise<T> => {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
-  return response.json();
+  return response.json() as Promise<T>;
 }
 
 export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {

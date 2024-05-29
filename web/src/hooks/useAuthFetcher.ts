@@ -3,7 +3,7 @@ import { useAuthContext } from "../context/auth.context";
 import { fetcher } from "../data/api";
 import type { AssetStoredAttributes, PaginationResult, DashboardData } from "../utils/types/attributes";
 
-export const useAuthFetcher = <T>(url: string): SWRResponse<T> => {
+const useAuthFetcher = <T>(url: string): SWRResponse<T> => {
   const { authState } = useAuthContext();
   if (!authState.isLoggedIn) {
     throw new Error("No valid token");

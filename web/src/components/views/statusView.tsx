@@ -7,10 +7,10 @@ import {
 } from "../../utils/types/attributes";
 
 type StatusViewProps = {
-  data?: TotalInventoryStatuses;
+  data: TotalInventoryStatuses | undefined;
 };
 
-const testData = [
+const testData: TotalInventoryStatuses = [
   { status: Status.UNKNOWN, total: 0 },
   { status: Status.UNSERVICEABLE, total: 1 },
   { status: Status.IN_MAINTAINCE, total: 2 },
@@ -18,10 +18,11 @@ const testData = [
 ];
 
 const StatusView: React.FC<StatusViewProps> = ({ data }) => {
+  data = testData; // TODO: Remove once done
   return (
     <Box sx={{ display: "flex", flexDirection: "row" }}>
       <Typography>Inventory Status</Typography>
-      {testData.map((item, index) => {
+	  {data?.map((item, index) => {
         return (
           <Box id={index.toString()}>
             <StatusItem statusTotal={item.total} statusType={item.status} />
