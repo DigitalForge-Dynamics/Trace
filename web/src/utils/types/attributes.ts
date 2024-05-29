@@ -54,3 +54,12 @@ export enum Status {
   UNSERVICEABLE = "UNSERVICEABLE",
   UNKNOWN = "UNKNOWN",
 }
+
+export type PaginationResult<T> = {
+    lastPage: number;
+    totalRecords: number;
+    hasMorePages: boolean;
+    data: T[];
+};
+
+

@@ -1,7 +1,7 @@
 import useSWR, { SWRResponse } from "swr";
 import { useAuthContext } from "../context/auth.context";
 import { fetcher } from "../data/api";
-import type { AssetStoredAttributes } from "../utils/types/attributes";
+import type { AssetStoredAttributes, PaginationResult } from "../utils/types/attributes";
 
 export const useAuthFetcher = <T>(url: string): SWRResponse<T> => {
   const { authState } = useAuthContext();
@@ -12,4 +12,7 @@ export const useAuthFetcher = <T>(url: string): SWRResponse<T> => {
   return useSWR(url, (url) => fetcher<T>(url, authState.data));
 };
 
-export const useAssets = () => useAuthFetcher<AssetStoredAttributes[]>("/assets");
+export const useAssets = (page: number, pageSize: number) => {
+  const url = `/assets?page=${page}&pageSize=${pageSize}`;
+  return useAuthFetcher<PaginationResult<AssetStoredAttributes>>(url);
+};
