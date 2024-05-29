@@ -6,7 +6,9 @@ import type { AssetStoredAttributes } from "../../utils/types/attributes";
 
 function Assets() {
   const { data, error } = useAssets(1, 25);
-  if (error !== undefined && typeof error === "string") throw new Error(error);
+  if (error !== undefined) {
+    console.error(error);
+  }
   if (data === undefined) return <Skeleton />;
   return (
     <Layout>
