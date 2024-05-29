@@ -1,4 +1,5 @@
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
+export type Scope = string;
 
 export enum AuthOption {
   LOGIN = "LOGIN",
