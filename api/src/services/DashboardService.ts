@@ -4,11 +4,12 @@ import {
   RecentlyAddedInventory,
   TotalInventoryCount,
   TotalInventoryStatuses,
+  Status,
 } from "../utils/types/attributeTypes";
 
 interface IDashboardService {
-  getTotalInventoryCount(): Promise<TotalInventoryCount[]>;
-  getTotalInventoryStatus(): Promise<TotalInventoryStatuses[]>;
+  getTotalInventoryCount(): Promise<TotalInventoryCount>;
+  getTotalInventoryStatus(): Promise<TotalInventoryStatuses>;
   getRecentlyAddedInventory(): Promise<RecentlyAddedInventory>;
 }
 
@@ -17,20 +18,33 @@ class DashboardService implements IDashboardService {
     init();
   }
 
-  public async getTotalInventoryCount(): Promise<TotalInventoryCount[]> {
+  public async getTotalInventoryCount(): Promise<TotalInventoryCount> {
     const assetTotalCount = await Asset.findAndCountAll();
-    return [{ assets: assetTotalCount.count }];
+    return { assets: assetTotalCount.count };
   }
 
-  public async getTotalInventoryStatus(): Promise<TotalInventoryStatuses[]> {
+  public async getTotalInventoryStatus(): Promise<TotalInventoryStatuses> {
     const assetStatus = await Asset.findAll({
       attributes: [
         "status",
         [sequelize.fn("COUNT", sequelize.col("status")), "total"],
       ],
       group: "status",
-    }) as Array<unknown> as Array<TotalInventoryStatuses>;
-    return assetStatus;
+    }) as Array<unknown> as Array<{ status: Status; total: number}>;
+    const initial: TotalInventoryStatuses = {
+      [Status.IN_MAINTAINCE]: 0,
+      [Status.SERVICEABLE]: 0,
+      [Status.UNKNOWN]: 0,
+      [Status.UNSERVICEABLE]: 0,
+    };
+    return assetStatus.reduce(
+      (prev, current) => {
+        const { total } = JSON.parse(JSON.stringify(current)) as { total: string };
+        return {...prev, [current.status]: parseInt(total) };
+      },
+      initial,
+    );
+
   }
 
   public async getRecentlyAddedInventory(): Promise<RecentlyAddedInventory> {

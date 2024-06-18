@@ -3,15 +3,13 @@ import { useAuthContext } from "../../context/auth.context";
 import Layout from "../../components/layout/Layout";
 import ChartView from "../../components/ui/chartView";
 import { Box, Divider, Typography } from "@mui/material";
-import { DashboardData } from "../../../../api/src/utils/types/attributeTypes";
-import { useAuthFetcher } from "../../hooks/useAuthFetcher";
+import { useDashboardData } from "../../hooks/useAuthFetcher";
 import StatusView from "../../components/views/statusView";
 
 function HomePage() {
   const { authState } = useAuthContext();
+  const { data } = useDashboardData();
   if (!authState.isLoggedIn) return <Navigate to="/login" />;
-
-  const { data } = useAuthFetcher<DashboardData>("/dashboard");
   
   return (
     <Layout>
@@ -21,9 +19,9 @@ function HomePage() {
         </Typography>
       </Box>
       <Divider variant="middle" />
-      <ChartView data={data?.totalInventoryCount || []} />
+      <ChartView data={data?.totalInventoryCount} />
       <Box>
-        <StatusView />
+        <StatusView data={data?.totalInventoryStatuses} />
       </Box>
     </Layout>
   );

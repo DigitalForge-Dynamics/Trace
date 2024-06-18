@@ -1,12 +1,12 @@
 import React from "react";
 import { ArcElement, Chart, Legend, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Box, Paper } from "@mui/material";
-import { TotalInventoryCount } from "../../../../../api/src/utils/types/attributeTypes";
+import { Box } from "@mui/material";
+import type { TotalInventoryCount } from "../../../utils/types/attributes";
 
-type ChartViewProps = {
-  data: TotalInventoryCount[];
-};
+interface ChartViewProps {
+  data: TotalInventoryCount | undefined;
+}
 
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -20,7 +20,7 @@ const ChartView: React.FC<ChartViewProps> = ({ data }) => {
             datasets: [
               {
                 label: "Total Assets",
-                data: data.map((i) => i.assets),
+                data: data ? [data.assets] : undefined,
                 backgroundColor: ["green", "blue"],
               },
             ],

@@ -15,6 +15,7 @@ router.route("/").get(
     authoriseRequest(req, res, next);
   },
   (req, res, next) => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     dashboardController.getDashboardStats(req, res, next);
   }
 );
