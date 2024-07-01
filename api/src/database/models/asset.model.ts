@@ -6,6 +6,7 @@ import {
   Model,
 } from "sequelize";
 import { getSequelizeConnection } from "../config/databaseClient";
+import { Status } from "../../utils/types/attributeTypes";
 
 class Asset extends Model<
   InferAttributes<Asset>,
@@ -16,6 +17,7 @@ class Asset extends Model<
   declare name: string;
   declare serialNumber: CreationOptional<string | null>;
   declare modelNumber: CreationOptional<string | null>;
+  declare status: Status;
   declare nextAuditDate: CreationOptional<Date | null>;
   declare createdAt: CreationOptional<Date | null>;
   declare updatedAt: CreationOptional<Date | null>;
@@ -44,11 +46,17 @@ export const init = () => {
       },
       modelNumber: {
         type: DataTypes.STRING(128),
-        allowNull: true
+        allowNull: true,
+      },
+      status: {
+        type: DataTypes.ENUM({
+          values: Object.values(Status),
+        }),
+        allowNull: false,
       },
       nextAuditDate: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: true,
       },
       createdAt: {
         type: DataTypes.DATE,

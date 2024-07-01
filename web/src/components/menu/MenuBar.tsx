@@ -1,12 +1,12 @@
 import React from "react";
-import { AppBar as MuiAppBar, Box, styled } from "@mui/material";
+import { Paper as MuiPaper, Box, styled } from "@mui/material";
 import TraceIconLogo from "../../assets/trace-icon.png";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssetsIcon from "@mui/icons-material/ViewQuilt";
 import HomeIcon from "@mui/icons-material/Home";
 import NavItem from "../ui/navItem";
 
-const AppBar = styled(MuiAppBar)({
+const AppBar = styled(MuiPaper)({
   backgroundColor: "whitesmoke",
   width: 100,
   height: "100vh",
@@ -14,9 +14,7 @@ const AppBar = styled(MuiAppBar)({
   left: 0,
   display: "flex",
   flexDirection: "column",
-  alignItems: "center",
-  paddingTop: 1,
-  paddingBottom: 1
+  alignItems: "center"
 });
 
 const MenuBar: React.FC = () => {

@@ -1,5 +1,5 @@
 import { PaginationResult } from "../../utils/Paginator";
-import { AssetCreationAttributes, AssetStoredAttributes } from "../../utils/types/attributeTypes";
+import { AssetCreationAttributes, AssetStoredAttributes, Status } from "../../utils/types/attributeTypes";
 
 export const testCreationAsset: AssetCreationAttributes = {
   assetTag: "testAssetTag",
@@ -9,6 +9,7 @@ export const testCreationAsset: AssetCreationAttributes = {
   nextAuditDate: new Date(),
   createdAt: new Date(),
   updatedAt: new Date(),
+  status: Status.UNKNOWN,
 };
 
 export const testStoredAsset: AssetStoredAttributes = {
@@ -20,6 +21,7 @@ export const testStoredAsset: AssetStoredAttributes = {
   nextAuditDate: testCreationAsset.nextAuditDate!,
   createdAt: testCreationAsset.createdAt!,
   updatedAt: testCreationAsset.updatedAt!,
+  status: testCreationAsset.status,
 };
 
 export const testPaginationAssets: PaginationResult<AssetStoredAttributes> = {
@@ -36,6 +38,7 @@ export const testPaginationAssets: PaginationResult<AssetStoredAttributes> = {
       nextAuditDate: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
+      status: Status.SERVICEABLE,
     },
     {
       id: 2,
@@ -46,6 +49,7 @@ export const testPaginationAssets: PaginationResult<AssetStoredAttributes> = {
       nextAuditDate: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
+      status: Status.IN_MAINTAINCE
     },
     {
       id: 3,
@@ -56,6 +60,7 @@ export const testPaginationAssets: PaginationResult<AssetStoredAttributes> = {
       nextAuditDate: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
+      status: Status.UNSERVICEABLE
     },
   ],
 };

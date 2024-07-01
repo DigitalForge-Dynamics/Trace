@@ -7,12 +7,12 @@ import {
 import React from "react";
 import { Link } from "react-router-dom";
 
-type NavItemProps = {
+interface NavItemProps {
   icon: React.ReactElement;
   name: string;
   link: string;
   onClickCallback?: () => void;
-};
+}
 
 const IconButton = styled(MuiIconButton)({
   display: "flex",

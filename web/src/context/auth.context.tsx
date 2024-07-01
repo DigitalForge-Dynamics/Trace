@@ -53,13 +53,13 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
         logout();
         return;
       }
-      if (activeUser.expiry < now) {
-        // Access expired. Refreshing
+      if (activeUser.expiry < now + 30) {
+        // Access will expire within 30 seconds. Refreshing
         const newAuthData: AuthData = await refreshToken(activeUser)
         return authDispatch({ type: AuthOption.LOGIN, payload: newAuthData });
       }
     };
-    const interval = setInterval(tokenMonitor, 60*1000);
+    const interval = setInterval(tokenMonitor, 5000);
     return () => clearInterval(interval);
   }, [activeUser, logout]);
 

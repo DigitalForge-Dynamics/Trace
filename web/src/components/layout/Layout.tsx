@@ -4,7 +4,7 @@ import Menu from "../menu/MenuBar";
 
 const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", flexDirection: "row", minHeight: "100vh" }}>
       <Menu />
       <Box sx={{ flexGrow: 1 }}>{children}</Box>
     </Box>
