@@ -10,7 +10,7 @@ function HomePage() {
   const { authState } = useAuthContext();
   const { data } = useDashboardData();
   if (!authState.isLoggedIn) return <Navigate to="/login" />;
-  
+
   return (
     <Layout>
       <Box sx={{ m: 5 }}>
@@ -19,9 +19,12 @@ function HomePage() {
         </Typography>
       </Box>
       <Divider variant="middle" />
-      <ChartView data={data?.totalInventoryCount} />
-      <Box>
-        <StatusView data={data?.totalInventoryStatuses} />
+      <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
+        <ChartView data={data?.totalInventoryCount} />
+        <Divider orientation="vertical" flexItem />
+        <Box>
+          <StatusView data={data?.totalInventoryStatuses} />
+        </Box>
       </Box>
     </Layout>
   );
