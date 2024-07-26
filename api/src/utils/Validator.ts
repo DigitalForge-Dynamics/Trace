@@ -6,7 +6,8 @@ import { Request } from "express";
 import ErrorController from "../controllers/ErrorController";
 import {
   AssetCreationAttributes, LocationCreationAttributes, UserCreationAttributes,
-  Scope, NonUndefinedOptional
+  Scope, NonUndefinedOptional,
+  Status
 } from "./types/attributeTypes";
 import { UserLogin } from "./types/authenticationTypes";
 import Logger from "./Logger";
@@ -63,6 +64,7 @@ const assetCreationSchema: ZodSchema<AssetCreationAttributes> = z.object({
   name: z.string(),
   serialNumber: z.string().optional(),
   modelNumber: z.string().optional(),
+  status: z.nativeEnum(Status),
   nextAuditDate: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
