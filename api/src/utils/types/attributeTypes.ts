@@ -89,7 +89,7 @@ export type NonUndefinedOptional<T extends object> = {
 
 export enum Status {
   SERVICEABLE = "SERVICEABLE",
-  IN_MAINTAINCE = "IN_MAINTAINCE",
+  IN_MAINTENANCE = "IN MAINTENANCE",
   UNSERVICEABLE = "UNSERVICEABLE",
   UNKNOWN = "UNKNOWN",
 }

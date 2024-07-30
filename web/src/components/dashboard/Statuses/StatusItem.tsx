@@ -3,9 +3,7 @@ import {
   Box,
   Icon,
   Typography,
-  Skeleton,
-  Paper as MuiPaper,
-  styled,
+  Skeleton
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -18,14 +16,8 @@ interface StatusItemProps {
   statusType: Status;
 }
 
-const Paper = styled(MuiPaper)(() => ({
-  width: 180,
-  height: 180,
-}));
-
 const StatusItem: React.FC<StatusItemProps> = ({ statusTotal, statusType }) => {
   return (
-    <Paper elevation={3}>
       <Box
         sx={{
           display: "flex",
@@ -41,7 +33,6 @@ const StatusItem: React.FC<StatusItemProps> = ({ statusTotal, statusType }) => {
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>{statusTotal}</Typography>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>{statusType}</Typography>
       </Box>
-    </Paper>
   );
 };
 

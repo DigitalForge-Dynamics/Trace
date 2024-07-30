@@ -4,7 +4,8 @@ import Layout from "../../components/layout/Layout";
 import ChartView from "../../components/ui/chartView";
 import { Box, Divider, Typography } from "@mui/material";
 import { useDashboardData } from "../../hooks/useAuthFetcher";
-import StatusView from "../../components/views/statusView";
+import StatusView from "../../components/dashboard/Statuses/StatusView";
+import RecentlyAddedView from "../../components/dashboard/RecentlyAdded/RecentlyAddedView";
 
 function HomePage() {
   const { authState } = useAuthContext();
@@ -19,11 +20,18 @@ function HomePage() {
         </Typography>
       </Box>
       <Divider variant="middle" />
-      <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-around",
+        }}
+      >
         <ChartView data={data?.totalInventoryCount} />
         <Divider orientation="vertical" flexItem />
-        <Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <StatusView data={data?.totalInventoryStatuses} />
+          <RecentlyAddedView />
         </Box>
       </Box>
     </Layout>

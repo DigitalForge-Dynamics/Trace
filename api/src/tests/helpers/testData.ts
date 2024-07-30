@@ -49,7 +49,7 @@ export const testPaginationAssets: PaginationResult<AssetStoredAttributes> = {
       nextAuditDate: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      status: Status.IN_MAINTAINCE
+      status: Status.IN_MAINTENANCE
     },
     {
       id: 3,
