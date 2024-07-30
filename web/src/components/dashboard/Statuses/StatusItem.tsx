@@ -34,11 +34,12 @@ const StatusItem: React.FC<StatusItemProps> = ({ statusTotal, statusType }) => {
           justifyContent: "center",
           width: "100%",
           height: "100%",
+          gap: 1
         }}
       >
-        <Icon>{StatusIcon(statusType) ?? <Skeleton />}</Icon>
-        <Typography variant="h6">{statusTotal}</Typography>
-        <Typography variant="h6">{statusType}</Typography>
+        <Icon fontSize="large">{StatusIcon(statusType) ?? <Skeleton />}</Icon>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>{statusTotal}</Typography>
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>{statusType}</Typography>
       </Box>
     </Paper>
   );
@@ -49,12 +50,12 @@ export default StatusItem;
 const StatusIcon = (statusType: Status) => {
   switch (statusType) {
     case Status.UNKNOWN:
-      return <HelpIcon />;
+      return <HelpIcon fontSize="large" sx={{ color: "blue" }} />;
     case Status.UNSERVICEABLE:
-      return <CancelIcon />;
+      return <CancelIcon fontSize="large" sx={{ color: "red" }} />;
     case Status.IN_MAINTENANCE:
-      return <RemoveCircleIcon />;
+      return <RemoveCircleIcon fontSize="large" sx={{ color: "orange" }} />;
     case Status.SERVICEABLE:
-      return <CheckCircleIcon />;
+      return <CheckCircleIcon fontSize="large" sx={{ color: "green" }} />;
   }
 };
