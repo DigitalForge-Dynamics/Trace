@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-
-import StatusItem from ".";
+import StatusItem from "./StatusItem";
 import { Status } from "../../../utils/types/attributes";
 
 const meta: Meta = {
@@ -27,10 +26,10 @@ export const Unserviceable: Story = {
   },
 };
 
-export const InMaintaince: Story = {
+export const InMaintenance: Story = {
   args: {
     statusTotal: 1,
-    statusType: Status.IN_MAINTAINCE,
+    statusType: Status.IN_MAINTENANCE,
   },
 };
 
