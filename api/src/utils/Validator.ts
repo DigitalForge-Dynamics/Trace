@@ -1,5 +1,4 @@
 import { Request } from "express";
-import { ZodError } from "zod";
 import type { ParsedQs } from "qs";
 import {
 	type Validator,

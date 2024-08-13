@@ -1,4 +1,4 @@
-import { type Validator, validateAsset, validateLocation, validateUser, validateUserLogin } from "./validator";
+import { type Validator, validateAsset, validateLocation, validateUser, validateUserLogin, parseMFACode } from "./validator";
 import {
 	AssetCreationAttributes, UserCreationAttributes, LocationCreationAttributes,
 	AssetStoredAttributes, UserStoredAttributes, LocationStoredAttributes,
@@ -19,6 +19,7 @@ export {
 	validateLocation,
 	validateUser,
 	validateUserLogin,
+	parseMFACode,
 	// Attribute Types
 	AssetCreationAttributes,
 	UserCreationAttributes,

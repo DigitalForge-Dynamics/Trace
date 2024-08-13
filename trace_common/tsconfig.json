@@ -29,8 +29,6 @@
 
     // Emit
     "outDir": "./dist",
-	"declaration": true,
-	"declarationDir": "./types",
 
     // JS Support
     "allowJs": false,
