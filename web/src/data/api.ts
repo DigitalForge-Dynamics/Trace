@@ -1,12 +1,7 @@
-import { Tokens, AuthData, IdTokenPayload, GenericClaimStructure } from "../utils/types/authTypes";
+import { Tokens, AuthData, IdTokenPayload, GenericClaimStructure, UserLogin } from "../utils/types/authTypes";
 
 const API_URL = "http://localhost:3000";
-
-export interface UserLoginData {
-  username: string;
-  password: string;
-  mfaCode: string;
-}
+export type UserLoginData = Required<UserLogin>;
 
 export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
   const res = await fetch(`${API_URL}/auth/login`, {
