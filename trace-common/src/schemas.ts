@@ -3,6 +3,7 @@ import { ZodSchema, z} from "zod";
 import { AssetCreationAttributes, UserCreationAttributes, Scope, LocationCreationAttributes } from "./attributeTypes";
 import { UserLogin } from "./authenticationTypes";
 import { parseMFACode } from "./validator";
+import "./ZodExtend";
 
 export const assetCreationSchema: ZodSchema<AssetCreationAttributes> = z.object({
   assetTag: z.string(),
