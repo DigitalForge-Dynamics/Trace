@@ -1,4 +1,4 @@
-import type { UUID } from "crypto";
+import { UUID } from "./index";
 import { Scope } from "./attributeTypes";
 
 export type GenericClaimStructure = {
@@ -38,25 +38,3 @@ export interface Tokens {
   idToken: string;
   refreshToken: string;
 }
-
-/*import type {
-	GenericClaimStructure,
-	TokenUse,
-	RefreshTokenPayload,
-	AccessTokenPayload,
-	IdTokenPayload,
-	TokenPayload,
-	UserLogin,
-	Tokens,
-} from "trace-common";
-
-export {
-	GenericClaimStructure,
-	TokenUse,
-	RefreshTokenPayload,
-	AccessTokenPayload,
-	IdTokenPayload,
-	TokenPayload,
-	UserLogin,
-	Tokens,
-};*/
