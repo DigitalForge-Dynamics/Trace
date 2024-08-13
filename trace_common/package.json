@@ -1,7 +1,8 @@
 {
-  "name": "trace-common",
+  "name": "trace_common",
   "version": "0.0.0",
   "main": "dist/index.js",
+  "types": "types/*.d.ts",
   "devDependencies": {
     "typescript": "^5.5.3"
   },

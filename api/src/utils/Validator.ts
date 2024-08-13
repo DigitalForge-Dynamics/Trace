@@ -8,7 +8,7 @@ import {
 	validateUser as validateUserCommon,
 	validateUserLogin as validateUserLoginCommon,
 	validateLocation as validateLocationCommon
-} from "trace-common";
+} from "trace_common";
 import Logger from "./Logger";
 import ErrorController from "../controllers/ErrorController";
 
@@ -44,11 +44,8 @@ const curryValidator = <T>(validator: Validator<T>): Validator<T> => {
 			const t: T = validator(data);
 			return t;
 		} catch (err) {
-			if (err instanceof ZodError) {
-				Logger.error(err);
-    			throw ErrorController.BadRequestError();
-			}
-			throw err;
+			Logger.error(err);
+    		throw ErrorController.BadRequestError();
 		}
 	};
 };

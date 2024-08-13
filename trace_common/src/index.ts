@@ -1,21 +1,16 @@
 import { type Validator, validateAsset, validateLocation, validateUser, validateUserLogin } from "./validator";
-import type {
+import {
 	AssetCreationAttributes, UserCreationAttributes, LocationCreationAttributes,
 	AssetStoredAttributes, UserStoredAttributes, LocationStoredAttributes,
-	WithMfa, WithUuid, Scope, HealthCheckType,
+	WithMfa, WithUuid, HealthCheckType,
 } from "./attributeTypes";
-import type {
+import { Scope } from "./attributeTypes";
+import {
 	GenericClaimStructure, TokenUse, Tokens, UserLogin,
 	RefreshTokenPayload, AccessTokenPayload, IdTokenPayload, TokenPayload,
 } from "./authenticationTypes";
 
-export type UUID = `${string}-${string}-${string}-${string}-${string}`;
-
-// Converts from `[K]?: T | undefined` to `[K]?: T`.
-export type NonUndefinedOptional<T extends object> = {
-  [K in keyof T]: Omit<T, K> extends T ?
-    Exclude<T[K], undefined> : T[K];
-};
+import { UUID, NonUndefinedOptional } from "./misc";
 
 export {
 	// Validation
@@ -44,4 +39,7 @@ export {
 	AccessTokenPayload,
 	IdTokenPayload,
 	TokenPayload,
+	// Misc
+	UUID,
+	NonUndefinedOptional,
 };

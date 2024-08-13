@@ -9,7 +9,7 @@ import {
 	WithMfa,
 	Scope,
 	HealthCheckType,
-} from "trace-common";
+} from "trace_common";
 
 export {
 	AssetCreationAttributes,

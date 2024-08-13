@@ -1,4 +1,4 @@
-import { UUID } from "./index";
+import { UUID } from "./misc";
 
 export interface AssetCreationAttributes {
   assetTag: string;
