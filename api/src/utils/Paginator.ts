@@ -1,12 +1,7 @@
 import { Model, ModelStatic } from "sequelize";
 import ErrorController from "../controllers/ErrorController";
-
-export type PaginationResult<T> = {
-    lastPage: number;
-    totalRecords: number;
-    hasMorePages: boolean;
-    data: T[];
-};
+import type { PaginationResult } from "trace_common";
+export type { PaginationResult };
 
 class Paginator<T extends Model> {
     private readonly model: ModelStatic<T>;

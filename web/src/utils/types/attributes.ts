@@ -8,13 +8,7 @@ export type {
   TotalInventoryCount,
   TotalInventoryStatuses,
   DashboardData,
+  PaginationResult,
 } from "trace_common";
 
 export { Status } from "trace_common";
-
-export type PaginationResult<T> = {
-  lastPage: number;
-  totalRecords: number;
-  hasMorePages: boolean;
-  data: T[];
-};

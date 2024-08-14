@@ -11,3 +11,10 @@ export type HealthCheckType = {
   message: string;
   timestamp: Date;
 };
+
+export type PaginationResult<T> = {
+  lastPage: number;
+  totalRecords: number;
+  hasMorePages: boolean;
+  data: T[];
+};
