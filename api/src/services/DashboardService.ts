@@ -32,7 +32,7 @@ class DashboardService implements IDashboardService {
       group: "status",
     }) as Array<unknown> as Array<{ status: Status; total: number}>;
     const initial: TotalInventoryStatuses = {
-      [Status.IN_MAINTAINCE]: 0,
+      [Status.IN_MAINTENANCE]: 0,
       [Status.SERVICEABLE]: 0,
       [Status.UNKNOWN]: 0,
       [Status.UNSERVICEABLE]: 0,

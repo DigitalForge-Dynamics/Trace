@@ -1,6 +1,6 @@
 import { ZodSchema, z} from "zod";
 
-import { AssetCreationAttributes, UserCreationAttributes, Scope, LocationCreationAttributes } from "./attributeTypes";
+import { AssetCreationAttributes, UserCreationAttributes, Scope, LocationCreationAttributes, Status } from "./attributeTypes";
 import { UserLogin } from "./authenticationTypes";
 import { parseMFACode } from "./validator";
 import "./ZodExtend";

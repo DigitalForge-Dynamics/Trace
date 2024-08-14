@@ -10,7 +10,7 @@ export type GenericClaimStructure = {
   token_use: TokenUse;
 };
 
-export const enum TokenUse {
+export enum TokenUse {
   Id = 'id',
   Access = 'access',
   Refresh = 'refresh',
