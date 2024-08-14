@@ -1,16 +1,3 @@
-import {
-	AssetCreationAttributes,
-	UserCreationAttributes,
-	LocationCreationAttributes,
-	AssetStoredAttributes,
-	UserStoredAttributes,
-	LocationStoredAttributes,
-	WithUuid,
-	WithMfa,
-	Scope,
-	HealthCheckType,
-} from "trace_common";
-
 export {
 	AssetCreationAttributes,
 	UserCreationAttributes,
@@ -21,5 +8,10 @@ export {
 	WithUuid,
 	WithMfa,
 	Scope,
+	Status,
 	HealthCheckType,
-};
+	TotalInventoryCount,
+	TotalInventoryStatuses,
+	RecentlyAddedInventory,
+	DashboardData,
+} from "trace_common";

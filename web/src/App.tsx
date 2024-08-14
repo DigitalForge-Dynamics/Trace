@@ -9,16 +9,16 @@ import AuthProvider from "./context/auth.context";
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route element={<PrivateRoutes />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/assets" element={<AssetsPage />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route element={<PrivateRoutes />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/assets" element={<AssetsPage />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
     </Router>
   );
 }

@@ -12,22 +12,37 @@
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "e2e": "playwright test playwright/tests",
-    "e2e:trace": "playwright test playwright/tests --trace on"
+    "e2e:trace": "playwright test playwright/tests --trace on",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.10",
     "@mui/material": "^5.15.7",
+    "chart.js": "^4.4.3",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-qr-code": "^2.0.12",
     "react-router-dom": "^6.21.3",
+    "swr": "^2.2.5",
 	"trace_common": "file:../trace_common"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.2.0",
     "@playwright/test": "^1.43.0",
+    "@storybook/addon-a11y": "^8.2.6",
+    "@storybook/addon-essentials": "^8.2.6",
+    "@storybook/addon-interactions": "^8.2.6",
+    "@storybook/addon-links": "^8.2.6",
+    "@storybook/addon-onboarding": "^8.2.6",
+    "@storybook/blocks": "^8.2.6",
+    "@storybook/react": "^8.2.6",
+    "@storybook/react-vite": "^8.2.6",
+    "@storybook/test": "^8.2.6",
     "@testing-library/react": "^14.2.1",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
@@ -38,10 +53,17 @@
     "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
+    "eslint-plugin-storybook": "^0.8.0",
     "jsdom": "^24.0.0",
+    "storybook": "^8.2.6",
     "typescript": "^5.2.2",
     "typescript-eslint": "^7.7.1",
     "vite": "^5.0.13",
     "vitest": "^1.4.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
   }
 }

@@ -1,7 +1,26 @@
-import { Tokens, AuthData, IdTokenPayload, GenericClaimStructure, UserLogin } from "../utils/types/authTypes";
+import {
+  Tokens,
+  AuthData,
+  IdTokenPayload,
+  GenericClaimStructure,
+  UserLogin,
+} from "../utils/types/authTypes";
 
 const API_URL = "http://localhost:3000";
 export type UserLoginData = Required<UserLogin>;
+
+export const fetcher = async <T>(url: string, auth: AuthData): Promise<T> => {
+  const response = await fetch(`${API_URL}${url}`, {
+    headers: {
+      Authorization: `Bearer ${auth.accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return response.json() as Promise<T>;
+}
 
 export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
   const res = await fetch(`${API_URL}/auth/login`, {
@@ -22,10 +41,20 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
 };
 
 export const decodeUserAuth = (tokens: Tokens): AuthData => {
-  const idTokenPayload = decodeTokenPayload(tokens.idToken) as IdTokenPayload | null;
-  const accessTokenPayload = decodeTokenPayload(tokens.accessToken) as GenericClaimStructure | null;
-  const refreshTokenPayload = decodeTokenPayload(tokens.refreshToken) as GenericClaimStructure | null;
-  if (idTokenPayload === null || accessTokenPayload === null || refreshTokenPayload === null) {
+  const idTokenPayload = decodeTokenPayload(
+    tokens.idToken
+  ) as IdTokenPayload | null;
+  const accessTokenPayload = decodeTokenPayload(
+    tokens.accessToken
+  ) as GenericClaimStructure | null;
+  const refreshTokenPayload = decodeTokenPayload(
+    tokens.refreshToken
+  ) as GenericClaimStructure | null;
+  if (
+    idTokenPayload === null ||
+    accessTokenPayload === null ||
+    refreshTokenPayload === null
+  ) {
     throw new Error();
   }
   return {
@@ -54,14 +83,16 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${authData.refreshToken}`,
+      Authorization: `Bearer ${authData.refreshToken}`,
     },
   });
   if (res.status !== 200) {
     throw new Error();
   }
   const accessToken: string = await res.text();
-  const accessTokenPayload = decodeTokenPayload(accessToken) as GenericClaimStructure | null;
+  const accessTokenPayload = decodeTokenPayload(
+    accessToken
+  ) as GenericClaimStructure | null;
   if (accessTokenPayload === null) throw new Error();
   return {
     ...authData,
@@ -74,7 +105,7 @@ export const initMfa = async (authData: AuthData): Promise<string | null> => {
   const res = await fetch(`${API_URL}/auth/totp/init`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${authData.accessToken}`,
+      Authorization: `Bearer ${authData.accessToken}`,
     },
   });
   if (res.status !== 200) {
@@ -84,12 +115,15 @@ export const initMfa = async (authData: AuthData): Promise<string | null> => {
   return secret;
 };
 
-export const enableMfa = async (authData: AuthData, mfaCode: string): Promise<boolean> => {
+export const enableMfa = async (
+  authData: AuthData,
+  mfaCode: string
+): Promise<boolean> => {
   const res = await fetch(`${API_URL}/auth/totp/enable`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${authData.accessToken}`,
+      Authorization: `Bearer ${authData.accessToken}`,
     },
     body: JSON.stringify({
       code: mfaCode,

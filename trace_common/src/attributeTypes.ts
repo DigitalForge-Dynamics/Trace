@@ -5,6 +5,7 @@ export interface AssetCreationAttributes {
   name: string;
   serialNumber?: string;
   modelNumber?: string;
+  status: Status;
   nextAuditDate?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -64,8 +65,22 @@ export enum Scope {
   SETTINGS_ADMIN = "TRACE_SETTINGS_ADMIN",
 }
 
-export type HealthCheckType = {
-  uptime: string;
-  message: string;
-  timestamp: Date;
+export enum Status {
+	SERVICEABLE = "SERVICEABLE",
+	IN_MAINTENANCE = "IN_MAINTENANCE",
+	UNSERVICEABLE = "UNSERVICEABLE",
+	UNKNOWN = "UNKNOWN",
+}
+
+export type TotalInventoryCount = {
+	assets: number;
+};
+
+export type TotalInventoryStatuses = Record<Status, number>;
+export type RecentlyAddedInventory = AssetStoredAttributes[];
+
+export type DashboardData = {
+	totalInventoryCount: TotalInventoryCount;
+	totalInventoryStatuses: TotalInventoryStatuses;
+	recentlyAddedInventory: RecentlyAddedInventory;
 };

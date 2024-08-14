@@ -10,6 +10,7 @@ export const assetCreationSchema: ZodSchema<AssetCreationAttributes> = z.object(
   name: z.string(),
   serialNumber: z.string().optional(),
   modelNumber: z.string().optional(),
+  status: z.nativeEnum(Status),
   nextAuditDate: z.coerce.date().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
