@@ -1,16 +1,15 @@
 import { Request } from "express";
 import type { ParsedQs } from "qs";
 import {
-	type Validator,
-	validateAsset as validateAssetCommon,
-	parseMFACode as parseMFACodeCommon,
-	validateUser as validateUserCommon,
-	validateUserLogin as validateUserLoginCommon,
-	validateLocation as validateLocationCommon
+  type Validator,
+  validateAsset as validateAssetCommon,
+  parseMFACode as parseMFACodeCommon,
+  validateUser as validateUserCommon,
+  validateUserLogin as validateUserLoginCommon,
+  validateLocation as validateLocationCommon
 } from "trace_common";
 import Logger from "./Logger";
 import ErrorController from "../controllers/ErrorController";
-
 
 type QueryValue = string | string[] | ParsedQs | ParsedQs[] | undefined;
 
@@ -38,15 +37,15 @@ export const getId = (request: Request): number => {
 };
 
 const curryValidator = <T>(validator: Validator<T>): Validator<T> => {
-	return (data: unknown) => {
-		try {
-			const t: T = validator(data);
-			return t;
-		} catch (err) {
-			Logger.error(err);
-    		throw ErrorController.BadRequestError();
-		}
-	};
+  return (data: unknown) => {
+    try {
+      const t: T = validator(data);
+      return t;
+    } catch (err) {
+      Logger.error(err);
+      throw ErrorController.BadRequestError();
+    }
+  };
 };
 
 export const validateAsset = curryValidator(validateAssetCommon);

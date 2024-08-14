@@ -1,5 +1,5 @@
 {
-  "name": "trace_common",
+  "name": "trace-common",
   "version": "0.0.0",
   "main": "dist/index.js",
   "types": "src/index.d.ts",

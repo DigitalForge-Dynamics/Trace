@@ -66,21 +66,21 @@ export enum Scope {
 }
 
 export enum Status {
-	SERVICEABLE = "SERVICEABLE",
-	IN_MAINTENANCE = "IN_MAINTENANCE",
-	UNSERVICEABLE = "UNSERVICEABLE",
-	UNKNOWN = "UNKNOWN",
+  SERVICEABLE = "SERVICEABLE",
+  IN_MAINTENANCE = "IN_MAINTENANCE",
+  UNSERVICEABLE = "UNSERVICEABLE",
+  UNKNOWN = "UNKNOWN",
 }
 
 export type TotalInventoryCount = {
-	assets: number;
+  assets: number;
 };
 
 export type TotalInventoryStatuses = Record<Status, number>;
 export type RecentlyAddedInventory = AssetStoredAttributes[];
 
 export type DashboardData = {
-	totalInventoryCount: TotalInventoryCount;
-	totalInventoryStatuses: TotalInventoryStatuses;
-	recentlyAddedInventory: RecentlyAddedInventory;
+  totalInventoryCount: TotalInventoryCount;
+  totalInventoryStatuses: TotalInventoryStatuses;
+  recentlyAddedInventory: RecentlyAddedInventory;
 };

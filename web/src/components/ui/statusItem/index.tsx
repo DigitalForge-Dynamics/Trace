@@ -37,7 +37,7 @@ const StatusIcon = (statusType: Status) => {
       return <HelpIcon />;
     case Status.UNSERVICEABLE:
       return <CancelIcon />;
-    case Status.IN_MAINTAINCE:
+    case Status.IN_MAINTENANCE:
       return <RemoveCircleIcon />;
     case Status.SERVICEABLE:
       return <CheckCircleIcon />;
