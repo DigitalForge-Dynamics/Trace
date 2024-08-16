@@ -65,12 +65,20 @@ export enum Scope {
   SETTINGS_ADMIN = "TRACE_SETTINGS_ADMIN",
 }
 
-export enum Status {
+/*export enum Status {
   SERVICEABLE = "SERVICEABLE",
   IN_MAINTENANCE = "IN_MAINTENANCE",
   UNSERVICEABLE = "UNSERVICEABLE",
   UNKNOWN = "UNKNOWN",
-}
+}*/
+
+export const Status = {
+	SERVICEABLE: "SERVICEABLE",
+	IN_MAINTENANCE: "IN_MAINTENANCE",
+	UNSERVICEABLE: "UNSERVICEABLE",
+	UNKNOWN: "UNKNOWN",
+} as const;
+export type Status = typeof Status[keyof typeof Status];
 
 export type TotalInventoryCount = {
   assets: number;

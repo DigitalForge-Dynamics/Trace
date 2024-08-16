@@ -1,5 +1,4 @@
 export type { UUID, GenericClaimStructure, Tokens, IdTokenPayload, UserLogin } from "trace_common";
-export { Scope } from "trace_common";
 
 export enum AuthOption {
   LOGIN = "LOGIN",

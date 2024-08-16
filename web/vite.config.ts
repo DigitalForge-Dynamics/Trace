@@ -9,4 +9,12 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
   },
+  optimizeDeps: {
+    include: ["trace_common"],
+  },
+  build: {
+    commonjsOptions: {
+	  include: [/trace_common/, /node_modules/],
+	},
+  },
 });
