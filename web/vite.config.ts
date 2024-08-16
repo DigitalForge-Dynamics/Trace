@@ -14,7 +14,7 @@ export default defineConfig({
   },
   build: {
     commonjsOptions: {
-	  include: [/trace_common/, /node_modules/],
-	},
+      include: [/trace_common/, /node_modules/],
+    },
   },
 });
