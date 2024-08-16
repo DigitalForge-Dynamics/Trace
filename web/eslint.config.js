@@ -34,6 +34,7 @@ export default tseslint.config(
       "playwright.config.ts",
       "playwright/report/**/*",
       "playwright/tests/**/*.test.ts",
+	  ".storybook/**/*",
     ],
   },
 );
