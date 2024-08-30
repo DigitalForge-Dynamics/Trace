@@ -1,0 +1,12 @@
+{
+  "name": "trace-common",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "src/index.d.ts",
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

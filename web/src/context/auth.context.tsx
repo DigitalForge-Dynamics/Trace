@@ -44,6 +44,11 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     const tokenMonitor = async () => {
       const now = Math.floor(Date.now() / 1000);
       if (activeUser === null) {
+        // On login screen, avoid navigating to "/", as it clears the inputs
+        if (window.location.pathname === "/login") {
+          authDispatch({ type: AuthOption.LOGOUT });
+          return;
+        }
         // No active user. Signing out
         logout();
         return;

@@ -27,7 +27,8 @@
     "react-dom": "^18.2.0",
     "react-qr-code": "^2.0.12",
     "react-router-dom": "^6.21.3",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "trace_common": "file:../trace-common"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",

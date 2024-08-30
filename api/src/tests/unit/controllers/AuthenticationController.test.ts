@@ -11,7 +11,8 @@ import AuthenticationController from "../../../controllers/AuthenticationControl
 import { TokenUse } from "../../../utils/types/authenticationTypes";
 import AuthenticationService from "../../../services/AuthenticationService";
 import UserService from "../../../services/UserService";
-import { Scope, UserCreationAttributes, UserLoginAttributes, UserStoredAttributes } from "../../../utils/types/attributeTypes";
+import { Scope, UserCreationAttributes, UserStoredAttributes } from "../../../utils/types/attributeTypes";
+import { UserLogin } from "../../../utils/types/authenticationTypes";
 
 jest.mock("../../../services/UserService.ts");
 jest.mock("../../../services/BaseService.ts");
@@ -46,7 +47,7 @@ describe("signIn", () => {
     resetMockLogger(logger);
   });
 
-  it.each<keyof UserLoginAttributes>(["username", "password"])
+  it.each<keyof UserLogin>(["username", "password"])
   ("Calls the next middleware with a BadRequestError if the request does not contain %p", async (fieldName: string) => {
     // Given
     delete request.body[fieldName];
