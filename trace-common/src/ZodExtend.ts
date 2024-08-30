@@ -4,6 +4,8 @@ import {
   addIssueToContext, objectInputType, objectOutputType
 } from "zod";
 
+import { NonUndefinedOptional } from "./index";
+
 // When parsing, enforces that schemas defined with `z.optional(...)` or `[...].optional()` do not permit the presence of a value of `undefined`.
 export class ZodObjectExactOption<
   T extends ZodRawShape,
@@ -46,3 +48,21 @@ export class ZodObjectExactOption<
     return ctx.common.issues.length > 0 ? INVALID : parsed;
   }
 }
+
+// Strict optional, fixing zod issue #510, where .optional infers `K?: T | undefined`, rather than `K?: T`.
+
+declare module "zod" {
+  interface ZodObject<
+    T extends ZodRawShape,
+    UnknownKeys extends UnknownKeysParam = UnknownKeysParam,
+    Catchall extends ZodTypeAny = ZodTypeAny,
+    Output extends object = objectOutputType<T, Catchall, UnknownKeys>,
+    Input extends object = objectInputType<T, Catchall, UnknownKeys>,
+  > {
+    exactOptions(): ZodObjectExactOption<T, UnknownKeys, Catchall, NonUndefinedOptional<Output>, NonUndefinedOptional<Input>>;
+  }
+}
+
+ZodObject.prototype.exactOptions = function(this) {
+  return new ZodObjectExactOption(this._def);
+};

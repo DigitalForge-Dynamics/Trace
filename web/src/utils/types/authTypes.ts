@@ -1,5 +1,4 @@
-export type UUID = `${string}-${string}-${string}-${string}-${string}`;
-export type Scope = string;
+export type { UUID, GenericClaimStructure, Tokens, IdTokenPayload, UserLogin } from "trace_common";
 
 export enum AuthOption {
   LOGIN = "LOGIN",
@@ -29,32 +28,3 @@ export type AuthData = {
   firstName: string;
   lastName: string;
 };
-
-export type Tokens = {
-  accessToken: string;
-  idToken: string;
-  refreshToken: string;
-};
-
-export type GenericClaimStructure = {
-  iss: string;
-  sub: UUID;
-  aud: string;
-  exp: number;
-  iat: number;
-  token_use: TokenUse;
-};
-
-export const enum TokenUse {
-  Id = 'id',
-  Access = 'access',
-  Refresh = 'refresh',
-}
-
-export type IdTokenPayload = {
-  token_use: TokenUse.Id;
-  firstname: string;
-  lastname: string;
-  email: string;
-};
-

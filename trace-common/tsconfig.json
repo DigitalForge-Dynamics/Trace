@@ -1,0 +1,45 @@
+{
+  "include": ["src"],
+  // See https://aka.ms/tsconfig for documentation
+  "compilerOptions": {
+    // Type Checking
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+
+    // Modules
+    "module": "commonjs",
+    "resolveJsonModule": true,
+
+    // Emit
+    "outDir": "./dist",
+
+    // JS Support
+    "allowJs": false,
+
+    // Interop Constraints
+    "esModuleInterop": true,
+
+    // Language and Environment
+    "target": "es2016",
+
+    // Completeness
+    "skipLibCheck": true
+  }
+}
