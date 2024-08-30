@@ -19,17 +19,30 @@ function HomePage() {
           Welcome, {authState.data.firstName}
         </Typography>
       </Box>
-      <Divider variant="middle" />
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "space-around",
+          justifyContent: "space-evenly",
         }}
       >
-        <ChartView data={data?.totalInventoryCount} />
-        <Divider orientation="vertical" flexItem />
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <ChartView data={data?.totalInventoryCount} />
+          <ChartView data={data?.totalInventoryCount} />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
           <StatusView data={data?.totalInventoryStatuses} />
           <RecentlyAddedView />
         </Box>

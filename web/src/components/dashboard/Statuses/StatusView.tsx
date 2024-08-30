@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import {
   TotalInventoryStatuses,
   Status,
@@ -12,7 +12,7 @@ interface StatusViewProps {
 
 const StatusView: React.FC<StatusViewProps> = ({ data }) => {
   return (
-    <>
+    <Paper elevation={3} sx={{ p: 3 }}>
       <Typography variant="h4">Inventory Status</Typography>
       <Box sx={{ display: "flex", flexDirection: "row", gap: 3, mt: 2 }}>
         {Object.values(Status)
@@ -26,7 +26,7 @@ const StatusView: React.FC<StatusViewProps> = ({ data }) => {
             </Box>
           ))}
       </Box>
-    </>
+    </Paper>
   );
 };
 
