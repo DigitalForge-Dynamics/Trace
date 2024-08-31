@@ -6,7 +6,12 @@ const RecentlyAddedView: React.FC = () => {
   return (
     <Paper
       elevation={3}
-      sx={{ display: "flex", flexDirection: "column", p: 3 }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        p: 3,
+        backgroundColor: "whitesmoke",
+      }}
     >
       <Typography variant="h4">Recently Added</Typography>
       <RecentlyAddedTable />

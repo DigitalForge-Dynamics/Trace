@@ -5,18 +5,19 @@ import { Box, Paper } from "@mui/material";
 import type { TotalInventoryCount } from "../../../utils/types/attributes";
 
 interface ChartViewProps {
-  data: TotalInventoryCount | undefined;
+  labels: Array<string>;
+  data?: TotalInventoryCount | undefined;
 }
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const ChartView: React.FC<ChartViewProps> = ({ data }) => {
+const ChartView: React.FC<ChartViewProps> = ({ labels, data }) => {
   return (
-    <Paper elevation={3} sx={{ p: 3 }}>
-      <Box sx={{ maxWidth: "40vw", maxHeight: "40vh" }}>
+    <Paper elevation={3} sx={{ backgroundColor: "whitesmoke", p: 1 }}>
+      <Box sx={{ maxWidth: "80vw", maxHeight: "80vh" }}>
         <Doughnut
           data={{
-            labels: ["Assets"],
+            labels: labels,
             datasets: [
               {
                 label: "Total Assets",

@@ -26,7 +26,8 @@ const StatusItem: React.FC<StatusItemProps> = ({ statusTotal, statusType }) => {
           justifyContent: "center",
           width: "100%",
           height: "100%",
-          gap: 1
+          gap: 1,
+          pr: 6
         }}
       >
         <Icon fontSize="large">{StatusIcon(statusType) ?? <Skeleton />}</Icon>

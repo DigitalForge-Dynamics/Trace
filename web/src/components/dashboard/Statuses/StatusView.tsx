@@ -12,7 +12,7 @@ interface StatusViewProps {
 
 const StatusView: React.FC<StatusViewProps> = ({ data }) => {
   return (
-    <Paper elevation={3} sx={{ p: 3 }}>
+    <Paper elevation={3} sx={{ backgroundColor: "whitesmoke", p: 3 }}>
       <Typography variant="h4">Inventory Status</Typography>
       <Box sx={{ display: "flex", flexDirection: "row", gap: 3, mt: 2 }}>
         {Object.values(Status)
