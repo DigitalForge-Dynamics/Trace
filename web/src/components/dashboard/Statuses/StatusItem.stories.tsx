@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-
-import StatusItem from ".";
+import StatusItem from "./StatusItem";
 import { Status } from "../../../utils/types/attributes";
 
 const meta: Meta = {

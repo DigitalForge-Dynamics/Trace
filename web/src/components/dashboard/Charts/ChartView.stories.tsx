@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import ChartView from ".";
+import ChartView from "./ChartView";
 
 const meta: Meta = {
   title: "Chart View",
   component: ChartView,
   args: {
+    labels: ["Assets"],
     data: {
         assets: 1
     }
