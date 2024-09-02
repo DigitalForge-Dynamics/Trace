@@ -1,5 +1,6 @@
 export {
-	validateIdToken,
-	validateAccessToken,
-	validateRefreshToken,
+  validateTokens,
+  validateIdToken,
+  validateAccessToken,
+  validateRefreshToken,
 } from "trace_common";

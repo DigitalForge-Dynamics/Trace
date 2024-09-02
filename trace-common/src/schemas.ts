@@ -1,7 +1,7 @@
 import { ZodSchema, z} from "zod";
 
 import { AssetCreationAttributes, UserCreationAttributes, Scope, LocationCreationAttributes, Status } from "./attributeTypes";
-import { AccessTokenPayload, GenericClaimStructure, IdTokenPayload, RefreshTokenPayload, TokenUse, UserLogin } from "./authenticationTypes";
+import { AccessTokenPayload, GenericClaimStructure, IdTokenPayload, RefreshTokenPayload, TokenUse, UserLogin, Tokens } from "./authenticationTypes";
 import { parseMFACode } from "./validator";
 import type { UUID } from "./misc";
 import "./ZodExtend";
@@ -51,27 +51,33 @@ export const userLoginSchema = z.object({
 }).strict().exactOptions() satisfies ZodSchema<UserLogin>;
 
 export const refreshTokenPayloadSchema = z.object({
-	token_use: z.literal(TokenUse.Refresh),
-	username: z.string(),
+  token_use: z.literal(TokenUse.Refresh),
+  username: z.string(),
 }).strict() satisfies ZodSchema<RefreshTokenPayload>;
 
 export const accessTokenPayloadSchema = z.object({
-	token_use: z.literal(TokenUse.Access),
-	scope: z.nativeEnum(Scope).array(),
+  token_use: z.literal(TokenUse.Access),
+  scope: z.nativeEnum(Scope).array(),
 }).strict() satisfies ZodSchema<AccessTokenPayload>;
 
 export const idTokenPayloadSchema = z.object({
-	token_use: z.literal(TokenUse.Id),
-	firstname: z.string(),
-	lastname: z.string(),
-	email: z.string(),
+  token_use: z.literal(TokenUse.Id),
+  firstname: z.string(),
+  lastname: z.string(),
+  email: z.string(),
 }).strict() satisfies ZodSchema<IdTokenPayload>;
 
 export const genericClaimStructureSchema = z.object({
-	iss: z.string(),
-	sub: z.string().uuid() as ZodSchema<UUID>,
-	aud: z.string(),
-	exp: z.number(),
-	iat: z.number(),
-	token_use: z.nativeEnum(TokenUse),
+  iss: z.string(),
+  sub: z.string().uuid() as ZodSchema<UUID>,
+  aud: z.string(),
+  exp: z.number(),
+  iat: z.number(),
+  token_use: z.nativeEnum(TokenUse),
 }).strict() satisfies ZodSchema<GenericClaimStructure>;
+
+export const tokensSchema = z.object({
+  accessToken: z.string(),
+  idToken: z.string(),
+  refreshToken: z.string(),
+}).strict() satisfies ZodSchema<Tokens>;

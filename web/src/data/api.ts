@@ -9,9 +9,10 @@ import {
 } from "../utils/types/authTypes";
 
 import {
-	validateIdToken,
-	validateAccessToken,
-	validateRefreshToken,
+  validateTokens,
+  validateIdToken,
+  validateAccessToken,
+  validateRefreshToken,
 } from "../utils/validators/authValidators";
 
 const API_URL = "http://localhost:3000";
@@ -43,16 +44,18 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
   if (res.status !== 200) {
     throw new Error();
   }
-
-  // TODO: Validate
-  const data: Tokens = await res.json();
-  return data;
+  const data: unknown = await res.json();
+  const tokens: Tokens = validateTokens(data);
+  return tokens;
 };
 
 export const decodeUserAuth = (tokens: Tokens): AuthData => {
-  const idTokenPayload: IdTokenPayload & GenericClaimStructure = validateIdToken(decodeTokenPayload(tokens.idToken));
-  const accessTokenPayload: AccessTokenPayload & GenericClaimStructure = validateAccessToken(decodeTokenPayload(tokens.accessToken));
-  const refreshTokenPayload: RefreshTokenPayload & GenericClaimStructure = validateRefreshToken(decodeTokenPayload(tokens.refreshToken));
+  const idTokenPayload: IdTokenPayload & GenericClaimStructure =
+    validateIdToken(decodeTokenPayload(tokens.idToken));
+  const accessTokenPayload: AccessTokenPayload & GenericClaimStructure =
+    validateAccessToken(decodeTokenPayload(tokens.accessToken));
+  const refreshTokenPayload: RefreshTokenPayload & GenericClaimStructure =
+    validateRefreshToken(decodeTokenPayload(tokens.refreshToken));
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
