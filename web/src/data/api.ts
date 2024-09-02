@@ -2,9 +2,17 @@ import {
   Tokens,
   AuthData,
   IdTokenPayload,
+  AccessTokenPayload,
+  RefreshTokenPayload,
   GenericClaimStructure,
   UserLogin,
 } from "../utils/types/authTypes";
+
+import {
+	validateIdTokenPayload,
+	validateAccessTokenPayload,
+	validateRefreshTokenPayload,
+} from "../utils/validators/authValidators";
 
 const API_URL = "http://localhost:3000";
 export type UserLoginData = Required<UserLogin>;
@@ -36,27 +44,16 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
     throw new Error();
   }
 
+  // TODO: Validate
   const data: Tokens = await res.json();
   return data;
 };
 
 export const decodeUserAuth = (tokens: Tokens): AuthData => {
-  const idTokenPayload = decodeTokenPayload(
-    tokens.idToken
-  ) as IdTokenPayload | null;
-  const accessTokenPayload = decodeTokenPayload(
-    tokens.accessToken
-  ) as GenericClaimStructure | null;
-  const refreshTokenPayload = decodeTokenPayload(
-    tokens.refreshToken
-  ) as GenericClaimStructure | null;
-  if (
-    idTokenPayload === null ||
-    accessTokenPayload === null ||
-    refreshTokenPayload === null
-  ) {
-    throw new Error();
-  }
+  // FIXME: These need to include GenericClaimStructure.
+  const idTokenPayload: IdTokenPayload = validateIdTokenPayload(decodeTokenPayload(tokens.idToken));
+  const accessTokenPayload: AccessTokenPayload = validateAccessTokenPayload(decodeTokenPayload(tokens.accessToken));
+  const refreshTokenPayload: RefreshTokenPayload = validateRefreshTokenPayload(decodeTokenPayload(tokens.refreshToken));
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
@@ -90,10 +87,8 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
     throw new Error();
   }
   const accessToken: string = await res.text();
-  const accessTokenPayload = decodeTokenPayload(
-    accessToken
-  ) as GenericClaimStructure | null;
-  if (accessTokenPayload === null) throw new Error();
+  const accessTokenPayload: AccessTokenPayload & GenericClaimStructure =
+    validateAccessTokenPayload(accessToken);
   return {
     ...authData,
     accessToken,
