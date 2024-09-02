@@ -7,7 +7,7 @@ import {
 import type { AssetCreationAttributes, UserCreationAttributes, LocationCreationAttributes } from "./attributeTypes";
 import type { AccessTokenPayload, GenericClaimStructure, IdTokenPayload, RefreshTokenPayload, Tokens, UserLogin } from "./authenticationTypes";
 
-const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
+export const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   const result = schema.safeParse(data);
   if (!result.success) {
     throw result.error;
