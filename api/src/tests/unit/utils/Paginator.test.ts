@@ -1,29 +1,34 @@
 import { ModelStatic } from "sequelize";
 import Paginator from "../../../utils/Paginator";
+import type { MockedLogger } from "../../helpers/mockLogger";
 import { testPaginationAssets } from "../../helpers/testData";
-import { MockedLogger } from "../../helpers/mockLogger";
 import Asset from "../../../database/models/asset.model";
+import { vi, describe, it, expect, beforeEach, afterEach, Mocked } from "vitest";
 
-jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-}));
+vi.mock("../../../utils/Logger.ts", (): { default: MockedLogger } => ({ default: {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+}}));
 
-const MockedModel: jest.Mocked<ModelStatic<Asset>> =
-  jest.createMockFromModule("sequelize");
-const mockFindAndCountAll = jest.fn();
-MockedModel.findAndCountAll = mockFindAndCountAll;
+const mockFindAndCountAll = vi.fn();
+//const MockedModel: Promise<Mocked<ModelStatic<Asset>>> = vi.importMock("sequelize");
+const MockedModel: Promise<Mocked<unknown>> = vi.importMock("sequelize");
+
+MockedModel.then((mock) => {
+  (mock as any).findAndCountAll = mockFindAndCountAll;
+});
 
 describe("Paginator Unit Tests", () => {
   let paginator: Paginator<Asset>;
 
-  beforeEach(() => {
-    paginator = new Paginator(MockedModel);
+  beforeEach(async () => {
+    const model: Mocked<ModelStatic<Asset>> = await MockedModel as any;
+    paginator = new Paginator(model);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+  	vi.clearAllMocks();
   });
 
   it("returns paginated test data with 3 total records", async () => {

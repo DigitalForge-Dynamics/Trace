@@ -13,14 +13,15 @@ import AuthenticationService from "../../../services/AuthenticationService";
 import UserService from "../../../services/UserService";
 import { Scope, UserCreationAttributes, UserStoredAttributes } from "../../../utils/types/attributeTypes";
 import { UserLogin } from "../../../utils/types/authenticationTypes";
+import { vi, describe, it, expect, beforeEach, afterEach, MockedFunction } from "vitest";
 
-jest.mock("../../../services/UserService.ts");
-jest.mock("../../../services/BaseService.ts");
-jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-}));
+vi.mock("../../../services/UserService.ts");
+vi.mock("../../../services/BaseService.ts");
+vi.mock("../../../utils/Logger.ts", (): { default: MockedLogger } => ({ default: {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+}}));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
@@ -30,19 +31,19 @@ describe("signIn", () => {
   let request: Request;
   let response: Response;
   let next: NextFunction;
-  let getUserMock: jest.MockedFunction<typeof UserService.prototype.getUser>;
+  let getUserMock: MockedFunction<typeof UserService.prototype.getUser>;
 
   beforeEach(() => {
     request = mockRequest();
     request.body = { username: "USERNAME", password: "PASSWORD" };
     const locals = { user: { token_use: TokenUse.Refresh } };
     response = mockResponse({ locals });
-    next = mockNext();
-    getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
+    next = mockNext() as unknown as NextFunction;
+    getUserMock = UserService.prototype.getUser as MockedFunction<typeof UserService.prototype.getUser>;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     getUserMock.mockReset();
     resetMockLogger(logger);
   });
@@ -146,8 +147,8 @@ describe("signUp", () => {
   let request: Request;
   let response: Response;
   let next: NextFunction;
-  let getUserMock: jest.MockedFunction<typeof UserService.prototype.getUser>;
-  let createUserMock: jest.MockedFunction<typeof UserService.prototype.createUser>;
+  let getUserMock: MockedFunction<typeof UserService.prototype.getUser>;
+  let createUserMock: MockedFunction<typeof UserService.prototype.createUser>;
   let user: UserCreationAttributes;
 
   beforeEach(() => {
@@ -164,13 +165,13 @@ describe("signUp", () => {
     request.body = user;
     const locals = { user: { token_use: TokenUse.Refresh } };
     response = mockResponse({ locals });
-    next = mockNext();
-    getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
-    createUserMock = UserService.prototype.createUser as jest.MockedFunction<typeof UserService.prototype.createUser>;
+    next = mockNext() as unknown as NextFunction;
+    getUserMock = UserService.prototype.getUser as MockedFunction<typeof UserService.prototype.getUser>;
+    createUserMock = UserService.prototype.createUser as MockedFunction<typeof UserService.prototype.createUser>;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     getUserMock.mockReset();
     createUserMock.mockReset();
     resetMockLogger(logger);
@@ -307,18 +308,18 @@ describe("refresh", () => {
   let request: Request;
   let response: Response;
   let next: NextFunction;
-  let getUserMock: jest.MockedFunction<typeof UserService.prototype.getUser>;
+  let getUserMock: MockedFunction<typeof UserService.prototype.getUser>;
 
   beforeEach(() => {
     request = mockRequest();
     const locals = { user: { token_use: TokenUse.Refresh, username: "USERNAME" } };
     response = mockResponse({ locals });
-    next = mockNext();
-    getUserMock = UserService.prototype.getUser as jest.MockedFunction<typeof UserService.prototype.getUser>;
+    next = mockNext() as unknown as NextFunction;
+    getUserMock = UserService.prototype.getUser as MockedFunction<typeof UserService.prototype.getUser>;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     getUserMock.mockReset();
     resetMockLogger(logger);
   });
@@ -363,7 +364,7 @@ describe("refresh", () => {
     // Given
     const scope: Scope[] = [Scope.ASSET_CREATE, Scope.ASSET_RETURN];
     getUserMock.mockResolvedValue({ scope, isActive: true } as UserStoredAttributes);
-    const generateAccessTokenSpy = jest.spyOn(AuthenticationService.prototype, "generateAccessToken");
+    const generateAccessTokenSpy = vi.spyOn(AuthenticationService.prototype, "generateAccessToken");
 
     // When
     await authController.refresh(request, response, next);

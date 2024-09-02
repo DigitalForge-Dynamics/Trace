@@ -40,6 +40,8 @@
     "target": "es2016",
 
     // Completeness
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+	"types": ["vitest/globals"]
   }
 }

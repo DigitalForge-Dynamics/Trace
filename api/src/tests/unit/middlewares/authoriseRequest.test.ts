@@ -5,32 +5,33 @@ import { expectNonFinal, mockNext, mockRequest, mockResponse } from "../../helpe
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import { AccessTokenPayload, TokenUse } from "../../../utils/types/authenticationTypes";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
-jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-}));
+vi.mock("../../../utils/Logger.ts", (): { default: MockedLogger } => ({ default: {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+}}));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
 describe('authoriseRequest', () => {
   let request: Request;
   let response: Response;
-  let next: jest.MockedFunction<NextFunction>;
+  let next: NextFunction;
 
   beforeEach(() => {
     // Express
     request = mockRequest();
     const locals = { user: { scope: [], token_use: TokenUse.Access }, required_scopes: [Scope.READ] };
     response = mockResponse({ locals });
-    next = mockNext();
+    next = mockNext() as unknown as NextFunction;
     // Misc
-    next = jest.fn();
+    next = vi.fn();
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     resetMockLogger(logger);
   });
 

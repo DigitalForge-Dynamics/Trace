@@ -1,5 +1,7 @@
+import { MockedFunction } from "vitest";
+
 export type LoggerFunction = (message: string) => void;
-export type MockedLogger = ILogger<jest.MockedFunction<LoggerFunction>>;
+export type MockedLogger = ILogger<MockedFunction<LoggerFunction>>;
 
 export interface ILogger<Fn=LoggerFunction> {
   info: Fn;

@@ -1,4 +1,5 @@
 import { decodeBase32, decodeBase32Char, encodeBase32, encodeBase32Char } from "../../../utils/Encodings";
+import { describe, it, expect } from "vitest";
 
 describe("decodeBase32Char", () => {
   it.each<[string, number]>([

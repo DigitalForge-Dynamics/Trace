@@ -15,14 +15,15 @@ import Logger from "../../../utils/Logger";
 import { PaginationResult } from "../../../utils/Paginator";
 import { AssetCreationAttributes } from "../../../utils/types/attributeTypes";
 import type { JsonNetworkType } from "../../helpers/types";
+import { vi, describe, beforeEach, afterEach, it, expect, MockedFunction } from "vitest";
 
-jest.mock("../../../services/AssetService.ts");
-jest.mock("../../../services/BaseService.ts");
-jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-}));
+vi.mock("../../../services/AssetService.ts");
+vi.mock("../../../services/BaseService.ts");
+vi.mock("../../../utils/Logger.ts", (): { default: MockedLogger } => ({default: {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+}}));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
@@ -31,22 +32,22 @@ describe("getAllAssets", () => {
   let request: Request;
   let response: Response;
   let next: NextFunction;
-  let findAllPaginatedMock: jest.MockedFunction<
+  let findAllPaginatedMock: MockedFunction<
     (page: number, pageSize: number) => Promise<PaginationResult<Asset>>
   >;
 
   beforeEach(() => {
     request = mockRequest();
     response = mockResponse({});
-    next = mockNext();
+    next = mockNext() as unknown as NextFunction;
     findAllPaginatedMock = AssetService.prototype
-      .findAllPaginated as jest.MockedFunction<
+      .findAllPaginated as MockedFunction<
       typeof AssetService.prototype.findAllPaginated
     >;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     findAllPaginatedMock.mockReset();
     resetMockLogger(logger);
   });
@@ -119,19 +120,19 @@ describe("getAssetById", () => {
   let request: Request<{ id: string }>;
   let response: Response;
   let next: NextFunction;
-  let findByIdMock: jest.MockedFunction<typeof AssetService.prototype.findById>;
+  let findByIdMock: MockedFunction<typeof AssetService.prototype.findById>;
 
   beforeEach(() => {
     request = mockRequest({ id: "0" });
     response = mockResponse({});
-    next = mockNext();
-    findByIdMock = AssetService.prototype.findById as jest.MockedFunction<
+    next = mockNext() as unknown as NextFunction;
+    findByIdMock = AssetService.prototype.findById as MockedFunction<
       typeof AssetService.prototype.findById
     >;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     findByIdMock.mockReset();
     resetMockLogger(logger);
   });
@@ -200,19 +201,19 @@ describe("createAsset", () => {
   let request: Request;
   let response: Response;
   let next: NextFunction;
-  let createMock: jest.MockedFunction<typeof AssetService.prototype.create>;
+  let createMock: MockedFunction<typeof AssetService.prototype.create>;
 
   beforeEach(() => {
     request = mockRequest();
     response = mockResponse({});
-    next = mockNext();
-    createMock = AssetService.prototype.create as jest.MockedFunction<
+    next = mockNext() as unknown as NextFunction;
+    createMock = AssetService.prototype.create as MockedFunction<
       typeof AssetService.prototype.create
     >;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     createMock.mockReset();
     resetMockLogger(logger);
   });
@@ -268,24 +269,24 @@ describe("updateAsset", () => {
   let request: Request<{ id: string }>;
   let response: Response;
   let next: NextFunction;
-  let findByIdMock: jest.MockedFunction<typeof AssetService.prototype.findById>;
-  let updateMock: jest.MockedFunction<typeof AssetService.prototype.update>;
+  let findByIdMock: MockedFunction<typeof AssetService.prototype.findById>;
+  let updateMock: MockedFunction<typeof AssetService.prototype.update>;
 
   beforeEach(() => {
     request = mockRequest({ id: "2" });
     request.body = JSON.parse(JSON.stringify(testCreationAsset)) as JsonNetworkType<AssetCreationAttributes>;
     response = mockResponse({});
-    next = mockNext();
-    findByIdMock = AssetService.prototype.findById as jest.MockedFunction<
+    next = mockNext() as unknown as NextFunction;
+    findByIdMock = AssetService.prototype.findById as MockedFunction<
       typeof AssetService.prototype.findById
     >;
-    updateMock = AssetService.prototype.update as jest.MockedFunction<
+    updateMock = AssetService.prototype.update as MockedFunction<
       typeof AssetService.prototype.update
     >;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     findByIdMock.mockReset();
     updateMock.mockReset();
     resetMockLogger(logger);
@@ -393,19 +394,19 @@ describe("deleteAsset", () => {
   let request: Request<{ id: string }>;
   let response: Response;
   let next: NextFunction;
-  let deleteMock: jest.MockedFunction<typeof AssetService.prototype.delete>;
+  let deleteMock: MockedFunction<typeof AssetService.prototype.delete>;
 
   beforeEach(() => {
     request = mockRequest({ id: "2" });
     response = mockResponse({});
-    next = mockNext();
-    deleteMock = AssetService.prototype.delete as jest.MockedFunction<
+    next = mockNext() as unknown as NextFunction;
+    deleteMock = AssetService.prototype.delete as MockedFunction<
       typeof AssetService.prototype.delete
     >;
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     deleteMock.mockReset();
     resetMockLogger(logger);
   });

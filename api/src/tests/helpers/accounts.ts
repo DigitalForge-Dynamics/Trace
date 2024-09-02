@@ -1,4 +1,5 @@
 import type { Tokens } from "../../utils/types/authenticationTypes";
+
 const { API_PORT } = process.env;
 const API_URL = `http://localhost:${API_PORT}`;
 

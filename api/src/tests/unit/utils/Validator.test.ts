@@ -5,12 +5,13 @@ import { validateAsset } from "../../../utils/Validator";
 import { AssetCreationAttributes } from "../../../utils/types/attributeTypes";
 import { MockedLogger } from "../../helpers/mockLogger";
 import { testCreationAsset } from "../../helpers/testData";
+import { vi, describe, it, expect } from "vitest";
 
-jest.mock("../../../utils/Logger.ts", (): MockedLogger => ({
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-}));
+vi.mock("../../../utils/Logger.ts", () => ({ default: {
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+}}));
 
 const logger: MockedLogger = Logger as unknown as MockedLogger;
 
