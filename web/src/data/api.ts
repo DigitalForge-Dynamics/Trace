@@ -9,9 +9,9 @@ import {
 } from "../utils/types/authTypes";
 
 import {
-	validateIdTokenPayload,
-	validateAccessTokenPayload,
-	validateRefreshTokenPayload,
+	validateIdToken,
+	validateAccessToken,
+	validateRefreshToken,
 } from "../utils/validators/authValidators";
 
 const API_URL = "http://localhost:3000";
@@ -50,10 +50,9 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
 };
 
 export const decodeUserAuth = (tokens: Tokens): AuthData => {
-  // FIXME: These need to include GenericClaimStructure.
-  const idTokenPayload: IdTokenPayload = validateIdTokenPayload(decodeTokenPayload(tokens.idToken));
-  const accessTokenPayload: AccessTokenPayload = validateAccessTokenPayload(decodeTokenPayload(tokens.accessToken));
-  const refreshTokenPayload: RefreshTokenPayload = validateRefreshTokenPayload(decodeTokenPayload(tokens.refreshToken));
+  const idTokenPayload: IdTokenPayload & GenericClaimStructure = validateIdToken(decodeTokenPayload(tokens.idToken));
+  const accessTokenPayload: AccessTokenPayload & GenericClaimStructure = validateAccessToken(decodeTokenPayload(tokens.accessToken));
+  const refreshTokenPayload: RefreshTokenPayload & GenericClaimStructure = validateRefreshToken(decodeTokenPayload(tokens.refreshToken));
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
@@ -88,7 +87,7 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
   }
   const accessToken: string = await res.text();
   const accessTokenPayload: AccessTokenPayload & GenericClaimStructure =
-    validateAccessTokenPayload(accessToken);
+    validateAccessToken(decodeTokenPayload(accessToken));
   return {
     ...authData,
     accessToken,

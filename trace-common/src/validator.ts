@@ -1,9 +1,10 @@
 import type { ZodSchema } from "zod";
 import {
   mfaCodeSchema, assetCreationSchema, userCreationSchema, locationCreationSchema, userLoginSchema,
-  idTokenPayloadSchema, accessTokenPayloadSchema, refreshTokenPayloadSchema } from "./schemas";
+  idTokenPayloadSchema, accessTokenPayloadSchema, refreshTokenPayloadSchema, 
+  genericClaimStructureSchema} from "./schemas";
 import type { AssetCreationAttributes, UserCreationAttributes, LocationCreationAttributes } from "./attributeTypes";
-import type { AccessTokenPayload, IdTokenPayload, RefreshTokenPayload, UserLogin } from "./authenticationTypes";
+import type { AccessTokenPayload, GenericClaimStructure, IdTokenPayload, RefreshTokenPayload, UserLogin } from "./authenticationTypes";
 
 const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   const result = schema.safeParse(data);
@@ -22,6 +23,13 @@ export const validateUserLogin: Validator<UserLogin> = (data: unknown) => valida
 export const validateIdTokenPayload: Validator<IdTokenPayload> = (data: unknown) => validate<IdTokenPayload>(data, idTokenPayloadSchema);
 export const validateAccessTokenPayload: Validator<AccessTokenPayload> = (data: unknown) => validate<AccessTokenPayload>(data, accessTokenPayloadSchema);
 export const validateRefreshTokenPayload: Validator<RefreshTokenPayload> = (data: unknown) => validate<RefreshTokenPayload>(data, refreshTokenPayloadSchema);
+
+export const validateIdToken: Validator<IdTokenPayload & GenericClaimStructure> =
+  (data: unknown) => validate<IdTokenPayload & GenericClaimStructure>(data, genericClaimStructureSchema.extend(idTokenPayloadSchema.shape));
+export const validateAccessToken: Validator<AccessTokenPayload & GenericClaimStructure> =
+  (data: unknown) => validate<AccessTokenPayload & GenericClaimStructure>(data, genericClaimStructureSchema.extend(accessTokenPayloadSchema.shape));
+export const validateRefreshToken: Validator<RefreshTokenPayload & GenericClaimStructure> =
+  (data: unknown) => validate<RefreshTokenPayload & GenericClaimStructure>(data, genericClaimStructureSchema.extend(refreshTokenPayloadSchema.shape));
 
 // Checks for either a string literal, or an object of type `{ code: string }`.
 export const parseMFACode: Validator<string> = (data: unknown): string => {
