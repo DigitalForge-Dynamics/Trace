@@ -3,11 +3,10 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "npx tsc && nodemon dist/index.js",
-    "test:unit": "vitest run src/tests/unit",
-    "test:integration": "vitest run src/tests/integration --maxWorkers 5",
+    "test:unit": "vitest run src/tests/unit --config vitest.config.mts",
+    "test:integration": "vitest run src/tests/integration --maxWorkers 5 --config vitest.config.mts",
     "test:coverage": "vitest run src --coverage",
     "lint": "eslint ."
   },

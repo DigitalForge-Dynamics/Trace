@@ -15,7 +15,8 @@ const mockFindAndCountAll = vi.fn();
 //const MockedModel: Promise<Mocked<ModelStatic<Asset>>> = vi.importMock("sequelize");
 const MockedModel: Promise<Mocked<unknown>> = vi.importMock("sequelize");
 
-MockedModel.then((mock) => {
+void MockedModel.then((mock) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
   (mock as any).findAndCountAll = mockFindAndCountAll;
 });
 
@@ -23,6 +24,7 @@ describe("Paginator Unit Tests", () => {
   let paginator: Paginator<Asset>;
 
   beforeEach(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
     const model: Mocked<ModelStatic<Asset>> = await MockedModel as any;
     paginator = new Paginator(model);
   });
