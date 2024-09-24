@@ -2,9 +2,18 @@ import {
   Tokens,
   AuthData,
   IdTokenPayload,
+  AccessTokenPayload,
+  RefreshTokenPayload,
   GenericClaimStructure,
   UserLogin,
 } from "../utils/types/authTypes";
+
+import {
+  validateTokens,
+  validateIdToken,
+  validateAccessToken,
+  validateRefreshToken,
+} from "../utils/validators/authValidators";
 
 const API_URL = "http://localhost:3000";
 export type UserLoginData = Required<UserLogin>;
@@ -35,28 +44,18 @@ export const loginUser = async (userData: UserLoginData): Promise<Tokens> => {
   if (res.status !== 200) {
     throw new Error();
   }
-
-  const data: Tokens = await res.json();
-  return data;
+  const data: unknown = await res.json();
+  const tokens: Tokens = validateTokens(data);
+  return tokens;
 };
 
 export const decodeUserAuth = (tokens: Tokens): AuthData => {
-  const idTokenPayload = decodeTokenPayload(
-    tokens.idToken
-  ) as IdTokenPayload | null;
-  const accessTokenPayload = decodeTokenPayload(
-    tokens.accessToken
-  ) as GenericClaimStructure | null;
-  const refreshTokenPayload = decodeTokenPayload(
-    tokens.refreshToken
-  ) as GenericClaimStructure | null;
-  if (
-    idTokenPayload === null ||
-    accessTokenPayload === null ||
-    refreshTokenPayload === null
-  ) {
-    throw new Error();
-  }
+  const idTokenPayload: IdTokenPayload & GenericClaimStructure =
+    validateIdToken(decodeTokenPayload(tokens.idToken));
+  const accessTokenPayload: AccessTokenPayload & GenericClaimStructure =
+    validateAccessToken(decodeTokenPayload(tokens.accessToken));
+  const refreshTokenPayload: RefreshTokenPayload & GenericClaimStructure =
+    validateRefreshToken(decodeTokenPayload(tokens.refreshToken));
   return {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
@@ -90,10 +89,8 @@ export const refreshToken = async (authData: AuthData): Promise<AuthData> => {
     throw new Error();
   }
   const accessToken: string = await res.text();
-  const accessTokenPayload = decodeTokenPayload(
-    accessToken
-  ) as GenericClaimStructure | null;
-  if (accessTokenPayload === null) throw new Error();
+  const accessTokenPayload: AccessTokenPayload & GenericClaimStructure =
+    validateAccessToken(decodeTokenPayload(accessToken));
   return {
     ...authData,
     accessToken,

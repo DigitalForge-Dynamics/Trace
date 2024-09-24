@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "npx tsc && nodemon dist/index.js",
-    "test:unit": "vitest run src/tests/unit --config vitest.config.mts",
-    "test:integration": "vitest run src/tests/integration --maxWorkers 5 --config vitest.config.mts",
-    "test:coverage": "vitest run src --coverage",
+    "test:unit": "jest src/tests/unit",
+    "test:integration": "jest src/tests/integration --maxWorkers 5",
+    "test:coverage": "jest src --coverage",
     "lint": "eslint ."
   },
   "author": "",
@@ -45,6 +45,6 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2",
     "typescript-eslint": "^7.7.1",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.1"
   }
 }
