@@ -16,7 +16,6 @@ import { UserLogin } from "../../../utils/types/authenticationTypes";
 import { vi, describe, it, expect, beforeEach, afterEach, MockedFunction } from "vitest";
 
 vi.mock("../../../services/UserService.ts");
-//vi.mock("../../../services/BaseService.ts");
 vi.mock("../../../utils/Logger.ts", (): { default: MockedLogger } => ({ default: {
   info: vi.fn(),
   warn: vi.fn(),
@@ -43,7 +42,6 @@ describe("signIn", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     getUserMock.mockReset();
     resetMockLogger(logger);
   });
@@ -171,7 +169,6 @@ describe("signUp", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     getUserMock.mockReset();
     createUserMock.mockReset();
     resetMockLogger(logger);
@@ -319,7 +316,6 @@ describe("refresh", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     getUserMock.mockReset();
     resetMockLogger(logger);
   });

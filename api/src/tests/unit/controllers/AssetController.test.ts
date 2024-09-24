@@ -18,7 +18,6 @@ import type { JsonNetworkType } from "../../helpers/types";
 import { vi, describe, beforeEach, afterEach, it, expect, MockedFunction } from "vitest";
 
 vi.mock("../../../services/AssetService.ts");
-//vi.mock("../../../services/BaseService.ts");
 vi.mock("../../../utils/Logger.ts", (): { default: MockedLogger } => ({default: {
   info: vi.fn(),
   warn: vi.fn(),
@@ -47,7 +46,6 @@ describe("getAllAssets", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     findAllPaginatedMock.mockReset();
     resetMockLogger(logger);
   });
@@ -132,7 +130,6 @@ describe("getAssetById", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     findByIdMock.mockReset();
     resetMockLogger(logger);
   });
@@ -213,7 +210,6 @@ describe("createAsset", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     createMock.mockReset();
     resetMockLogger(logger);
   });
@@ -286,7 +282,6 @@ describe("updateAsset", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     findByIdMock.mockReset();
     updateMock.mockReset();
     resetMockLogger(logger);
@@ -406,7 +401,6 @@ describe("deleteAsset", () => {
   });
 
   afterEach(() => {
-    //vi.resetAllMocks();
     deleteMock.mockReset();
     resetMockLogger(logger);
   });

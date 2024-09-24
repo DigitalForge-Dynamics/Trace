@@ -42,6 +42,6 @@
     // Completeness
     "skipLibCheck": true,
 
-	"types": ["vitest/globals"]
+    "types": ["vitest/globals"]
   }
 }
