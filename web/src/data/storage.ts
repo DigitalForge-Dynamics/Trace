@@ -1,4 +1,5 @@
 import { AuthData, AuthState } from "../utils/types/authTypes";
+import { validateAuthData } from "../utils/validators/authValidators";
 
 export const setSessionUser = (user: AuthData): void => {
   sessionStorage.setItem("trace_user", JSON.stringify(user));
@@ -7,7 +8,8 @@ export const setSessionUser = (user: AuthData): void => {
 export const getSessionUser = (): AuthData | null => {
   const item = sessionStorage.getItem("trace_user");
   if (item === null) return null;
-  return JSON.parse(item) as AuthData;
+  const authData: AuthData = validateAuthData(item);
+  return authData;
 };
 
 export const removeSessionUser = (): void => {
