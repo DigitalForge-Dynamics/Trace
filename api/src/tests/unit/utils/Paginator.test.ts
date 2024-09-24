@@ -12,6 +12,7 @@ vi.mock("../../../utils/Logger.ts", (): { default: MockedLogger } => ({ default:
 }}));
 
 const mockFindAndCountAll = vi.fn();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
 const MockedModel: Promise<Mocked<ModelStatic<Asset>>> = vi.importMock("sequelize") as any;
 
 void MockedModel.then((mock) => {
