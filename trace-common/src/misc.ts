@@ -19,6 +19,16 @@ export type PaginationResult<T> = {
   data: T[];
 };
 
+export type OidcSettings = {
+  clientId: string;
+  clientSecret: string;
+  redirectURI: URL;
+  authorisationEndpoint: URL;
+  tokenEndpoint: URL;
+  grantType: string;
+};
+
 export type Settings = {
   setup?: true;
+  oidc?: OidcSettings;
 };
