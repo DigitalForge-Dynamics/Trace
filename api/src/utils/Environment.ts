@@ -19,3 +19,5 @@ export const getSigningKey = (): string | undefined => process.env.EXPRESS_SECRE
 export const setSigningKey = (key: string) => {
   process.env.EXPRESS_SECRET_KEY = key;
 };
+
+export const getSettingsPath = (): string | undefined => process.env.API_SETTINGS_PATH;

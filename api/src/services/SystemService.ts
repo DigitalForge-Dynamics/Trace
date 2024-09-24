@@ -2,6 +2,10 @@ import { Settings } from "../utils/types/settings";
 import AuthService from "./AuthenticationService";
 import { HealthCheckType, Scope, UserCreationAttributes, WithMfa, WithUuid } from "../utils/types/attributeTypes";
 import { encodeBase32 } from "../utils/Encodings";
+import { getSettingsPath } from "../utils/Environment";
+import fs from "node:fs";
+import { validateSettings } from "trace_common";
+import ErrorController from "../controllers/ErrorController";
 
 interface ISystemService {
   healthCheck(): HealthCheckType;
@@ -23,15 +27,27 @@ export default class SystemService implements ISystemService {
   }
 
   public async loadSettings(): Promise<Settings> {
-    // TODO: loadSettings: Issue #110
-    await Promise.resolve();
-    return {};
+    const path = getSettingsPath();
+    if (path === undefined) throw ErrorController.InternalServerError("Missing settings path configuration.");
+    const json: string = await new Promise((resolve, reject) => {
+      fs.readFile(path, "utf-8", (err: NodeJS.ErrnoException | null, res: string) => {
+        if (err !== null) return reject(err);
+        return resolve(res);
+      });
+    });
+    return validateSettings(json);
   }
 
   public async setSettings(settings: Settings): Promise<void> {
-    // TODO: setSettings: Issue #110
-    await Promise.resolve();
-    void settings;
+    const path = getSettingsPath();
+    if (path === undefined) throw ErrorController.InternalServerError("Missing settings path configuration.");
+    const json: string = JSON.stringify(settings);
+    return new Promise((resolve, reject) => {
+      fs.writeFile(path, json, (err: NodeJS.ErrnoException | null) => {
+        if (err !== null) return reject(err);
+        return resolve();
+      });
+    });
   }
 
   public async generateQuickStartUser(authService: AuthService): Promise<[WithUuid<WithMfa<UserCreationAttributes>>, string]> {

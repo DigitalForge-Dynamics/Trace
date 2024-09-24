@@ -1,3 +1,1 @@
-export interface Settings {
-  setup?: true;
-}
+export type { Settings } from "trace_common";

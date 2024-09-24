@@ -44,6 +44,7 @@ const startupConfiguration = async () => {
     redisClient.connect(),
   ]);
   const systemService = new SystemService();
+  // TODO: Review whether it is suitable to use settings for quick start
   const settings = await systemService.loadSettings();
   if (!settings.setup) {
     console.log("Generating quick start user:...");
