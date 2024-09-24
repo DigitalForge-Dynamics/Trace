@@ -3,7 +3,7 @@ import { ZodSchema, z} from "zod";
 import { AssetCreationAttributes, UserCreationAttributes, Scope, LocationCreationAttributes, Status } from "./attributeTypes";
 import { AccessTokenPayload, GenericClaimStructure, IdTokenPayload, RefreshTokenPayload, TokenUse, UserLogin, Tokens } from "./authenticationTypes";
 import { parseMFACode } from "./validator";
-import type { UUID } from "./misc";
+import type { UUID, Settings } from "./misc";
 import "./ZodExtend";
 
 export const assetCreationSchema = z.object({
@@ -81,3 +81,7 @@ export const tokensSchema = z.object({
   idToken: z.string(),
   refreshToken: z.string(),
 }).strict() satisfies ZodSchema<Tokens>;
+
+export const settingsSchema = z.object({
+  setup: z.literal(true).optional(),
+}).strict().exactOptions() satisfies ZodSchema<Settings>;

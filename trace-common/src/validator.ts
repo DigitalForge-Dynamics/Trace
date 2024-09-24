@@ -3,9 +3,11 @@ import {
   mfaCodeSchema, assetCreationSchema, userCreationSchema, locationCreationSchema, userLoginSchema,
   idTokenPayloadSchema, accessTokenPayloadSchema, refreshTokenPayloadSchema, 
   genericClaimStructureSchema,
-  tokensSchema} from "./schemas";
+  tokensSchema,
+  settingsSchema} from "./schemas";
 import type { AssetCreationAttributes, UserCreationAttributes, LocationCreationAttributes } from "./attributeTypes";
 import type { AccessTokenPayload, GenericClaimStructure, IdTokenPayload, RefreshTokenPayload, Tokens, UserLogin } from "./authenticationTypes";
+import { Settings } from "./misc";
 
 export const validate = <T>(data: unknown, schema: ZodSchema<T>): T => {
   const result = schema.safeParse(data);
@@ -41,3 +43,5 @@ export const parseMFACode: Validator<string> = (data: unknown): string => {
   }
   return union.code;
 };
+
+export const validateSettings: Validator<Settings> = (data: unknown) => validate<Settings>(data, settingsSchema);

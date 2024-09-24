@@ -18,3 +18,7 @@ export type PaginationResult<T> = {
   hasMorePages: boolean;
   data: T[];
 };
+
+export type Settings = {
+  setup?: true;
+};

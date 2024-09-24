@@ -26,6 +26,7 @@ API_REDIS_PASSWORD=""
 ## Application Variables
 API_PORT=
 API_SEED_DATABASE="true" # Only to be set if in a trusted environment. Has security implications.
+API_SETTINGS_PATH=""
 ```
 
 ## API Integration Tests
