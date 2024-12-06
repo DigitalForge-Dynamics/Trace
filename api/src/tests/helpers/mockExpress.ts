@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { vi, MockedFunction, expect } from "vitest";
 
 export const mockRequest = <T extends Record<string, unknown>>(params?: T): Request<T> => {
   if (params === undefined) {
@@ -14,10 +15,10 @@ export interface MockResponseParams {
 }
 
 export const mockResponse = ({ locals }: MockResponseParams): Response => {
-  const status = jest.fn();
-  const end = jest.fn();
-  const send = jest.fn();
-  const json = jest.fn();
+  const status = vi.fn();
+  const end = vi.fn();
+  const send = vi.fn();
+  const json = vi.fn();
   const response = {
     status,
     send,
@@ -33,8 +34,8 @@ export const mockResponse = ({ locals }: MockResponseParams): Response => {
   return response;
 };
 
-export const mockNext = (): jest.MockedFunction<NextFunction> => {
-  return jest.fn();
+export const mockNext = (): MockedFunction<NextFunction> => {
+  return vi.fn();
 };
 
 export const expectNonFinal = (response: Response) => {
