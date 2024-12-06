@@ -8,7 +8,7 @@ export const setSessionUser = (user: AuthData): void => {
 export const getSessionUser = (): AuthData | null => {
   const item = sessionStorage.getItem("trace_user");
   if (item === null) return null;
-  const authData: AuthData = validateAuthData(item);
+  const authData: AuthData = validateAuthData(JSON.parse(item));
   return authData;
 };
 
