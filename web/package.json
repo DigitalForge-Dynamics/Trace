@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "e2e": "playwright test playwright/tests",
     "e2e:trace": "playwright test playwright/tests --trace on",
+    "e2e:configure": "playwright install --with-deps chromium",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
