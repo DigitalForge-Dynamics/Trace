@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { describe, it, expect } from "vitest";
 
 import type { Tokens } from "../../utils/types/authenticationTypes";
 
