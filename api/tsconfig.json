@@ -29,6 +29,8 @@
 
     // Emit
     "outDir": "./dist",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
 
     // JS Support
     "allowJs": false,

@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "reflect-metadata";
 import express, { Express } from "express";
 import { startup as databaseStartup } from "./database/config/databaseClient";
 import { getRedisClient } from "./database/config/redisClient";
