@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Location } from "./location.entity";
+import { DeviceType } from "./deviceType.entity";
 
 @Entity('assets')
 export class Asset {
@@ -19,18 +21,18 @@ export class Asset {
 
     // declare status: void;
 
-    // @ManyToOne()
-    // declare deviceType: void;
+    @ManyToOne(() => DeviceType, (deviceType) => deviceType.assets)
+    declare deviceType: DeviceType;
 
     @Column({ type: 'date', nullable: true })
     declare nextAuditDate: Date;
 
-    // @ManyToOne()
-    // declare location: void;
+    @ManyToOne(() => Location, (location) => location.assets)
+    declare location: Location;
 
     @CreateDateColumn()
     declare createdAt: Date;
 
-    @CreateDateColumn()
+    @UpdateDateColumn()
     declare updatedAt: Date;
 }

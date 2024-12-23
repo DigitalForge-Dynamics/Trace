@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserRole } from "./userRole.entity";
 
 @Entity('users')
@@ -37,6 +37,6 @@ export class User {
     @CreateDateColumn()
     declare createdAt: Date;
 
-    @CreateDateColumn()
+    @UpdateDateColumn()
     declare updatedAt: Date;
 }

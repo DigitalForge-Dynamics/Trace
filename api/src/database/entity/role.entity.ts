@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserRole } from "./userRole.entity";
 
 @Entity('roles')
@@ -18,6 +18,6 @@ export class Role {
     @CreateDateColumn()
     declare createdAt: Date;
 
-    @CreateDateColumn()
+    @UpdateDateColumn()
     declare updatedAt: Date;
 }
