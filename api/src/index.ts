@@ -1,7 +1,6 @@
 import "dotenv/config";
 import "reflect-metadata";
 import express, { Express } from "express";
-import { startup as databaseStartup } from "./database/config/databaseClient";
 import { getRedisClient } from "./database/config/redisClient";
 import cors from "cors";
 import helmet from "helmet";
@@ -41,7 +40,6 @@ app.use(errorHandler);
 const startupConfiguration = async () => {
   const redisClient = getRedisClient();
   await Promise.all([
-    databaseStartup(),
     redisClient.connect(),
   ]);
   const systemService = new SystemService();

@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { getSequelizeConnection } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/Database";
 import { Status } from "../../utils/types/attributeTypes";
 
 class Asset extends Model<

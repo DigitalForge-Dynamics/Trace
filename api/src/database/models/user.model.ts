@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   Model,
 } from "sequelize";
-import { getSequelizeConnection } from "../config/databaseClient";
+import { getSequelizeConnection } from "../config/Database";
 import { Scope } from "../../utils/types/attributeTypes";
 import { UUID } from "crypto";
 
