@@ -21,3 +21,15 @@ export const getSessionAuthState = (): AuthState => {
   if (data === null) return { isLoggedIn: false };
   return { isLoggedIn: true, data };
 };
+
+export const getSessionOidcState = (): string | null => {
+	return sessionStorage.getItem("oidc_state");
+}
+
+export const setSessionOidcState = (state: string) => {
+	sessionStorage.setItem("oidc_state", state);
+};
+
+export const removeSessionOidcState = () => {
+	sessionStorage.removeItem("oidc_state");
+};
