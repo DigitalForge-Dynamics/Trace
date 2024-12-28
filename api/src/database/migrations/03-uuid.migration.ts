@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import type { Migration } from "../config/Database";
+import type { Migration } from "../config/databaseConfig";
 import User from "../models/user.model";
 import { UserStoredAttributes } from "../../utils/types/attributeTypes";
 import AuthService from "../../services/AuthenticationService";

@@ -1,15 +1,26 @@
 import { DataSource } from "typeorm";
-import { IDatabase } from "./IDatabase";
+import { IDatabaseConfig } from "./IDatabaseConfig";
 import Logger from "../../utils/Logger";
+import { Asset } from "../entity/asset.entity";
+import { AuditLog } from "../entity/auditLog.entity";
+import { DeviceType } from "../entity/deviceType.entity";
+import { Location } from "../entity/location.entity";
+import { Role } from "../entity/role.entity";
+import { Setting } from "../entity/setting.entity";
+import { User } from "../entity/user.entity";
+import { UserRole } from "../entity/userRole.entity";
+import { InitalConfiguration1734993303521 } from "../migration/1734993303521-initalConfiguration";
 
-export class Database implements IDatabase {
-  private static instance: Database;
+export class DatabaseConfig implements IDatabaseConfig {
+  private static connection: DatabaseConfig;
   private datasource: DataSource;
 
   private constructor() {
     this.datasource = new DataSource({
       type: "postgres",
       url: this.generateConnectionString(),
+      entities: [Asset, AuditLog, DeviceType, Location, Role, Setting, User, UserRole],
+      migrations: [InitalConfiguration1734993303521],
       cache: {
         duration: 30000
       }
@@ -26,11 +37,11 @@ export class Database implements IDatabase {
     return `postgres://${username}:${password}@${host}:${port}/${database}`
   }
 
-  public static getInstance(): Database {
-    if (!Database.instance) {
-      Database.instance = new Database();
+  public static getConnection(): DatabaseConfig {
+    if (!DatabaseConfig.connection) {
+      DatabaseConfig.connection = new DatabaseConfig();
     }
-    return Database.instance
+    return DatabaseConfig.connection
   }
 
   public async connect(): Promise<void> {
@@ -45,5 +56,9 @@ export class Database implements IDatabase {
       await this.datasource.destroy();
       Logger.info("Database disconnected.")
     }
+  }
+
+  public getRepository<T>(entity: { new(): T; }): ReturnType<DataSource["getRepository"]> {
+    return this.datasource.getRepository(entity);
   }
 }

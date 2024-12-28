@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Location } from "./location.entity";
 import { DeviceType } from "./deviceType.entity";
+import { StatusType } from "./statusType.entity";
 
 @Entity('assets')
 export class Asset {
@@ -19,7 +20,9 @@ export class Asset {
     @Column({ type: 'varchar', nullable: true })
     declare modelNumber: string;
 
-    // declare status: void;
+    @ManyToOne(() => StatusType, (status) => status.assets, { nullable: false })
+    @JoinColumn({ name: 'status_type_Id' })
+    declare status: StatusType;
 
     @ManyToOne(() => DeviceType, (deviceType) => deviceType.assets)
     declare deviceType: DeviceType;

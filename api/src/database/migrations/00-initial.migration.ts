@@ -1,5 +1,5 @@
 import Logger from "../../utils/Logger";
-import type { Migration } from "../config/Database";
+import type { Migration } from "../config/databaseConfig";
 import { DataTypes } from "sequelize";
 
 export const up: Migration = async ({ context: queryInterface }) => {
