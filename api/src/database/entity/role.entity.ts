@@ -13,11 +13,11 @@ export class Role {
     declare description: string;
 
     @OneToMany(() => UserRole, (userRole) => userRole.role)
-    declare userRoles: UserRole[];
+    declare user_roles: UserRole[];
 
     @CreateDateColumn()
-    declare createdAt: Date;
+    declare created_at: Date;
 
     @UpdateDateColumn()
-    declare updatedAt: Date;
+    declare updated_at: Date;
 }

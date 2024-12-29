@@ -7,20 +7,20 @@ export class Location {
     declare id: number;
 
     @Column({ type: 'varchar' })
-    declare locationName: string;
+    declare location_name: string;
 
     @Column({ type: 'json', nullable: true })
-    declare geoLocation: object;
+    declare geo_location: object;
 
     @Column({ type: 'boolean', default: false })
-    declare primaryLocation: boolean;
+    declare primary_location: boolean;
 
-    @OneToMany(() => Asset, (asset) => asset.location)
+    @OneToMany(() => Asset, (asset) => asset.location_id)
     declare assets: Asset[];
 
     @CreateDateColumn()
-    declare createdAt: Date;
+    declare created_at: Date;
 
     @UpdateDateColumn()
-    declare updatedAt: Date;
+    declare updated_at: Date;
 }

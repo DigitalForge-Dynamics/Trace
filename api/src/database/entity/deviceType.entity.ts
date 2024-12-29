@@ -9,12 +9,12 @@ export class DeviceType {
     @Column({ type: 'varchar' })
     declare category: string;
 
-    @OneToMany(() => Asset, (asset) => asset.deviceType)
+    @OneToMany(() => Asset, (asset) => asset.device_type)
     declare assets: Asset[];
 
     @CreateDateColumn()
-    declare createdAt: Date;
+    declare created_at: Date;
 
     @UpdateDateColumn()
-    declare updatedAt: Date;
+    declare updated_at: Date;
 }

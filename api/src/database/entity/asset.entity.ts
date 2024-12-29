@@ -9,33 +9,33 @@ export class Asset {
     declare id: number;
 
     @Column({ type: 'varchar' })
-    declare assetTag: string;
+    declare asset_tag: string;
 
     @Column({ type: 'varchar' })
     declare name: string;
 
     @Column({ type: 'varchar', nullable: true })
-    declare serialNumber: string;
+    declare serial_number: string;
 
     @Column({ type: 'varchar', nullable: true })
-    declare modelNumber: string;
+    declare model_number: string;
 
     @ManyToOne(() => StatusType, (status) => status.assets, { nullable: false })
-    @JoinColumn({ name: 'status_type_Id' })
+    @JoinColumn({ name: 'status_types_id' })
     declare status: StatusType;
 
     @ManyToOne(() => DeviceType, (deviceType) => deviceType.assets)
-    declare deviceType: DeviceType;
+    declare device_type: DeviceType;
 
     @Column({ type: 'date', nullable: true })
-    declare nextAuditDate: Date;
+    declare next_audit_date: Date;
 
     @ManyToOne(() => Location, (location) => location.assets)
-    declare location: Location;
+    declare location_id: Location;
 
     @CreateDateColumn()
-    declare createdAt: Date;
+    declare created_at: Date;
 
     @UpdateDateColumn()
-    declare updatedAt: Date;
+    declare updated_at: Date;
 }

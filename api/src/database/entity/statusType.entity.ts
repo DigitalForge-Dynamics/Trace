@@ -16,8 +16,8 @@ export class StatusType {
     declare assets: Asset[];
 
     @CreateDateColumn()
-    declare createdAt: Date;
+    declare created_at: Date;
 
     @UpdateDateColumn()
-    declare updatedAt: Date;
+    declare updated_at: Date;
 }

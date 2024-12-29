@@ -11,10 +11,10 @@ export class User {
     declare uuid: UUID;
 
     @Column({ type: 'varchar' })
-    declare firstName: string;
+    declare first_name: string;
 
     @Column({ type: 'varchar' })
-    declare lastName: string;
+    declare last_name: string;
 
     @Column({ type: 'varchar', unique: true })
     declare username: string;
@@ -26,17 +26,17 @@ export class User {
     declare email: string;
 
     @Column({ type: 'boolean', default: false })
-    declare hasConsoleAccess: boolean;
+    declare has_console_access: boolean;
 
     @Column({ type: 'varchar', nullable: true })
-    declare mfaSecret: string;
+    declare mfa_secret: string;
 
     @OneToMany(() => UserRole, (userRole) => userRole.user)
-    declare userRoles: UserRole[];
+    declare user_roles: UserRole[];
 
     @CreateDateColumn()
-    declare createdAt: Date;
+    declare created_at: Date;
 
     @UpdateDateColumn()
-    declare updatedAt: Date;
+    declare updated_at: Date;
 }

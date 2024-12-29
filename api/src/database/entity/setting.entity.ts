@@ -9,14 +9,14 @@ export class Setting {
     declare category: string;
 
     @Column({ type: 'jsonb' })
-    declare categoryData: object;
+    declare category_data: object;
 
     @Column({ type: 'varchar', nullable: true })
     declare description: string;
 
     @CreateDateColumn()
-    declare createdAt: Date;
+    declare created_at: Date;
 
     @UpdateDateColumn()
-    declare updatedAt: Date;
+    declare updated_at: Date;
 }
