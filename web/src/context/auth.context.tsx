@@ -45,7 +45,7 @@ const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       const now = Math.floor(Date.now() / 1000);
       if (activeUser === null) {
         // On login screen, avoid navigating to "/", as it clears the inputs
-        if (window.location.pathname === "/login") {
+        if (window.location.pathname === "/login" || window.location.pathname === "/oidc") {
           authDispatch({ type: AuthOption.LOGOUT });
           return;
         }

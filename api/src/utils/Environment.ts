@@ -19,3 +19,9 @@ export const getSigningKey = (): string | undefined => process.env.EXPRESS_SECRE
 export const setSigningKey = (key: string) => {
   process.env.EXPRESS_SECRET_KEY = key;
 };
+
+//export const getOidcUrl = (): string | undefined => process.env.API_OIDC_URL;
+//export const getOidcClientId = (): string | undefined => process.env.API_OIDC_CLIENT_ID;
+//export const getOidcClientSecret = (): string | undefined => process.env.API_OIDC_CLIENT_SECRET;
+
+export const getOidcUserInfoEndpoint = (): string | undefined => process.env.API_OIDC_USERINFO;

@@ -131,3 +131,19 @@ export const enableMfa = async (
   }
   return true;
 };
+
+export const loginOidc = async (idpToken: string): Promise<Tokens> => {
+  const res = await fetch(`${API_URL}/auth/oidc/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({
+		oidcToken: idpToken,
+	}),
+  });
+  if (res.status !== 200) {
+    throw new Error();
+  }
+  const data: unknown = await res.json();
+  const tokens: Tokens = validateTokens(data);
+  return tokens;
+};

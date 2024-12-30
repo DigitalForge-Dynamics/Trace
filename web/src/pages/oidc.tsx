@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 
 import { setSessionOidcState, getSessionOidcState, removeSessionOidcState } from "../data/storage";
+import { loginOidc, decodeUserAuth } from "../data/api";
+import type { Tokens, AuthData } from "../utils/types/authTypes";
+import { useAuthContext } from "../context/auth.context";
 
 const idpUrl = "https://localhost:18000/realms/trace";
 const clientId = "trace-api";
@@ -34,13 +37,12 @@ export const OidcRequest = () => {
 
 export const OidcCallback = () => {
 	const [wellKnown, setWellKnown] = useState<WellKnown | undefined>();
+	const { login } = useAuthContext();
 
 	useEffect(() => {
 		const callback = async () => setWellKnown(await getWellKnown(idpUrl));
 		callback().catch((err) => console.error(err));
 	}, []);
-
-
 
 	useEffect(() => {
 		const storedState = getSessionOidcState();
@@ -57,12 +59,13 @@ export const OidcCallback = () => {
 		removeSessionOidcState();
 
 		const callback = async () => {
-			const tokens = await getTokens(wellKnown.token_endpoint, callbackCode);
-			const id = JSON.parse(atob(tokens.id_token.split(".")[1] ?? ""));
-			console.log(id);
+			const idpTokens = await getTokens(wellKnown.token_endpoint, callbackCode);
+			const apiTokens: Tokens = await loginOidc(idpTokens.access_token);
+			const apiTokenAuthData: AuthData = decodeUserAuth(apiTokens);
+			login(apiTokenAuthData);
 		};
 		callback().catch((err) => console.error(err));
-	}, [wellKnown]);
+	}, [wellKnown, login]);
 
 	return null;
 };

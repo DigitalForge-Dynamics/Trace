@@ -42,4 +42,9 @@ router.route("/totp/enable").post(
   (req, res, next) => authController.enableMfa(req, res, next),
 );
 
+router.route("/oidc/login").post(
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  (req, res, next) => authController.signInOidc(req, res, next),
+);
+
 export default router;

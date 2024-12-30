@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import icon from "../../assets/trace-icon.png";
-import { AuthData, Tokens } from "../../utils/types/authTypes";
+import { AuthData, type Tokens } from "../../utils/types/authTypes";
 import { useAuthContext } from "../../context/auth.context";
-import { UserLoginData, loginUser, decodeUserAuth } from "../../data/api";
+import { type UserLoginData, loginUser, decodeUserAuth } from "../../data/api";
 import background from "../../assets/login-background.jpg";
 import LoginForm from "../../components/login/LoginForm.component";
 

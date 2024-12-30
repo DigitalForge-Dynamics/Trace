@@ -3,11 +3,12 @@ import UserService from "../services/UserService";
 import { parseMFACode, validateUser, validateUserLogin } from "../utils/Validator";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
-import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
+import { IdPUserInfoPayload, TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
 import AuthService from "../services/AuthenticationService";
 import { getRedisClient } from "../database/config/redisClient";
 import { UserCreationAttributes, UserStoredAttributes, WithUuid } from "../utils/types/attributeTypes";
 import { encodeBase32 } from "../utils/Encodings";
+import { getOidcUserInfoEndpoint } from "../utils/Environment";
 
 export default class AuthenticationContoller extends ErrorController {
   private readonly userService = new UserService();
@@ -185,6 +186,50 @@ export default class AuthenticationContoller extends ErrorController {
       }
       Logger.info(`Successfully enabled MFA for user: ${userDetails.username}`);
       res.status(204).end();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async signInOidc(req: Request, res: Response, next: NextFunction) {
+    try {
+      // Accept IdP access_token in request
+      // Send request to IdP UserInfo endpoint.
+      // Authenticate user
+      // Send client response of tokens
+
+      const idpToken = req.body.oidcToken;
+      const userInfoEndpoint = getOidcUserInfoEndpoint();
+      console.info(`Using Userinfo endpoint: ${userInfoEndpoint}`);
+
+      if (userInfoEndpoint === undefined) {
+        throw ErrorController.ForbiddenError();
+      }
+      // https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
+      const response = await fetch(userInfoEndpoint, {
+        headers: {
+          Authorization: `Bearer ${idpToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw ErrorController.InternalServerError();
+      }
+
+      const userInfo: IdPUserInfoPayload = await response.json();
+
+      // TODO: Resync user details with those provided by IdP. Only if enabled.
+      const userDetails: UserStoredAttributes | null = await this.userService.getUserByUuid(userInfo.sub);
+      // TODO: Conditional env check for JIT User provisioning
+      if (userDetails === null) {
+        throw new Error("Auto OIDC user provisioning is not supported.");
+      }
+      Logger.info('User signed in successfully via OIDC');
+      res.status(200).json({
+        idToken: this.authService.generateIdToken(userDetails),
+        accessToken: this.authService.generateAccessToken(userDetails.scope, userDetails.username),
+        refreshToken: this.authService.generateRefreshToken(userDetails.username),
+      }).end();
     } catch (err) {
       next(err);
     }
