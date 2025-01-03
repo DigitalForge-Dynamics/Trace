@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
 
-export interface IDatabaseConfig {
+export interface IDatabaseStrategy {
     connect(): Promise<void>;
     disconnect(): Promise<void>;
-    generateConnectionString(): string;
     getRepository<T>(entity: { new (): T }): ReturnType<DataSource['getRepository']>;
+    runMigrations(): Promise<void>;
 }

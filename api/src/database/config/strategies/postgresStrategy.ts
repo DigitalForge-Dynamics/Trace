@@ -1,22 +1,20 @@
 import { DataSource } from "typeorm";
-import { IDatabaseConfig } from "./IDatabaseConfig";
-import Logger from "../../utils/Logger";
-import { Asset } from "../entity/asset.entity";
-import { AuditLog } from "../entity/auditLog.entity";
-import { DeviceType } from "../entity/deviceType.entity";
-import { Location } from "../entity/location.entity";
-import { Role } from "../entity/role.entity";
-import { Setting } from "../entity/setting.entity";
-import { User } from "../entity/user.entity";
-import { UserRole } from "../entity/userRole.entity";
-import { InitalConfiguration1734993303521 } from "../migration/1734993303521-initalConfiguration";
-import { StatusType } from "../entity/statusType.entity";
+import { IDatabaseStrategy } from "../IDatabaseStrategy";
+import Logger from "../../../utils/Logger";
+import { Asset } from "../../entity/asset.entity";
+import { AuditLog } from "../../entity/auditLog.entity";
+import { DeviceType } from "../../entity/deviceType.entity";
+import { Role } from "../../entity/role.entity";
+import { Setting } from "../../entity/setting.entity";
+import { User } from "../../entity/user.entity";
+import { UserRole } from "../../entity/userRole.entity";
+import { StatusType } from "../../entity/statusType.entity";
+import { InitalConfiguration1734993303521 } from "../../migration/1734993303521-initalConfiguration";
 
-export class DatabaseConfig implements IDatabaseConfig {
-  private static connection: DatabaseConfig;
-  private datasource: DataSource;
+export class PostgresStrategy implements IDatabaseStrategy {
+    private datasource: DataSource;
 
-  private constructor() {
+  constructor() {
     this.datasource = new DataSource({
       type: "postgres",
       url: this.generateConnectionString(),
@@ -28,7 +26,7 @@ export class DatabaseConfig implements IDatabaseConfig {
     });
   }
 
-  public generateConnectionString(): string {
+  private generateConnectionString(): string {
     const host: string = process.env.API_DATABASE_HOST || "localhost";
     const port: string = process.env.API_DATABASE_PORT || "5432";
     const username: string = process.env.API_DATABASE_USERNAME || "postgres";
@@ -36,13 +34,6 @@ export class DatabaseConfig implements IDatabaseConfig {
     const database: string = process.env.API_DATABASE_NAME || "trace";
 
     return `postgres://${username}:${password}@${host}:${port}/${database}`
-  }
-
-  public static getConnection(): DatabaseConfig {
-    if (!DatabaseConfig.connection) {
-      DatabaseConfig.connection = new DatabaseConfig();
-    }
-    return DatabaseConfig.connection
   }
 
   public async connect(): Promise<void> {
@@ -63,10 +54,9 @@ export class DatabaseConfig implements IDatabaseConfig {
     return this.datasource.getRepository(entity);
   }
 
-  // Needs a tidy up
   public async runMigrations(): Promise<void> {
     await this.connect();
-
-    this.datasource.runMigrations();
+    await this.datasource.runMigrations();
+    Logger.info("Migrations exected successfully.")
   }
 }
