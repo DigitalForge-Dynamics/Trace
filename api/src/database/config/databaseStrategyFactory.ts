@@ -2,7 +2,7 @@ import { IDatabaseStrategy } from "./IDatabaseStrategy";
 import { PostgresStrategy } from "./strategies/postgresStrategy";
 
 export class DatabaseStrategyFactory {
-    static createStrategy(): IDatabaseStrategy {
+    public createStrategy(): IDatabaseStrategy {
         const dbType = "postgres";
 
         switch(dbType) {
