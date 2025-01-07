@@ -1,5 +1,5 @@
 import { Scope, UserCreationAttributes, WithUuid } from "../../utils/types/attributeTypes";
-import AuthenticationService from "../../services/AuthenticationService";
+import AuthenticationService from "../../services/authenticationService";
 import type { Migration } from "../config/databaseConfig";
 import User, { init } from "../models/user.model";
 import Logger from "../../utils/Logger";

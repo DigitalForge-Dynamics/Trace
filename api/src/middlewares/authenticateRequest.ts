@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import jwt, { VerifyErrors } from "jsonwebtoken";
-import AuthService from "../services/AuthenticationService";
+import AuthService from "../services/authenticationService";
 import { TokenPayload } from "../utils/types/authenticationTypes";
 
 export const authenticateRequest = (

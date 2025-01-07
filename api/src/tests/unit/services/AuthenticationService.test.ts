@@ -1,4 +1,4 @@
-import AuthenticationService from "../../../services/AuthenticationService";
+import AuthenticationService from "../../../services/authenticationService";
 
 describe("generateMfaCode", () => {
   let authenticationService: AuthenticationService;

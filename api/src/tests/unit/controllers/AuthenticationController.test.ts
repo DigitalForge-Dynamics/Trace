@@ -9,7 +9,7 @@ import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";
 import AuthenticationController from "../../../controllers/AuthenticationController";
 import { TokenUse } from "../../../utils/types/authenticationTypes";
-import AuthenticationService from "../../../services/AuthenticationService";
+import AuthenticationService from "../../../services/authenticationService";
 import UserService from "../../../services/UserService";
 import { Scope, UserCreationAttributes, UserStoredAttributes } from "../../../utils/types/attributeTypes";
 import { UserLogin } from "../../../utils/types/authenticationTypes";

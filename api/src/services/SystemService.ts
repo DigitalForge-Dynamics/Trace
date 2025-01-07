@@ -1,5 +1,5 @@
 import { Settings } from "../utils/types/settings";
-import AuthService from "./AuthenticationService";
+import AuthService from "./authenticationService";
 import { HealthCheckType, Scope, UserCreationAttributes, WithMfa, WithUuid } from "../utils/types/attributeTypes";
 import { encodeBase32 } from "../utils/Encodings";
 
