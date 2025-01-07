@@ -8,7 +8,7 @@ import {
 } from "../../helpers/mockExpress";
 import ErrorController from "../../../controllers/ErrorController";
 import { testCreationAsset, testPaginationAssets, testStoredAsset } from "../../helpers/testData";
-import AssetService from "../../../services/AssetService";
+import AssetService from "../../../services/AssetService(1)";
 import Asset from "../../../database/models/asset.model";
 import { MockedLogger, resetMockLogger } from "../../helpers/mockLogger";
 import Logger from "../../../utils/Logger";

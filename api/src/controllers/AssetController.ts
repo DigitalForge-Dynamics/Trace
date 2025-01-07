@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import AssetService from "../services/AssetService";
 import ErrorController from "./ErrorController";
 import { getId, getInt, getOptString, validateAsset } from "../utils/Validator";
 import Logger from "../utils/Logger";
 import { AssetCreationAttributes } from "../utils/types/attributeTypes";
+import AssetService from "../services/assetService";
 
 export default class AssetController extends ErrorController {
   private readonly assetService = new AssetService();

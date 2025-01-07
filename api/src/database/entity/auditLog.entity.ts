@@ -1,19 +1,11 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('audit_logs')
-export class AuditLog {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class AuditLog extends SharedContext {
     @Column({ type: 'enum', enum: ['create', 'update', 'delete', 'login', 'logout'] })
     declare type: string;
 
     @Column({ type: 'varchar' })
     declare entry: string;
-
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }

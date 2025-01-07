@@ -1,12 +1,10 @@
 import { UUID } from "crypto";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { UserRole } from "./userRole.entity";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('users')
-export class User {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class User extends SharedContext {
     @Column({ type: 'uuid' })
     declare uuid: UUID;
 
@@ -34,9 +32,4 @@ export class User {
     @OneToMany(() => UserRole, (userRole) => userRole.user)
     declare user_roles: UserRole[];
 
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }

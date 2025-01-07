@@ -1,10 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('settings')
-export class Setting {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class Setting extends SharedContext {
     @Column({ type: 'varchar' })
     declare category: string;
 
@@ -14,9 +12,4 @@ export class Setting {
     @Column({ type: 'varchar', nullable: true })
     declare description: string;
 
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }

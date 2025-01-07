@@ -1,11 +1,9 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { Asset } from "./asset.entity";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('locations')
-export class Location {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class Location extends SharedContext {
     @Column({ type: 'varchar' })
     declare location_name: string;
 
@@ -18,9 +16,4 @@ export class Location {
     @OneToMany(() => Asset, (asset) => asset.location_id)
     declare assets: Asset[];
 
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }

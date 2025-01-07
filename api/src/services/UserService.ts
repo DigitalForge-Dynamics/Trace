@@ -1,8 +1,15 @@
 import { UUID } from "crypto";
-import User, { init } from "../database/models/user.model";
-import { UserCreationAttributes, UserStoredAttributes, WithUuid } from "../utils/types/attributeTypes";
+import {
+  UserCreationAttributes,
+  UserStoredAttributes,
+  WithUuid,
+} from "../utils/types/attributeTypes";
 import { BaseService } from "./BaseService";
 import { IService } from "./IService";
+import { DatabaseManager } from "../database/databaseManager";
+import { DatabaseStrategyFactory } from "../database/config/databaseStrategyFactory";
+import { User } from "../database/entity/user.entity";
+import { UserRepository } from "../database/repositories/user.respository";
 
 interface IUserService extends IService<User> {
   getUser(username: string): Promise<UserStoredAttributes | null>;
@@ -12,18 +19,23 @@ interface IUserService extends IService<User> {
   disableUser(username: string): Promise<boolean>;
 }
 
-export default class UserService extends BaseService<User> implements IUserService {
+export default class UserService
+  extends BaseService<User>
+  implements IUserService
+{
   constructor() {
     super(User);
-    init();
   }
 
-  public async getUser(requestedUser: string): Promise<UserStoredAttributes | null> {
-    const user = await User.findOne({ where: { username: requestedUser } });
+  public async getUser(
+    requestedUser: string
+  ): Promise<UserStoredAttributes | null> {
+    const user = await UserRepository.findByUsername(requestedUser);
 
     if (!user) {
       return null;
     }
+
     return user;
   }
 
@@ -31,12 +43,14 @@ export default class UserService extends BaseService<User> implements IUserServi
     const user = await User.findOne({ where: { uuid } });
 
     if (!user) {
-        return null;
+      return null;
     }
     return null;
   }
 
-  public async createUser(data: WithUuid<UserCreationAttributes>): Promise<boolean> {
+  public async createUser(
+    data: WithUuid<UserCreationAttributes>
+  ): Promise<boolean> {
     const isCreated = await User.create(data);
 
     if (isCreated.id <= 0) {
@@ -45,7 +59,10 @@ export default class UserService extends BaseService<User> implements IUserServi
     return true;
   }
 
-  public async setMfaSecret(username: string, mfaSecret: string): Promise<boolean> {
+  public async setMfaSecret(
+    username: string,
+    mfaSecret: string
+  ): Promise<boolean> {
     const updates: Partial<UserStoredAttributes> = { mfaSecret };
     const filter = { where: { username: username } };
     const [affectedCount] = await User.update(updates, filter);

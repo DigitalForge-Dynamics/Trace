@@ -1,11 +1,9 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { UserRole } from "./userRole.entity";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('roles')
-export class Role {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class Role extends SharedContext {
     @Column({ unique: true })
     declare name: string;
 
@@ -14,10 +12,4 @@ export class Role {
 
     @OneToMany(() => UserRole, (userRole) => userRole.role)
     declare user_roles: UserRole[];
-
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }

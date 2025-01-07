@@ -1,11 +1,9 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { Asset } from "./asset.entity";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('status_types')
-export class StatusType {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class StatusType extends SharedContext {
     @Column({ type: 'varchar', unique: true })
     declare name: string;
 
@@ -15,9 +13,4 @@ export class StatusType {
     @OneToMany(() => Asset, (asset) => asset.status)
     declare assets: Asset[];
 
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }

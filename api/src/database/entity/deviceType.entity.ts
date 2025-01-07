@@ -1,20 +1,13 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { Asset } from "./asset.entity";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('device_types')
-export class DeviceType {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class DeviceType extends SharedContext {
     @Column({ type: 'varchar' })
     declare category: string;
 
     @OneToMany(() => Asset, (asset) => asset.device_type)
     declare assets: Asset[];
 
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }

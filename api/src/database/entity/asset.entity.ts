@@ -1,13 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { Location } from "./location.entity";
 import { DeviceType } from "./deviceType.entity";
 import { StatusType } from "./statusType.entity";
+import { SharedContext } from "./sharedContext.entity";
 
 @Entity('assets')
-export class Asset {
-    @PrimaryGeneratedColumn()
-    declare id: number;
-
+export class Asset extends SharedContext {
     @Column({ type: 'varchar' })
     declare asset_tag: string;
 
@@ -33,9 +31,4 @@ export class Asset {
     @ManyToOne(() => Location, (location) => location.assets)
     declare location_id: Location;
 
-    @CreateDateColumn()
-    declare created_at: Date;
-
-    @UpdateDateColumn()
-    declare updated_at: Date;
 }
