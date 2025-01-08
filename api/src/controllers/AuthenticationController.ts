@@ -4,7 +4,7 @@ import { parseMFACode, validateUser, validateUserLogin } from "../utils/Validato
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
 import { TokenPayload, TokenUse, UserLogin } from "../utils/types/authenticationTypes";
-import AuthService from "../services/AuthenticationService";
+import AuthService from "../services/authenticationService";
 import { getRedisClient } from "../database/config/redisClient";
 import { UserCreationAttributes, UserStoredAttributes, WithUuid } from "../utils/types/attributeTypes";
 import { encodeBase32 } from "../utils/Encodings";

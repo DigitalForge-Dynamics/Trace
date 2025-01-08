@@ -15,7 +15,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
 import { getApiPort } from "./utils/Environment";
 import SystemService from "./services/SystemService";
-import AuthService from "./services/AuthenticationService";
+import AuthService from "./services/authenticationService";
 import UserService from "./services/UserService";
 
 const app: Express = express();
