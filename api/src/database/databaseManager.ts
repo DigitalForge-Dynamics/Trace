@@ -1,3 +1,4 @@
+import { ObjectLiteral, Repository } from "typeorm";
 import { IDatabaseStrategy } from "./config/IDatabaseStrategy";
 
 export class DatabaseManager {
@@ -15,7 +16,7 @@ export class DatabaseManager {
         await this.strategy.disconnect();
     }
 
-    public getRepository<T>(entity: { new (): T }): ReturnType<IDatabaseStrategy["getRepository"]> {
+    public getRepository<T extends ObjectLiteral>(entity: { new (): T }): Repository<T>{
         return this.strategy.getRepository(entity);
     }
 

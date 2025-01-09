@@ -1,4 +1,4 @@
-import { DataSource } from "typeorm";
+import { DataSource, ObjectLiteral, Repository } from "typeorm";
 import { IDatabaseStrategy } from "../IDatabaseStrategy";
 import Logger from "../../../utils/Logger";
 import { Asset } from "../../entity/asset.entity";
@@ -50,7 +50,7 @@ export class PostgresStrategy implements IDatabaseStrategy {
     }
   }
 
-  public getRepository<T>(entity: { new(): T; }): ReturnType<DataSource["getRepository"]> {
+  public getRepository<T extends ObjectLiteral>(entity: { new (): T }): Repository<T> {
     return this.datasource.getRepository(entity);
   }
 
