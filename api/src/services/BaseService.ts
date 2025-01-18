@@ -1,30 +1,30 @@
-import { Model, ModelStatic } from "sequelize";
-import { IService } from "./IService";
-import Paginator from "../utils/Paginator";
+import { ObjectLiteral, Repository } from "typeorm";
+import Paginator, { PaginationResult } from "../utils/Paginator";
 
-export abstract class BaseService<TEntity extends Model>
+interface IService<TEntity> {
+  findAll(): Promise<TEntity[]>;
+  findById(id: number): Promise<TEntity | null>;
+  findAllPaginated(page: number, pageSize: number): Promise<PaginationResult<TEntity>>;
+}
+
+export abstract class BaseService<TEntity extends ObjectLiteral>
   implements IService<TEntity>
 {
-  protected readonly Model: ModelStatic<TEntity>;
+  protected readonly repository: Repository<TEntity>;
   private readonly paginator: Paginator<TEntity>;
 
-  constructor(Model: ModelStatic<TEntity>) {
-    this.Model = Model;
-    this.paginator = new Paginator<TEntity>(this.Model);
+  constructor(repository: Repository<TEntity>) {
+    this.repository = repository;
+    this.paginator = new Paginator<TEntity>(this.repository);
   }
 
   public async findAll(): Promise<TEntity[]> {
-    return await this.Model.findAll();
+    return await this.repository.find();
   }
 
   public async findById(id: number): Promise<TEntity | null> {
-    const data = await this.Model.findByPk(id);
-
-    if (data === null) {
-      return null;
-    }
-
-    return data;
+    const entity = await this.repository.findOne({ where: { id } as never });
+    return entity || null;
   }
 
   public async findAllPaginated(page: number, pageSize: number) {
