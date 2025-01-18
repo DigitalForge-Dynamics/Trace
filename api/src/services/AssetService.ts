@@ -3,6 +3,7 @@ import { AssetRepository } from "../database/repositories/asset.repository";
 import { BaseService } from "./BaseService";
 import { Asset } from "../database/entity/asset.entity";
 import Logger from "../utils/Logger";
+import AssetMapper from "./mappers/assetMapper";
 
 interface IAssetService {
   getAllAssets(): Promise<Asset[]>;
@@ -16,6 +17,7 @@ export default class AssetService
   extends BaseService<Asset>
   implements IAssetService
 {
+  private readonly mapper = new AssetMapper();
   constructor() {
     super(AssetRepository);
   }
@@ -51,9 +53,9 @@ export default class AssetService
     try {
       // Need a validator here
 
-      // Need a mapper here
+      const assetEntity = this.mapper.map(data);
 
-      const assetIdentifier = await AssetRepository.createAsset(data);
+      const assetIdentifier = await AssetRepository.createAsset(assetEntity);
 
       if (assetIdentifier.identifiers.length <= 0) {
         Logger.error(`Unable to create new asset`);
@@ -75,9 +77,9 @@ export default class AssetService
     try {
       // Need a validator here
 
-      // Need a mapper here
+      const assetEntity = this.mapper.map(data);
 
-      const { affected } = await AssetRepository.updateAsset(id, data);
+      const { affected } = await AssetRepository.updateAsset(id, assetEntity);
 
       if (affected === undefined || affected <= 0) {
         Logger.error(`Unable to update asset with the following ID: ${id}`);
