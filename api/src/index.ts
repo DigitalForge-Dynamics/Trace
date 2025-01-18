@@ -14,7 +14,7 @@ import { rateLimiterMiddleware } from "./middlewares/requestRateLimiter";
 import { errorHandler } from "./middlewares/errorHandler";
 import { httpRequestLogger } from "./middlewares/httpRequestLogger";
 import { getApiPort } from "./utils/Environment";
-import SystemService from "./services/SystemService";
+import SystemService from "./services/systemService";
 import AuthService from "./services/authenticationService";
 import UserService from "./services/UserService";
 

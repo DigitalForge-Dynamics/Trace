@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ErrorController from "./ErrorController";
 import Logger from "../utils/Logger";
-import SystemService from "../services/SystemService";
+import SystemService from "../services/systemService";
 
 export default class SystemController extends ErrorController {
   private readonly systemService = new SystemService();

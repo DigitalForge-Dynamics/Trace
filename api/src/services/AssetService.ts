@@ -1,6 +1,6 @@
 import { AssetCreationAttributes } from "trace_common";
 import { AssetRepository } from "../database/repositories/asset.repository";
-import { BaseService } from "./BaseService";
+import { BaseService } from "./baseService";
 import { Asset } from "../database/entity/asset.entity";
 import Logger from "../utils/Logger";
 import AssetMapper from "./mappers/assetMapper";

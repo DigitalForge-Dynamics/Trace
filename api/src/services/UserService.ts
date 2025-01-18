@@ -4,7 +4,7 @@ import {
   UserStoredAttributes,
   WithUuid,
 } from "../utils/types/attributeTypes";
-import { BaseService } from "./BaseService";
+import { BaseService } from "./baseService";
 import { IService } from "./IService";
 import { DatabaseManager } from "../database/databaseManager";
 import { DatabaseStrategyFactory } from "../database/config/databaseStrategyFactory";
