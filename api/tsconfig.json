@@ -22,6 +22,8 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "useUnknownInCatchVariables": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
 
     // Modules
     "module": "commonjs",

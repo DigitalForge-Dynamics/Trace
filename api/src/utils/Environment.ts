@@ -5,6 +5,7 @@ export const getDatabaseName = (): string | undefined => process.env.API_DATABAS
 export const getDatabaseUsername = (): string | undefined => process.env.API_DATABASE_USERNAME;
 export const getDatabasePassword = (): string | undefined => process.env.API_DATABASE_PASSWORD;
 export const getDatabaseHost = (): string | undefined => process.env.API_DATABASE_HOST;
+export const getDatabasePort = (): number | undefined => parseInt(process.env.API_DATABASE_PORT ?? "5432");
 
 export const getCachePassword = (): string | undefined => process.env.API_REDIS_PASSWORD;
 export const getCacheHost = (): string | undefined => process.env.API_REDIS_HOST;
