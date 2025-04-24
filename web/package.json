@@ -27,7 +27,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-qr-code": "^2.0.12",
-    "react-router-dom": "^6.21.3",
+    "react-router-dom": "^7.5.2",
     "swr": "^2.2.5",
     "zod": "^3.23.8",
     "trace_common": "file:../trace-common"
