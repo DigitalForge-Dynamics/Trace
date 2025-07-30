@@ -1,5 +1,7 @@
 import { signIn } from "../helpers/accounts";
 import { testCreationAsset } from "../helpers/testData";
+import { describe, it, expect } from "vitest";
+
 const { API_PORT } = process.env;
 
 const API_URL = `http://localhost:${API_PORT}`;
