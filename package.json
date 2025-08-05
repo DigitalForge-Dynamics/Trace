@@ -1,0 +1,14 @@
+{
+  "name": "trace",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@trace/common": "workspace:packages/common"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
