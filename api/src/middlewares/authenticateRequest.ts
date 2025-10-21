@@ -1,15 +1,15 @@
 import { Response, Request, NextFunction } from "express";
-import jwt, { VerifyErrors } from "jsonwebtoken";
+import { jwtVerify } from "jose";
 import AuthService from "../services/AuthenticationService";
 import { TokenPayload } from "../utils/types/authenticationTypes";
 
-export const authenticateRequest = (
+export const authenticateRequest = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  const requiredKey = new AuthService().getJWTSecretKey();
+  const requiredKey = new Uint8Array(new Buffer(new AuthService().getJWTSecretKey(), "base64"));
 
   if (!authHeader) {
     res.status(401).end();
@@ -20,13 +20,12 @@ export const authenticateRequest = (
     res.status(401).end();
     return;
   }
-  jwt.verify(token, requiredKey, { audience: "urn:trace-consumer" }, (error: VerifyErrors | null, user) => {
-    if (error !== null) {
-      res.status(403).end();
-      return;
-    }
-    res.locals.user = user as TokenPayload;
-    next();
-    return;
-  });
+  try {
+  	const claims = await jwtVerify(token, requiredKey, { audience: "urn:trace-consumer" });
+	res.locals.user = claims.payload as TokenPayload;
+	next();
+  } catch (error) {
+  	console.error(error);
+  	res.status(403).end();
+  }
 };

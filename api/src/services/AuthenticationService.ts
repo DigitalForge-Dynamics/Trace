@@ -1,48 +1,45 @@
 import { Scope, UserStoredAttributes } from "../utils/types/attributeTypes";
 import * as argon2 from "argon2";
 import crypto, { UUID } from "crypto";
-import jwt from "jsonwebtoken";
 import { GenericClaimStructure, TokenUse } from "../utils/types/authenticationTypes";
 import { decodeBase32 } from "../utils/Encodings";
 import { getSigningKey, setSigningKey } from "../utils/Environment";
+import { SignJWT } from "jose";
 
 class AuthService {
-  public generateIdToken(user: UserStoredAttributes): string {
+  public async generateIdToken(user: UserStoredAttributes): Promise<string> {
     const tokenClaims = this.generateClaims(TokenUse.Id, user.username);
-    return jwt.sign(
-      {
+	const signKey = new Uint8Array(new Buffer(this.getJWTSecretKey(), "base64"));
+    return new SignJWT({
         ...tokenClaims,
         firstname: user.firstName,
         lastname: user.lastName,
         email: user.email,
-      },
-      this.getJWTSecretKey(),
-      { algorithm: "HS512" }
-    );
+	})
+	.setProtectedHeader({ alg: "HS512" })
+	.sign(signKey);
   }
 
-  public generateAccessToken(scopes: Scope[], username: string): string {
+  public async generateAccessToken(scopes: Scope[], username: string): Promise<string> {
     const tokenClaims = this.generateClaims(TokenUse.Access, username);
-    return jwt.sign(
-      {
-        ...tokenClaims,
-        scope: scopes,
-      },
-      this.getJWTSecretKey(),
-      { algorithm: "HS512" }
-    );
+	const signKey = new Uint8Array(new Buffer(this.getJWTSecretKey(), "base64"));
+  	return new SignJWT({
+		...tokenClaims,
+		scope: scopes,
+	})
+	.setProtectedHeader({ alg: "HS512" })
+	.sign(signKey);
   }
 
-  public generateRefreshToken(username: string): string {
+  public async generateRefreshToken(username: string): Promise<string> {
     const tokenClaims = this.generateClaims(TokenUse.Refresh, username);
-    return jwt.sign(
-      {
-        ...tokenClaims,
-        username,
-      },
-      this.getJWTSecretKey(),
-      { algorithm: "HS512" }
-    )
+	const signKey = new Uint8Array(new Buffer(this.getJWTSecretKey(), "base64"));
+	return new SignJWT({
+		...tokenClaims,
+		username,
+	})
+	.setProtectedHeader({ alg: "HS512" })
+	.sign(signKey);
   }
 
   public async hashPassword(password: string): Promise<string> {
@@ -96,16 +93,16 @@ class AuthService {
   public mfaVerification(secret: string, code: string): boolean {
     const secretBytes: Buffer = decodeBase32(secret);
     const index = Math.floor(Date.now() / 1000 / 30);
-    const generatedCode: string = this.generateMfaCode(secretBytes, index);
+    const generatedCode: string = this.generateMfaCode(new Uint8Array(secretBytes), index);
     return generatedCode === code;
   }
 
-  public generateMfaCode(secret: Buffer, index: number): string {
+  public generateMfaCode(secret: Uint8Array, index: number): string {
     const buffer: Buffer = Buffer.alloc(8);
     buffer.writeUInt32BE(index, 4);
     const digest: Buffer = crypto
       .createHmac("sha1", secret)
-      .update(buffer)
+      .update(new Uint8Array(buffer))
       .digest();
     const offset: number = digest.readUInt8(digest.length - 1) & 0xF;
     const resultNumber: number =

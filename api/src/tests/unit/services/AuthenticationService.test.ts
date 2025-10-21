@@ -13,6 +13,6 @@ describe("generateMfaCode", () => {
     [Buffer.from([0, 68, 50, 20, 199]), 0, "058591"],
     [Buffer.from([0, 68, 50, 20, 199]), 100, "117565"],
   ])("Correctly generates the TOTP code", (secret: Buffer, index: number, expected: string) => {
-    expect(authenticationService.generateMfaCode(secret, index)).toEqual(expected);
+    expect(authenticationService.generateMfaCode(new Uint8Array(secret), index)).toEqual(expected);
   });
 });

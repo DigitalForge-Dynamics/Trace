@@ -8,7 +8,10 @@ const config: JestConfigWithTsJest = {
     "\.test\.ts$": ["ts-jest", {
       isolatedModules: true,
     },
-  ]}
+  ]},
+  transformIgnorePatterns: [
+  	"node_modules/(?!(jose)/)"
+  ],
 };
 
 export default config;
