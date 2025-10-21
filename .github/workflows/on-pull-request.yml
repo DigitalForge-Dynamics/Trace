@@ -1,0 +1,25 @@
+name: Pull Request
+
+on:
+  pull_request:
+
+permissions:
+  contents: "read"
+
+jobs:
+  API-Unit:
+    uses: ./.github/workflows/action-api-unit.yml
+
+  Web-Unit:
+    uses: ./.github/workflows/action-web-unit.yml
+
+  API-Integration:
+    uses: ./.github/workflows/action-api-integration.yml
+    needs:
+      - API-Unit
+ 
+  Web-E2E:
+    uses: ./.github/workflows/action-web-e2e.yml
+    needs:
+      - Web-Unit
+      - API-Integration 

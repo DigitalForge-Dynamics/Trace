@@ -1,0 +1,27 @@
+name: Push Main
+
+on:
+  push:
+    branches:
+    - main
+
+permissions:
+  contents: "read"
+
+jobs:
+  API-Testing:
+    uses: ./.github/workflows/action-api-unit.yml
+
+  Web-Testing:
+    uses: ./.github/workflows/actions-web-unit.yml
+
+  API-Integration:
+    uses: ./.github/workflows/action-api-integration.yml
+    needs:
+      - API-Unit
+ 
+  Web-E2E:
+    uses: ./.github/workflows/action-web-e2e.yml
+    needs:
+      - Web-Unit
+      - API-Integration 

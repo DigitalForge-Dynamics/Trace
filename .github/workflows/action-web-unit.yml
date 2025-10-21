@@ -1,0 +1,40 @@
+name: Web Unit Test
+
+on:
+  workflow_call:
+
+permissions:
+  contents: "read"
+
+jobs:
+  Web-Unit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v5
+      with:
+        node-version: 24
+
+    - name: Install Common dependencies
+      run: npm ci
+      working-directory: trace-common
+
+    - name: Build Common Package
+      run: npx tsc
+      working-directory: trace-common
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: web
+
+    - name: Typescript Check
+      run: npx tsc
+      working-directory: web
+
+    - name: Unit Test
+      run: npm test
+      working-directory: web
+
+    - name: Lint
+      run: npm run lint
+      working-directory: web
