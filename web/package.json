@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "e2e": "playwright test playwright/tests",
     "e2e:trace": "playwright test playwright/tests --trace on",
+    "e2e:configure": "playwright install --with-deps chromium",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -50,7 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react": "^4.2.0",
-    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/coverage-v8": "^1.6.1",
     "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
@@ -59,8 +60,8 @@
     "storybook": "^8.2.6",
     "typescript": "^5.2.2",
     "typescript-eslint": "^7.7.1",
-    "vite": "^5.1.8",
-    "vitest": "^1.4.0"
+    "vite": "^5.4.20",
+    "vitest": "^1.6.1"
   },
   "eslintConfig": {
     "extends": [
