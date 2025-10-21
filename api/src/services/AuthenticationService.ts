@@ -104,8 +104,8 @@ class AuthService {
     const buffer: Buffer = Buffer.alloc(8);
     buffer.writeUInt32BE(index, 4);
     const digest: Buffer = crypto
-      .createHmac("sha1", secret)
-      .update(buffer)
+      .createHmac("sha1", new Uint8Array(secret))
+      .update(new Uint8Array(buffer))
       .digest();
     const offset: number = digest.readUInt8(digest.length - 1) & 0xF;
     const resultNumber: number =
