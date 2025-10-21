@@ -39,7 +39,7 @@
     "@types/jest": "^29.5.11",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^20.10.1",
+    "@types/node": "^24.9.1",
     "@types/redis": "^4.0.11",
     "@types/winston": "^2.4.4",
     "eslint": "^8.57.0",
