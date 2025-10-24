@@ -14,6 +14,5 @@ export const authenticateOidc = async (req: Request) => {
 		//issuer: ISSUER,
 		//audience: AUDIENCE,
 	});
-	console.log(payload);
-	return Response.json({ message: "Authenticated" }, { status: 200 });
+	return Response.json({ message: "Authenticated", data: payload }, { status: 200 });
 };
