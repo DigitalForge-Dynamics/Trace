@@ -7,7 +7,7 @@
         "@types/bun": "latest",
       },
       "peerDependencies": {
-        "typescript": "^5",
+        "typescript": "catalog:",
       },
     },
     "packages/trace-api": {
