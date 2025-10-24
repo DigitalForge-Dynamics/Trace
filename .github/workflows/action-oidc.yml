@@ -17,4 +17,4 @@ jobs:
       - run: bun run index.ts & sleep 2
         working-directory: packages/trace-api
       - run: |
-          curl --fail-with-body -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" localhost:3000/auth/oidc
+          curl --fail-with-body -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" localhost:3000/auth/oidc
