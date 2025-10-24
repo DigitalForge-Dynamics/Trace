@@ -3,6 +3,9 @@ name: Test
 on:
   workflow_call
 
+permissions:
+  content: "read"
+
 jobs:
   Test:
     runs-on: ubuntu-latest
