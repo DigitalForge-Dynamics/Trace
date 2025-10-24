@@ -2,7 +2,7 @@ import { jwtVerify, createRemoteJWKSet } from "jose";
 
 const HEADER_PREFIX = "Bearer ";
 const ISSUER = "https://token.actions.githubusercontent.com";
-const AUDIENCE = "https:///github.com/DigitalDynamics/Trace";
+//const AUDIENCE = "https:///github.com/DigitalDynamics/Trace";
 
 export const authenticateOidc = async (req: Request) => {
 	const header = req.headers.get("authorization");
@@ -11,8 +11,8 @@ export const authenticateOidc = async (req: Request) => {
 	const jwt = header.substring(HEADER_PREFIX.length);
 	const jwks = createRemoteJWKSet(new URL(`${ISSUER}/.well-known/jwks`));
 	const { payload } = await jwtVerify(jwt, jwks, {
-		issuer: ISSUER,
-		audience: AUDIENCE,
+		//issuer: ISSUER,
+		//audience: AUDIENCE,
 	});
 	console.log(payload);
 	return Response.json({ message: "Authenticated" }, { status: 200 });
