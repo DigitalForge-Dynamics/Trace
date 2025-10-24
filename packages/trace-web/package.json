@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-  	"trace-sdk": "workspace:*"
+    "trace-sdk": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest"
