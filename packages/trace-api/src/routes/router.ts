@@ -1,21 +1,22 @@
-export type HttpMethod = "GET";
-export type Context = {
+type HttpMethod = "GET";
+interface Context {
   req: Request;
   url: URL;
   params: Record<string, string>;
-};
-export type Handler = (ctx: Context) => Promise<Response> | Response;
-export type Complied = { regex: RegExp; paramNames: string[] };
+}
+type Handler = (ctx: Context) => Promise<Response> | Response;
+type Complied = { regex: RegExp; paramNames: string[] };
 type Route = { method: HttpMethod; pattern: Complied; handler: Handler };
-export type Router = {
+type Router = {
   on: (method: HttpMethod, path: string, handler: Handler) => void;
   get: (path: string, handler: Handler) => void;
   fetch: (req: Request) => Promise<Response>;
 };
 
 const compilePath = (path: string): Complied => {
-  if (!path.startsWith("/"))
+  if (!path.startsWith("/")) {
     throw new Error(`Path must start with "/": ${path}`);
+  }
 
   const names: string[] = [];
 
@@ -35,15 +36,19 @@ const buildParams = (
   pathname: string
 ): Record<string, string> | null => {
   const match = compiled.regex.exec(pathname);
-  if (!match) return null;
+  if (!match) {
+    return null;
+  }
 
   const values = match.slice(1);
-  if (values.length !== compiled.paramNames.length) return null;
+  if (values.length !== compiled.paramNames.length) {
+    return null;
+  }
 
   const params = compiled.paramNames.reduce<Record<string, string>>(
     (acc, key, i) => {
       const v = values[i];
-      if (typeof key == "string" && typeof v == "string") {
+      if (typeof key === "string" && typeof v === "string") {
         acc[key] = v;
       }
       return acc;
@@ -63,7 +68,7 @@ const createRouter = (): Router => {
     handler: Handler
   ) => {
     routes.push({
-      method: method,
+      method,
       pattern: compilePath(path),
       handler,
     });
@@ -85,7 +90,9 @@ const createRouter = (): Router => {
     }
 
     const params = buildParams(route.pattern, url.pathname);
-    if (!params) return new Response("Not Found", { status: 404 }); 
+    if (!params) {
+      return new Response("Not Found", { status: 404 });
+    }
 
     const ctx: Context = { req, url, params };
 
@@ -99,4 +106,5 @@ const createRouter = (): Router => {
   return { on, get, fetch };
 };
 
-export { createRouter, buildParams, compilePath }
+export type { HttpMethod, Context, Handler, Complied, Router };
+export { createRouter, buildParams, compilePath };
