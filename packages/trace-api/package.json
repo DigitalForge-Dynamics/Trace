@@ -1,6 +1,7 @@
 {
   "name": "trace-api",
   "module": "src/index.ts",
+  "types": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {

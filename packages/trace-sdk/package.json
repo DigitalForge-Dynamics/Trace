@@ -1,10 +1,12 @@
 {
   "name": "trace-sdk",
   "module": "src/client.ts",
+  "types": "src/client.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "trace-api": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "catalog:",
