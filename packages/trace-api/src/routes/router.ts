@@ -1,15 +1,19 @@
-type HttpMethod = "GET";
-type Context = { req: Request; url: URL; params: Record<string, string> };
-type Handler = (ctx: Context) => Promise<Response> | Response;
-type Complied = { regex: RegExp; paramNames: string[] };
+export type HttpMethod = "GET";
+export type Context = {
+  req: Request;
+  url: URL;
+  params: Record<string, string>;
+};
+export type Handler = (ctx: Context) => Promise<Response> | Response;
+export type Complied = { regex: RegExp; paramNames: string[] };
 type Route = { method: HttpMethod; pattern: Complied; handler: Handler };
-type Router = {
+export type Router = {
   on: (method: HttpMethod, path: string, handler: Handler) => void;
   get: (path: string, handler: Handler) => void;
   fetch: (req: Request) => Promise<Response>;
 };
 
-const compilePath = (path: string): Complied => {
+export const compilePath = (path: string): Complied => {
   if (!path.startsWith("/"))
     throw new Error(`Path must start with "/": ${path}`);
 
@@ -24,6 +28,30 @@ const compilePath = (path: string): Complied => {
 
   const source = path === "/" ? "^/$" : `^${pattern}/?$`;
   return { regex: new RegExp(source), paramNames: names };
+};
+
+const buildParams = (
+  compiled: Complied,
+  pathname: string
+): Record<string, string> | null => {
+  const match = compiled.regex.exec(pathname);
+  if (!match) return null;
+
+  const values = match.slice(1);
+  if (values.length !== compiled.paramNames.length) return null;
+
+  const params = compiled.paramNames.reduce<Record<string, string>>(
+    (acc, key, i) => {
+      const v = values[i];
+      if (typeof key == "string" && typeof v == "string") {
+        acc[key] = v;
+      }
+      return acc;
+    },
+    {}
+  );
+
+  return params;
 };
 
 const createRouter = (): Router => {
@@ -56,23 +84,12 @@ const createRouter = (): Router => {
       return new Response("Not Found", { status: 404 });
     }
 
+    const params = buildParams(route.pattern, url.pathname);
+
+    if (!params) return new Response("Not Found", { status: 404 }); 
+
     const match = route.pattern.regex.exec(url.pathname);
     if (!match) return new Response("Not Found", { status: 404 });
-
-    const names: string[] = route.pattern.paramNames;
-    const values: string[] = match.slice(1);
-
-    if (values.length !== names.length) {
-      return new Response("Not Found", { status: 404 });
-    }
-
-    const params = names.reduce<Record<string, string>>((acc, key, i) => {
-      const v = values[i];
-      if (typeof key == "string" && typeof v == "string") {
-        acc[key] = v;
-      }
-      return acc;
-    }, {});
 
     const ctx: Context = { req, url, params };
 
@@ -86,5 +103,4 @@ const createRouter = (): Router => {
   return { on, get, fetch };
 };
 
-export type { Context, Handler, Router };
-export { createRouter };
+export { createRouter, buildParams };
