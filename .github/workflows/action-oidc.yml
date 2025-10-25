@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
-      - run: bun install
+      - run: bun install --frozen-lockfile
       - run: bun run index.ts & sleep 2
         working-directory: packages/trace-api
       - run: |
