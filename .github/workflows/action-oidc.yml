@@ -18,4 +18,4 @@ jobs:
         working-directory: packages/trace-api
       - run: |
           token=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=trace-api" | jq -r '.value')
-          curl --fail-with-body -H "Authorization: Bearer $token" localhost:3000/auth/oidc
+          curl --fail-with-body -H "Authorization: Bearer $token" localhost:3000/auth/oidc | jq
