@@ -1,8 +1,9 @@
+import { serve } from "bun";
 import { authenticateOidc } from "./src/handlers/auth.ts";
 
-export const packageName = "trace-api";
+const packageName = "trace-api";
 
-const server = Bun.serve({
+const server = serve({
   port: 3000,
   routes: {
     "/auth/oidc": authenticateOidc,
@@ -10,3 +11,5 @@ const server = Bun.serve({
 });
 
 console.log(`Listening on port ${server.port}`);
+
+export { packageName };

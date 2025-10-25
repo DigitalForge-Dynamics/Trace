@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.7/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -110,5 +110,52 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "packages/trace-web/index.ts",
+        "packages/trace-sdk/index.ts",
+        "packages/trace-api/index.ts",
+        "packages/trace-api/src/handlers/auth.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/trace-api/src/handlers/auth.ts"],
+      "linter": {
+        "rules": {
+          "security": {
+            "noSecrets": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/trace-api/index.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useExplicitType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/trace-api/index.ts", "packages/trace-api/index.test.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noUnresolvedImports": "off"
+          }
+        }
+      }
+    }
+  ]
 }
