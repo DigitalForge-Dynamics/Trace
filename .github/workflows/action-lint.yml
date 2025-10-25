@@ -1,0 +1,17 @@
+name: Lint
+
+on:
+  workflow_call
+
+permissions:
+  contents: "read"
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - uses: biomejs/setup-biome@v2
+      - run: bun install --frozen-lockfile
+      - run: biome ci
