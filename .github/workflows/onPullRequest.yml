@@ -11,4 +11,4 @@ jobs:
   Test:
     uses: ./.github/workflows/action-test.yml
   OIDC:
-    uses: ./.github.workflows/action-oidc.yml
+    uses: ./.github/workflows/action-oidc.yml
