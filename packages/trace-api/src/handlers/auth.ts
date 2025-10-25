@@ -5,7 +5,7 @@ const HEADER_PREFIX = "Bearer ";
 // OIDC Configuration
 const ISSUER = "https://token.actions.githubusercontent.com";
 const AUDIENCE = "trace-api";
-const SUBJECT = "repo:DigitalForge-Dynamics/Trace:ref:refs/heads/bunjs-api-oidc";
+const SUBJECT = /^repo:DigitalForge-Dynamics\/Trace:ref:refs\/heads\/[^/]+$/;
 
 export const authenticateOidc = async (req: Request) => {
 	try {
@@ -17,10 +17,16 @@ export const authenticateOidc = async (req: Request) => {
 		const { payload } = await jwtVerify(jwt, jwks, {
 			issuer: ISSUER,
 			audience: AUDIENCE,
-			subject: SUBJECT,
+			requiredClaims: ["sub", "iat", "nbf", "repository"],
 		});
+		if (!payload.sub) return Response.json({ message: "Internal Server Error" }, { status: 500 });
+		if (!SUBJECT.test(payload.sub)) {
+			return Response.json({ message: "Unauthorised" }, { status: 403 });
+		}
+		// TODO: Generate User Token, and return in request.
 		return Response.json({ message: "Authenticated", data: payload }, { status: 200 });
 	} catch (error) {
-		return Response.json({ error }, { status: 500 });
+		console.error(error);
+		return Response.json({ message: "Internal Server Error" }, { status: 500 });
 	}
 };
