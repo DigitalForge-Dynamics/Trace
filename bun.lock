@@ -7,7 +7,7 @@
         "@types/bun": "latest",
       },
       "peerDependencies": {
-        "typescript": "catalog:",
+        "typescript": "catalog:*",
       },
     },
     "packages/trace-api": {
@@ -24,15 +24,6 @@
     },
     "packages/trace-sdk": {
       "name": "trace-sdk",
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-      "peerDependencies": {
-        "typescript": "catalog:",
-      },
-    },
-    "packages/trace-shared": {
-      "name": "trace-shared",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -72,8 +63,6 @@
     "trace-api": ["trace-api@workspace:packages/trace-api"],
 
     "trace-sdk": ["trace-sdk@workspace:packages/trace-sdk"],
-
-    "trace-shared": ["trace-shared@workspace:packages/trace-shared"],
 
     "trace-web": ["trace-web@workspace:packages/trace-web"],
 
