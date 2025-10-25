@@ -17,5 +17,7 @@ jobs:
       - run: bun run index.ts & sleep 2
         working-directory: packages/trace-api
       - run: |
+          curl https://api.github.com/users/SolarFactories/gpg_keys | jq -r '.[4].raw_key' | gpg --import
           token=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=trace-api")
+          echo "Test Message" | gpg --encrypt --armor --recipient SolarFactories@users.noreply.github.com
           curl --fail-with-body -H "Authorization: Bearer $token" localhost:3000/auth/oidc
