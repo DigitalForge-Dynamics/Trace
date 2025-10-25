@@ -121,11 +121,24 @@
   "overrides": [
     {
       "includes": [
+        "**/*.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noEmptyBlockStatements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
         "index.ts",
         "packages/trace-web/index.ts",
         "packages/trace-sdk/index.ts",
-        "packages/trace-api/index.ts",
-        "packages/trace-api/src/handlers/auth.ts"
+        "packages/trace-api/src/index.ts",
+        "packages/trace-api/src/handlers/auth.ts",
+        "packages/trace-api/src/routes/router.ts"
       ],
       "linter": {
         "rules": {
@@ -137,7 +150,8 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/handlers/auth.ts"
+        "packages/trace-api/src/handlers/auth.ts",
+        "packages/trace-api/src/routes/router.test.ts"
       ],
       "linter": {
         "rules": {
@@ -149,7 +163,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/index.ts"
+        "packages/trace-api/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -161,8 +175,9 @@
     },
     {
       "includes": [
-        "packages/trace-api/index.ts",
-        "packages/trace-api/index.test.ts"
+        "packages/trace-api/src/index.ts",
+        "packages/trace-api/src/index.test.ts",
+        "packages/trace-api/src/routes/router.test.ts"
       ],
       "linter": {
         "rules": {
@@ -179,6 +194,55 @@
       "json": {
         "parser": {
           "allowComments": true
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/routes/router.ts",
+        "packages/trace-api/src/routes/router.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useQwikValidLexicalScope": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/routes/router.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useConsistentTypeDefinitions": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/routes/router.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noMagicNumbers": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/routes/router.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUndeclaredVariables": "off"
+          }
         }
       }
     }
