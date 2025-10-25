@@ -3,6 +3,12 @@ name: Pull Request
 on:
   pull_request
 
+permissions:
+  contents: "read"
+  id-token: "write"
+
 jobs:
   Test:
     uses: ./.github/workflows/action-test.yml
+  OIDC:
+    uses: ./.github/workflows/action-oidc.yml

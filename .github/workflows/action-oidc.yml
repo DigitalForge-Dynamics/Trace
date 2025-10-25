@@ -1,0 +1,21 @@
+name: OIDC Authenticate as GitHub Workflow
+
+on:
+  workflow_call
+
+permissions:
+  contents: "read"
+  id-token: "write"
+
+jobs:
+  OIDC:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run index.ts & sleep 2
+        working-directory: packages/trace-api
+      - run: |
+          token=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=trace-api" | jq -r '.value')
+          curl --fail-with-body -H "Authorization: Bearer $token" localhost:3000/auth/oidc | jq
