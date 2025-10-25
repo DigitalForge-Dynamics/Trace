@@ -1,8 +1,11 @@
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
 const HEADER_PREFIX = "Bearer ";
+
+// OIDC Configuration
 const ISSUER = "https://token.actions.githubusercontent.com";
-//const AUDIENCE = "https:///github.com/DigitalDynamics/Trace";
+const AUDIENCE = "trace-api";
+const SUBJECT = "repo:DigitalForge-Dynamics/Trace:ref:refs/heads/bunjs-api-oidc";
 
 export const authenticateOidc = async (req: Request) => {
 	try {
@@ -12,8 +15,9 @@ export const authenticateOidc = async (req: Request) => {
 		const jwt = header.substring(HEADER_PREFIX.length);
 		const jwks = createRemoteJWKSet(new URL(`${ISSUER}/.well-known/jwks`));
 		const { payload } = await jwtVerify(jwt, jwks, {
-			//issuer: ISSUER,
-			//audience: AUDIENCE,
+			issuer: ISSUER,
+			audience: AUDIENCE,
+			subject: SUBJECT,
 		});
 		return Response.json({ message: "Authenticated", data: payload }, { status: 200 });
 	} catch (error) {
