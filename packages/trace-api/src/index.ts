@@ -7,14 +7,10 @@ const packageName = "trace-api";
 const router = createRouter();
 
 router.get("/health-check", (): Response => Response.json({ health: "OK" }, { status: 200 }));
+router.post("/auth/oidc", ({ req }) => authenticateOidc(req));
 
 const server = serve({
   port: 3000,
-  routes: {
-  	"/auth/oidc": {
-		POST: authenticateOidc,
-	}
-  },
   fetch: router.fetch,
 });
 

@@ -1,4 +1,4 @@
-type HttpMethod = "GET";
+type HttpMethod = "GET" | "POST";
 type Context = {
   readonly req: Request;
   readonly url: URL;
@@ -10,6 +10,7 @@ type Route = { readonly method: HttpMethod; readonly pattern: Compiled; readonly
 type Router = {
   readonly on: (method: HttpMethod, path: string, handler: Handler) => void;
   readonly get: (path: string, handler: Handler) => void;
+  readonly post: (path: string, handler: Handler) => void;
   readonly fetch: (req: Request) => Promise<Response>;
 };
 
@@ -65,6 +66,7 @@ const createRouter = (): Router => {
   };
 
   const get: Router["get"] = (path: string, handler: Handler) => on("GET", path, handler);
+  const post: Router["post"] = (path: string, handler: Handler) => on("POST", path, handler);
 
   const fetch: Router["fetch"] = async (req: Request): Promise<Response> => {
     const url = new URL(req.url);
@@ -90,7 +92,7 @@ const createRouter = (): Router => {
       return new Response("Internal Server Error", { status: 500 });
     }
   };
-  return { on, get, fetch };
+  return { on, get, post, fetch };
 };
 
 export type { HttpMethod, Handler, Context, Compiled, Router };

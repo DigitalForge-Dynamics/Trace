@@ -60,7 +60,7 @@ class APIClient {
   }
 
   public async getHealth(): Promise<{ readonly health: "OK" }> {
-    const body = await this.netClient.get("/health");
+    const body = await this.netClient.get("/health-check");
     return body as { health: "OK" };
   }
 }
