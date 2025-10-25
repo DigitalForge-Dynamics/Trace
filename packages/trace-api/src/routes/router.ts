@@ -42,8 +42,10 @@ const buildParams = (compiled: Compiled, pathname: string): Record<string, strin
 
   const params = compiled.paramNames.reduce<Record<string, string>>((acc, key, i) => {
     const v = values[i];
-    if (typeof key === "string" && typeof v === "string") {
+    if (typeof v === "string") {
       acc[key] = v;
+    } else {
+      console.warn(`Unused parameter name (${key}), with unexpected corresponding type of value: ${typeof v}`);
     }
     return acc;
   }, {});
