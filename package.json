@@ -1,20 +1,25 @@
 {
-  "name": "trace",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "catalog:",
-    "@biomejs/biome": "catalog:"
-  },
-  "workspaces": {
-    "packages": ["packages/*"],
-    "catalog": {
-      "typescript": "^5.9.3",
-      "@biomejs/biome": "^2.3.0"
-    }
-  }
+	"name": "trace",
+	"module": "index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"lint": "biome check"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "catalog:",
+		"@biomejs/biome": "catalog:"
+	},
+	"workspaces": {
+		"packages": [
+			"packages/*"
+		],
+		"catalog": {
+			"typescript": "^5.9.3",
+			"@biomejs/biome": "^2.3.0"
+		}
+	}
 }
