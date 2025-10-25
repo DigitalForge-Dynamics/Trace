@@ -6,7 +6,12 @@ const packageName = "trace-api";
 const server = serve({
   port: 3000,
   routes: {
-    "/auth/oidc": authenticateOidc,
+    "/auth/oidc": {
+		POST: authenticateOidc,
+	},
+	"/health": {
+		GET: () => Response.json({ health: "OK" }, { status: 200 }),
+	},
   },
 });
 
