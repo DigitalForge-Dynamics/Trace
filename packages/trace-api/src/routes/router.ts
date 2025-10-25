@@ -30,7 +30,7 @@ export const compilePath = (path: string): Complied => {
   return { regex: new RegExp(source), paramNames: names };
 };
 
-const buildParams = (
+export const buildParams = (
   compiled: Complied,
   pathname: string
 ): Record<string, string> | null => {
@@ -54,7 +54,7 @@ const buildParams = (
   return params;
 };
 
-const createRouter = (): Router => {
+export const createRouter = (): Router => {
   const routes: Route[] = [];
 
   const on: Router["on"] = (
@@ -85,11 +85,7 @@ const createRouter = (): Router => {
     }
 
     const params = buildParams(route.pattern, url.pathname);
-
     if (!params) return new Response("Not Found", { status: 404 }); 
-
-    const match = route.pattern.regex.exec(url.pathname);
-    if (!match) return new Response("Not Found", { status: 404 });
 
     const ctx: Context = { req, url, params };
 
@@ -102,5 +98,3 @@ const createRouter = (): Router => {
   };
   return { on, get, fetch };
 };
-
-export { createRouter, buildParams };
