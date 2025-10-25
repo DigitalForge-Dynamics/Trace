@@ -5,6 +5,14 @@ on:
     branches:
     - main
 
+permissions:
+  contents: "read"
+  id-token: "write"
+
 jobs:
   Test:
     uses: ./.github/workflows/action-test.yml
+  OIDC:
+    uses: ./.github/workflows/action-oidc.yml
+  Lint:
+    uses: ./.github/workflows/action-lint.yml

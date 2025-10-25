@@ -13,5 +13,8 @@
   },
   "peerDependencies": {
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "jose": "catalog:"
   }
 }

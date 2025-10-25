@@ -13,7 +13,7 @@ export type Router = {
   fetch: (req: Request) => Promise<Response>;
 };
 
-export const compilePath = (path: string): Complied => {
+const compilePath = (path: string): Complied => {
   if (!path.startsWith("/"))
     throw new Error(`Path must start with "/": ${path}`);
 
@@ -30,7 +30,7 @@ export const compilePath = (path: string): Complied => {
   return { regex: new RegExp(source), paramNames: names };
 };
 
-export const buildParams = (
+const buildParams = (
   compiled: Complied,
   pathname: string
 ): Record<string, string> | null => {
@@ -54,7 +54,7 @@ export const buildParams = (
   return params;
 };
 
-export const createRouter = (): Router => {
+const createRouter = (): Router => {
   const routes: Route[] = [];
 
   const on: Router["on"] = (
@@ -98,3 +98,5 @@ export const createRouter = (): Router => {
   };
   return { on, get, fetch };
 };
+
+export { createRouter, buildParams, compilePath }
