@@ -1,58 +1,88 @@
+type HttpMethod = "GET";
 type Context = { req: Request; url: URL; params: Record<string, string> };
 type Handler = (ctx: Context) => Promise<Response> | Response;
-type Route = { method: string; pattern: RegExp; handler: Handler };
+type Complied = { regex: RegExp; paramNames: string[] };
+type Route = { method: HttpMethod; pattern: Complied; handler: Handler };
 type Router = {
-  on: (method: string, path: string, handler: Handler) => void;
+  on: (method: HttpMethod, path: string, handler: Handler) => void;
   get: (path: string, handler: Handler) => void;
   fetch: (req: Request) => Promise<Response>;
 };
 
-const compilePath = (path: string): RegExp => {
+const compilePath = (path: string): Complied => {
   if (!path.startsWith("/"))
     throw new Error(`Path must start with "/": ${path}`);
 
+  const names: string[] = [];
+
   const pattern = path
     .replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
-    .replace(/\\:(\w+)/g, (_m, name) => `(?<${name}>[^/]+)`);
+    .replace(/:(\w+)/g, (_m, name) => {
+      names.push(name);
+      return "([^/]+)";
+    });
 
-  const final = path === "/" ? "^/$" : `^${pattern}/?$`;
-  return new RegExp(final);
+  const source = path === "/" ? "^/$" : `^${pattern}/?$`;
+  return { regex: new RegExp(source), paramNames: names };
 };
 
 const createRouter = (): Router => {
   const routes: Route[] = [];
 
-  const on = (method: string, path: string, handler: Handler) => {
+  const on: Router["on"] = (
+    method: HttpMethod,
+    path: string,
+    handler: Handler
+  ) => {
     routes.push({
-      method: method.toUpperCase(),
+      method: method,
       pattern: compilePath(path),
       handler,
     });
   };
-  const get = (path: string, h: Handler) => on("GET", path, h);
 
-  const fetch = async (req: Request): Promise<Response> => {
+  const get: Router["get"] = (path: string, handler: Handler) =>
+    on("GET", path, handler);
+
+  const fetch: Router["fetch"] = async (req: Request): Promise<Response> => {
     const url = new URL(req.url);
     const method = req.method.toUpperCase();
 
-    for (const route of routes) {
-      if (route.method !== method) continue;
-      const match = route.pattern.exec(url.pathname);
-      if (!match) continue;
+    const route = routes.find(
+      (r) => r.method === method && r.pattern.regex.test(url.pathname)
+    );
 
-      const params = (match.groups ?? {});
-      const ctx: Context = { req, url, params };
-
-      try {
-        return await route.handler(ctx);
-      } catch (err) {
-        console.error("Handler error:", err);
-        return new Response("Internal Server Error", { status: 500 });
-      }
+    if (!route) {
+      return new Response("Not Found", { status: 404 });
     }
-    return new Response("Not Found", { status: 404 });
-  };
 
+    const match = route.pattern.regex.exec(url.pathname);
+    if (!match) return new Response("Not Found", { status: 404 });
+
+    const names: string[] = route.pattern.paramNames;
+    const values: string[] = match.slice(1);
+
+    if (values.length !== names.length) {
+      return new Response("Not Found", { status: 404 });
+    }
+
+    const params = names.reduce<Record<string, string>>((acc, key, i) => {
+      const v = values[i];
+      if (typeof key == "string" && typeof v == "string") {
+        acc[key] = v;
+      }
+      return acc;
+    }, {});
+
+    const ctx: Context = { req, url, params };
+
+    try {
+      return await route.handler(ctx);
+    } catch (err) {
+      console.error("Handler error:", err);
+      return new Response("Internal Server Error", { status: 500 });
+    }
+  };
   return { on, get, fetch };
 };
 
