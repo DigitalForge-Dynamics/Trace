@@ -7,13 +7,13 @@
         "@types/bun": "latest",
       },
       "peerDependencies": {
-        "typescript": "catalog:*",
+        "typescript": "catalog:",
       },
     },
     "packages/trace-api": {
       "name": "trace-api",
       "dependencies": {
-        "jose": "^6.1.0",
+        "jose": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -45,6 +45,7 @@
     },
   },
   "catalog": {
+    "jose": "^6.1.0",
     "typescript": "^5.9.3",
   },
   "packages": {

@@ -10,6 +10,6 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "jose": "^6.1.0"
+    "jose": "catalog:"
   }
 }
