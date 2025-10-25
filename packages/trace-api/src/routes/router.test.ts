@@ -1,5 +1,5 @@
-import { describe, it, expect, spyOn, beforeAll, afterAll } from "bun:test";
-import { buildParams, compilePath, createRouter } from "./router";
+import { afterAll, beforeAll, describe, expect, it, spyOn } from "bun:test";
+import { buildParams, compilePath, createRouter } from "./router.ts";
 
 describe("Unit: Tests compilePath() Function", () => {
   it("Compiles a static path", () => {
@@ -16,7 +16,7 @@ describe("Unit: Tests compilePath() Function", () => {
     const match = compiled.regex.exec("/users/42");
 
     expect(compiled.paramNames).toEqual(["id"]);
-    expect(!!match).toBeTrue();
+    expect(Boolean(match)).toBeTrue();
     expect(match?.[1]).toBe("42");
   });
 
@@ -48,8 +48,7 @@ describe("Unit: Tests buildParams() Function", () => {
 });
 
 describe("Unit: Tests createRouter() Function", () => {
-  const makeRequest = (path: string, init?: RequestInit) =>
-    new Request(`https://localhost${path}`, init);
+  const makeRequest = (path: string, init?: RequestInit): Request => new Request(`https://localhost${path}`, init);
 
   it("Dispatched to matching GET route", async () => {
     const router = createRouter();
@@ -62,7 +61,7 @@ describe("Unit: Tests createRouter() Function", () => {
 
   it("Injects params into handler context", async () => {
     const router = createRouter();
-    router.get("/users/:id", ({ params }) => new Response(params["id"]));
+    router.get("/users/:id", ({ params }) => new Response(params.id));
     const response = await router.fetch(makeRequest("/users/123"));
 
     expect(response.status).toBe(200);
@@ -72,9 +71,7 @@ describe("Unit: Tests createRouter() Function", () => {
   it("Returns 404 for unsupported method", async () => {
     const router = createRouter();
     router.get("/health-check", () => new Response("ok"));
-    const response = await router.fetch(
-      makeRequest("/health-check", { method: "POST" })
-    );
+    const response = await router.fetch(makeRequest("/health-check", { method: "POST" }));
 
     expect(response.status).toBe(404);
   });

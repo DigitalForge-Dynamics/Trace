@@ -1,40 +1,35 @@
 type HttpMethod = "GET";
-interface Context {
-  req: Request;
-  url: URL;
-  params: Record<string, string>;
-}
+type Context = {
+  readonly req: Request;
+  readonly url: URL;
+  readonly params: Record<string, string>;
+};
 type Handler = (ctx: Context) => Promise<Response> | Response;
-type Complied = { regex: RegExp; paramNames: string[] };
-type Route = { method: HttpMethod; pattern: Complied; handler: Handler };
+type Compiled = { readonly regex: RegExp; readonly paramNames: string[] };
+type Route = { readonly method: HttpMethod; readonly pattern: Compiled; readonly handler: Handler };
 type Router = {
-  on: (method: HttpMethod, path: string, handler: Handler) => void;
-  get: (path: string, handler: Handler) => void;
-  fetch: (req: Request) => Promise<Response>;
+  readonly on: (method: HttpMethod, path: string, handler: Handler) => void;
+  readonly get: (path: string, handler: Handler) => void;
+  readonly fetch: (req: Request) => Promise<Response>;
 };
 
-const compilePath = (path: string): Complied => {
+const compilePath = (path: string): Compiled => {
   if (!path.startsWith("/")) {
     throw new Error(`Path must start with "/": ${path}`);
   }
 
   const names: string[] = [];
 
-  const pattern = path
-    .replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")
-    .replace(/:(\w+)/g, (_m, name) => {
-      names.push(name);
-      return "([^/]+)";
-    });
+  const pattern = path.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&").replace(/:(\w+)/g, (_m, name) => {
+    names.push(name);
+    return "([^/]+)";
+  });
 
   const source = path === "/" ? "^/$" : `^${pattern}/?$`;
   return { regex: new RegExp(source), paramNames: names };
 };
 
-const buildParams = (
-  compiled: Complied,
-  pathname: string
-): Record<string, string> | null => {
+const buildParams = (compiled: Compiled, pathname: string): Record<string, string> | null => {
   const match = compiled.regex.exec(pathname);
   if (!match) {
     return null;
@@ -45,16 +40,13 @@ const buildParams = (
     return null;
   }
 
-  const params = compiled.paramNames.reduce<Record<string, string>>(
-    (acc, key, i) => {
-      const v = values[i];
-      if (typeof key === "string" && typeof v === "string") {
-        acc[key] = v;
-      }
-      return acc;
-    },
-    {}
-  );
+  const params = compiled.paramNames.reduce<Record<string, string>>((acc, key, i) => {
+    const v = values[i];
+    if (typeof key === "string" && typeof v === "string") {
+      acc[key] = v;
+    }
+    return acc;
+  }, {});
 
   return params;
 };
@@ -62,11 +54,7 @@ const buildParams = (
 const createRouter = (): Router => {
   const routes: Route[] = [];
 
-  const on: Router["on"] = (
-    method: HttpMethod,
-    path: string,
-    handler: Handler
-  ) => {
+  const on: Router["on"] = (method: HttpMethod, path: string, handler: Handler) => {
     routes.push({
       method,
       pattern: compilePath(path),
@@ -74,16 +62,13 @@ const createRouter = (): Router => {
     });
   };
 
-  const get: Router["get"] = (path: string, handler: Handler) =>
-    on("GET", path, handler);
+  const get: Router["get"] = (path: string, handler: Handler) => on("GET", path, handler);
 
   const fetch: Router["fetch"] = async (req: Request): Promise<Response> => {
     const url = new URL(req.url);
     const method = req.method.toUpperCase();
 
-    const route = routes.find(
-      (r) => r.method === method && r.pattern.regex.test(url.pathname)
-    );
+    const route = routes.find((r) => r.method === method && r.pattern.regex.test(url.pathname));
 
     if (!route) {
       return new Response("Not Found", { status: 404 });
@@ -106,5 +91,5 @@ const createRouter = (): Router => {
   return { on, get, fetch };
 };
 
-export type { HttpMethod, Context, Handler, Complied, Router };
+export type { HttpMethod, Handler, Context, Compiled, Router };
 export { createRouter, buildParams, compilePath };
