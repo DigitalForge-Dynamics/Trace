@@ -8,7 +8,14 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["packages/**/*.ts"]
+    "includes": [
+      "packages/**/*.ts",
+      "packages/**/package.json",
+      "packages/**/tsconfig.json",
+      "index.ts",
+      "package.json",
+      "tsconfig.json"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -58,7 +65,7 @@
       "allowTrailingCommas": false
     },
     "formatter": {
-      "enabled": true,
+      "enabled": false,
       "trailingCommas": "none"
     },
     "linter": {
@@ -114,6 +121,7 @@
   "overrides": [
     {
       "includes": [
+        "index.ts",
         "packages/trace-web/index.ts",
         "packages/trace-sdk/index.ts",
         "packages/trace-api/index.ts",
@@ -128,7 +136,9 @@
       }
     },
     {
-      "includes": ["packages/trace-api/src/handlers/auth.ts"],
+      "includes": [
+        "packages/trace-api/src/handlers/auth.ts"
+      ],
       "linter": {
         "rules": {
           "security": {
@@ -138,7 +148,9 @@
       }
     },
     {
-      "includes": ["packages/trace-api/index.ts"],
+      "includes": [
+        "packages/trace-api/index.ts"
+      ],
       "linter": {
         "rules": {
           "nursery": {
@@ -148,12 +160,25 @@
       }
     },
     {
-      "includes": ["packages/trace-api/index.ts", "packages/trace-api/index.test.ts"],
+      "includes": [
+        "packages/trace-api/index.ts",
+        "packages/trace-api/index.test.ts"
+      ],
       "linter": {
         "rules": {
           "nursery": {
             "noUnresolvedImports": "off"
           }
+        }
+      }
+    },
+    {
+      "includes": [
+        "tsconfig.json"
+      ],
+      "json": {
+        "parser": {
+          "allowComments": true
         }
       }
     }
