@@ -23,6 +23,15 @@
         "typescript": "catalog:",
       },
     },
+    "packages/trace-internal": {
+      "name": "trace-internal",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "catalog:",
+      },
+    },
     "packages/trace-sdk": {
       "name": "trace-sdk",
       "devDependencies": {
@@ -82,6 +91,8 @@
     "jose": ["jose@6.1.0", "", {}, "sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA=="],
 
     "trace-api": ["trace-api@workspace:packages/trace-api"],
+
+    "trace-internal": ["trace-internal@workspace:packages/trace-internal"],
 
     "trace-sdk": ["trace-sdk@workspace:packages/trace-sdk"],
 
