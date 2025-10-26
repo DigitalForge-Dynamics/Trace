@@ -6,7 +6,7 @@
   "private": true,
   "devDependencies": {
     "@types/bun": "latest",
-    "trace-api": "workspace:*"
+    "trace-api": "workspace:"
   },
   "peerDependencies": {
     "typescript": "catalog:",
