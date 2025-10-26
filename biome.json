@@ -134,8 +134,8 @@
     {
       "includes": [
         "index.ts",
-        "packages/trace-web/index.ts",
-        "packages/trace-sdk/index.ts",
+        "packages/trace-web/src/index.ts",
+        "packages/trace-sdk/src/index.ts",
         "packages/trace-api/src/index.ts",
         "packages/trace-api/src/handlers/auth.ts",
         "packages/trace-api/src/routes/router.ts"
@@ -151,7 +151,8 @@
     {
       "includes": [
         "packages/trace-api/src/handlers/auth.ts",
-        "packages/trace-api/src/routes/router.test.ts"
+        "packages/trace-api/src/routes/router.test.ts",
+        "packages/trace-sdk/src/client.ts"
       ],
       "linter": {
         "rules": {
@@ -163,7 +164,8 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/index.ts"
+        "packages/trace-api/src/index.ts",
+        "packages/trace-schemas/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -177,7 +179,8 @@
       "includes": [
         "packages/trace-api/src/index.ts",
         "packages/trace-api/src/index.test.ts",
-        "packages/trace-api/src/routes/router.test.ts"
+        "packages/trace-api/src/routes/router.test.ts",
+        "packages/trace-sdk/src/client.test.ts"
       ],
       "linter": {
         "rules": {
@@ -200,7 +203,8 @@
     {
       "includes": [
         "packages/trace-api/src/routes/router.ts",
-        "packages/trace-api/src/routes/router.test.ts"
+        "packages/trace-api/src/routes/router.test.ts",
+        "packages/trace-api/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -224,7 +228,9 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/routes/router.test.ts"
+        "packages/trace-api/src/routes/router.test.ts",
+        "packages/trace-api/src/index.ts",
+        "packages/trace-sdk/src/client.test.ts"
       ],
       "linter": {
         "rules": {
@@ -242,6 +248,30 @@
         "rules": {
           "correctness": {
             "noUndeclaredVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-sdk/src/client.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-sdk/src/client.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useConsistentMemberAccessibility": "off"
           }
         }
       }

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { startServer } from "trace-api";
 import { APIClient, NetClient } from "./client.ts";
-import { server } from "trace-api";
 
 describe("APIClient", () => {
   let port: number;
@@ -8,7 +8,7 @@ describe("APIClient", () => {
   let apiClient: APIClient;
   beforeAll(() => {
     port = 3000 + Math.floor(1000 * Math.random());
-    const apiServer = server(port);
+    const apiServer = startServer(port);
     netClient = new NetClient(apiServer.url);
     apiClient = new APIClient(netClient);
   });

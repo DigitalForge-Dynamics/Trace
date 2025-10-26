@@ -1,9 +1,9 @@
-import { healthCheckResponse, type HealthCheckResponse } from "trace-schemas";
+import { type HealthCheckResponse, healthCheckResponse } from "trace-schemas";
 
 class NetClient {
-  private baseURL: URL;
-  private headers: Headers;
-  private tls: BunFetchRequestInitTLS;
+  private readonly baseURL: URL;
+  private readonly headers: Headers;
+  private readonly tls: BunFetchRequestInitTLS;
 
   constructor(baseUrl: URL) {
     if (!baseUrl.pathname.endsWith("/")) {
@@ -36,13 +36,11 @@ class NetClient {
   }
 
   public async get(path: string): Promise<unknown> {
-    if (!path.startsWith(".")) {
-      path = `.${path}`;
-    }
-    if (path.includes("..")) {
+    const relativePath = path.startsWith(".") ? path : `.${path}`;
+    if (relativePath.includes("..")) {
       throw new Error("Path traversal is not permitted within NetClient");
     }
-    const url = new URL(path, this.baseURL);
+    const url = new URL(relativePath, this.baseURL);
     const response = await fetch(url, {
       method: "GET",
       tls: this.tls,
@@ -63,7 +61,7 @@ class APIClient {
 
   public async getHealth(): Promise<HealthCheckResponse> {
     const body = await this.netClient.get("/health-check");
-	return healthCheckResponse.parse(body);
+    return healthCheckResponse.parse(body);
   }
 }
 
