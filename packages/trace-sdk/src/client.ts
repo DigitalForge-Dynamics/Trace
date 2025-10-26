@@ -1,4 +1,7 @@
-import { type HealthCheckResponse, healthCheckResponse } from "trace-schemas";
+import {
+  type HealthCheckResponse, healthCheckResponse,
+  type OIDCResponse, oidcResponse,
+} from "trace-schemas";
 
 class NetClient {
   private readonly baseURL: URL;
@@ -35,20 +38,41 @@ class NetClient {
     return this;
   }
 
-  public async get(path: string): Promise<unknown> {
+  public async fetch(path: string, method: "GET" | "POST", init?: RequestInit): Promise<unknown> {
+    if (!path.startsWith("./") && !path.startsWith("/")) {
+      throw new Error(`Invalid path prefix provided to fetch: ${path}, with method: ${method}`);
+    }
     const relativePath = path.startsWith(".") ? path : `.${path}`;
     if (relativePath.includes("..")) {
       throw new Error("Path traversal is not permitted within NetClient");
     }
+    if (relativePath.includes("%")) {
+      // TODO: There are legitimate paths using non alphanumeric characters, i.e. spaces, that are safe.
+      // This takes the blanket approach of banning all escapes, due to their ability to bypass checks preventing path traversal.
+      throw new Error("Character escapes are not currently permitted within NetClient");
+    }
     const url = new URL(relativePath, this.baseURL);
     const response = await fetch(url, {
-      method: "GET",
+      ...init,
+      method,
       tls: this.tls,
+      headers: {
+        ...this.headers,
+        ...init?.headers,
+      },
     });
     if (!response.ok) {
       throw new Error(`Request to ${path} failed with status: ${response.status}`);
     }
     return response.json();
+  }
+
+  public async get(path: string, init?: RequestInit): Promise<unknown> {
+    return this.fetch(path, "GET", init);
+  }
+
+  public async post(path: string, init?: RequestInit): Promise<unknown> {
+      return this.fetch(path, "POST", init);
   }
 }
 
@@ -62,6 +86,13 @@ class APIClient {
   public async getHealth(): Promise<HealthCheckResponse> {
     const body = await this.netClient.get("/health-check");
     return healthCheckResponse.parse(body);
+  }
+
+  public async authenticateOidc(idpToken: string): Promise<OIDCResponse> {
+      const body = await this.netClient.post("/auth/oidc", { headers: {
+        Authorization: `Bearer ${idpToken}`,
+    }});
+    return oidcResponse.parse(body);
   }
 }
 
