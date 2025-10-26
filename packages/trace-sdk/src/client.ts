@@ -1,7 +1,4 @@
-import {
-  type HealthCheckResponse, healthCheckResponse,
-  type OIDCResponse, oidcResponse,
-} from "trace-schemas";
+import { type HealthCheckResponse, healthCheckResponse, type OIDCResponse, oidcResponse } from "trace-schemas";
 
 class NetClient {
   private readonly baseURL: URL;
@@ -57,12 +54,12 @@ class NetClient {
       method,
       tls: this.tls,
       headers: {
-        ...this.headers,
         ...init?.headers,
+        ...this.headers,
       },
     });
     if (!response.ok) {
-      throw new Error(`Request to ${path} failed with status: ${response.status}`);
+      throw new Error(`Request to ${path} with method ${method} failed with status: ${response.status}`);
     }
     return response.json();
   }
@@ -72,7 +69,7 @@ class NetClient {
   }
 
   public async post(path: string, init?: RequestInit): Promise<unknown> {
-      return this.fetch(path, "POST", init);
+    return this.fetch(path, "POST", init);
   }
 }
 
@@ -89,9 +86,11 @@ class APIClient {
   }
 
   public async authenticateOidc(idpToken: string): Promise<OIDCResponse> {
-      const body = await this.netClient.post("/auth/oidc", { headers: {
+    const body = await this.netClient.post("/auth/oidc", {
+      headers: {
         Authorization: `Bearer ${idpToken}`,
-    }});
+      },
+    });
     return oidcResponse.parse(body);
   }
 }
