@@ -1,16 +1,14 @@
 {
-  "name": "trace-web",
+  "name": "trace-schemas",
   "module": "src/index.ts",
   "types": "src/index.ts",
   "type": "module",
   "private": true,
-  "dependencies": {
-    "trace-sdk": "workspace:"
-  },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zod": "catalog:"
   }
 }

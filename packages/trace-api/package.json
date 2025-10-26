@@ -1,6 +1,7 @@
 {
   "name": "trace-api",
-  "module": "index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
@@ -12,7 +13,8 @@
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "trace-schemas": "workspace:"
   },
   "dependencies": {
     "jose": "catalog:"
