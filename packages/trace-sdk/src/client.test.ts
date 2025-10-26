@@ -16,7 +16,6 @@ describe("APIClient", () => {
   describe("Integration: Tests getHealth() Method", () => {
     it("Returns a successful contents", async () => {
       const response = await apiClient.getHealth();
-      console.log(response);
       expect(response).toStrictEqual({
         health: "OK",
       });

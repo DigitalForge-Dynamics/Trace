@@ -1,3 +1,5 @@
+import { healthCheckResponse, type HealthCheckResponse } from "trace-schemas";
+
 class NetClient {
   private baseURL: URL;
   private headers: Headers;
@@ -59,9 +61,9 @@ class APIClient {
     this.netClient = netClient;
   }
 
-  public async getHealth(): Promise<{ readonly health: "OK" }> {
+  public async getHealth(): Promise<HealthCheckResponse> {
     const body = await this.netClient.get("/health-check");
-    return body as { health: "OK" };
+	return healthCheckResponse.parse(body);
   }
 }
 
