@@ -8,8 +8,8 @@ describe("APIClient", () => {
   let apiClient: APIClient;
   beforeAll(() => {
     port = 3000 + Math.floor(1000 * Math.random());
-    server(port);
-    netClient = new NetClient(new URL(`http://localhost:${port}`));
+    const apiServer = server(port);
+    netClient = new NetClient(apiServer.url);
     apiClient = new APIClient(netClient);
   });
 
