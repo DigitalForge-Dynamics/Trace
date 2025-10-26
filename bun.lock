@@ -20,7 +20,18 @@
         "@types/bun": "latest",
       },
       "peerDependencies": {
+        "trace-schemas": "workspace:",
         "typescript": "catalog:",
+      },
+    },
+    "packages/trace-schemas": {
+      "name": "trace-schemas",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "catalog:",
+        "zod": "catalog:",
       },
     },
     "packages/trace-sdk": {
@@ -30,8 +41,8 @@
         "trace-api": "workspace:*",
       },
       "peerDependencies": {
+        "trace-schemas": "workspace:",
         "typescript": "catalog:",
-        "zod": "catalog:",
       },
     },
     "packages/trace-web": {
@@ -85,6 +96,8 @@
     "jose": ["jose@6.1.0", "", {}, "sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA=="],
 
     "trace-api": ["trace-api@workspace:packages/trace-api"],
+
+    "trace-schemas": ["trace-schemas@workspace:packages/trace-schemas"],
 
     "trace-sdk": ["trace-sdk@workspace:packages/trace-sdk"],
 

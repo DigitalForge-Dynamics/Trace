@@ -13,7 +13,8 @@
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "trace-schemas": "workspace:"
   },
   "dependencies": {
     "jose": "catalog:"
