@@ -1,7 +1,11 @@
-import { Login } from "./components";
+import { userManager } from "./oidc-manager.ts";
 
 const App = () => {
-	return <Login />
+	const onClick = async () => {
+		console.log("onClick");
+		await userManager.signinRedirect();
+	};
+	return <button onClick={onClick}>Login</button>
 };
 
 export { App };

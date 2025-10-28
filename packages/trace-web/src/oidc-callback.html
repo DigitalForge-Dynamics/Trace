@@ -5,5 +5,28 @@
 </head>
 <body>
 You have reached an OIDC Callback page.
+<a href="/">Home</a>
+<script type="module">
+const { userManager } = await import("/oidc-manager.js");
+
+const url = new URL(window.location);
+const code = url.searchParams.get("code");
+const state = url.searchParams.get("state");
+
+console.log(code);
+console.log(state);
+
+
+const user = await userManager.signinCallback();
+const { refresh_token } = user;
+const refresh = refresh_token.split(".").slice(0,2).map(atob).map((s) => JSON.parse(s));
+console.log(JSON.stringify(refresh));
+const exp = new Date(refresh[1].exp * 1000);
+console.log(exp);
+
+console.log(user);
+window.location.href = "/";
+
+</script>
 </body>
 </html>
