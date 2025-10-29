@@ -5,7 +5,7 @@ const HEADER_PREFIX = "Bearer ";
 // OIDC Configuration
 const ISSUER = "https://token.actions.githubusercontent.com";
 const AUDIENCE = "trace-api";
-const SUBJECT = /^repo:DigitalForge-Dynamics\/Trace:ref:refs\/heads\/[^/]+$/;
+const SUBJECT = /^(repo:DigitalForge-Dynamics\/Trace:ref:refs\/heads\/[^/]+)|(repo:DigitalForge-Dynamics\/Trace:pull_request)$/;
 
 export const authenticateOidc = async (req: Request): Promise<Response> => {
   const header = req.headers.get("authorization");
