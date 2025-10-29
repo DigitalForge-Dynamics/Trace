@@ -6,7 +6,7 @@ const serveJs = (filename: string) => async (): Promise<Response> => {
   const buildRes = await Bun.build({
     entrypoints: [`./src/${filename}`],
     target: "browser",
-    splitting: true,
+    splitting: false,
     sourcemap: "inline",
     minify: {
       identifiers: true,
@@ -15,7 +15,7 @@ const serveJs = (filename: string) => async (): Promise<Response> => {
     },
   });
   const script = buildRes.outputs[0];
-  if (!script) {
+  if (!script || buildRes.outputs.length !== 1) {
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
   const text = await script.text();
