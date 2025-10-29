@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { env } from "bun";
 import { startServer } from "trace-api";
 import { APIClient, NetClient } from "./client.ts";
-import { env } from "bun";
 
 describe("Integration: APIClient", () => {
   let apiClient: APIClient;

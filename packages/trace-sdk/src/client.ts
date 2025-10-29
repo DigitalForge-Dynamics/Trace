@@ -36,7 +36,7 @@ class NetClient {
   }
 
   public async fetch(path: string, method: "GET" | "POST", init?: RequestInit): Promise<unknown> {
-    if (!path.startsWith("./") && !path.startsWith("/")) {
+    if (!(path.startsWith("./") || path.startsWith("/"))) {
       throw new Error(`Invalid path prefix provided to fetch: ${path}, with method: ${method}`);
     }
     const relativePath = path.startsWith(".") ? path : `.${path}`;
@@ -64,11 +64,11 @@ class NetClient {
     return response.json();
   }
 
-  public async get(path: string, init?: RequestInit): Promise<unknown> {
+  public get(path: string, init?: RequestInit): Promise<unknown> {
     return this.fetch(path, "GET", init);
   }
 
-  public async post(path: string, init?: RequestInit): Promise<unknown> {
+  public post(path: string, init?: RequestInit): Promise<unknown> {
     return this.fetch(path, "POST", init);
   }
 }
