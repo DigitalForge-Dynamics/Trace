@@ -88,7 +88,7 @@ class APIClient {
   public async authenticateOidc(idpToken: string): Promise<OIDCResponse> {
     const body = await this.netClient.post("/auth/oidc", {
       headers: {
-        Authorization: `Bearer ${idpToken}`,
+        authorization: `Bearer ${idpToken}`,
       },
     });
     return oidcResponse.parse(body);

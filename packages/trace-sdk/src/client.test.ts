@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { env } from "bun";
 import { startServer } from "trace-api";
 import { APIClient, NetClient } from "./client.ts";
 
@@ -24,7 +23,7 @@ describe("Integration: APIClient", () => {
 
   describe("Tests authenticateOidc(string) Method", () => {
     it("Returns the validated token claims.", async () => {
-      const idpToken = env.IDP_TOKEN;
+      const idpToken = Bun.env.IDP_TOKEN;
       if (!idpToken) {
         console.warn("[WARN]: Skipping Test for authenticateOidc, due to not being provided an IdP token.");
         return;

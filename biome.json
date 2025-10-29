@@ -184,7 +184,6 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/index.ts",
         "packages/trace-api/src/index.test.ts",
         "packages/trace-api/src/routes/router.test.ts",
         "packages/trace-sdk/src/client.test.ts"
@@ -245,18 +244,6 @@
         "rules": {
           "style": {
             "noMagicNumbers": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "packages/trace-api/src/routes/router.test.ts"
-      ],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUndeclaredVariables": "off"
           }
         }
       }
