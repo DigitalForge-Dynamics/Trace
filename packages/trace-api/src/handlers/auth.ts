@@ -26,7 +26,7 @@ export const authenticateOidc = async (req: Request): Promise<Response> => {
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
   if (!SUBJECT.test(payload.sub)) {
-    return Response.json({ message: "Unauthorised" }, { status: 403 });
+    return Response.json({ message: "Unauthorised", sub: payload.sub }, { status: 403 });
   }
   // TODO: Generate User Token, and return in request.
   return Response.json({ message: "Authenticated", data: payload }, { status: 200 });
