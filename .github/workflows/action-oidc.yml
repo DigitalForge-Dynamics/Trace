@@ -2,9 +2,6 @@ name: OIDC Authenticate as GitHub Workflow
 
 on:
   workflow_call:
-  push:
-    branches:
-      - bunjs-web-oidc
 
 permissions:
   contents: "read"
