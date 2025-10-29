@@ -1,5 +1,5 @@
 import { UserManager } from "oidc-client-ts";
-
+import { OIDC_ISSUER, OIDC_CLIENT_ID } from "./.config.ts";
 
 const metadata = await fetch(`${OIDC_ISSUER}/.well-known/openid-configuration`)
 	.then((response) => response.json());
