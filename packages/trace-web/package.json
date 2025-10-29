@@ -4,11 +4,19 @@
   "types": "src/index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun src/index.ts"
+  },
   "dependencies": {
+    "oidc-client-ts": "^3.3.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "trace-sdk": "workspace:"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2"
   },
   "peerDependencies": {
     "typescript": "catalog:"
