@@ -1,0 +1,7 @@
+`interface $type` where {
+    $type <: ``,
+    register_diagnostic(
+        span = $type,
+        message = "Prefer `type $type = `, over `interface $type`"
+    )
+}

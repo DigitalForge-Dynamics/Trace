@@ -28,6 +28,7 @@ const oidcResponse = z
         nbf: z.number().transform((seconds) => new Date(seconds * 1000)),
         exp: z.number().transform((seconds) => new Date(seconds * 1000)),
       })
+      //.extend(z.record(z.string(), z.union([z.string(), z.number()])))
       .readonly(),
   })
   .readonly();

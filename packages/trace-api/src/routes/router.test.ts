@@ -15,8 +15,8 @@ describe("Unit: Tests compilePath() Function", () => {
     const compiled = compilePath("/users/:id");
     const match = compiled.regex.exec("/users/42");
 
-    expect(compiled.paramNames).toEqual(["id"]);
-    expect(Boolean(match)).toBeTrue();
+    expect(compiled.paramNames).toStrictEqual(["id"]);
+    expect(match).not.toBeNull();
     expect(match?.[1]).toBe("42");
   });
 
@@ -30,7 +30,7 @@ describe("Unit: Tests buildParams() Function", () => {
     const compiled = compilePath("/a/:x/b/:y");
     const params = buildParams(compiled, "/a/one/b/two");
 
-    expect(params).toEqual({ x: "one", y: "two" });
+    expect(params).toStrictEqual({ x: "one", y: "two" });
   });
 
   it("Returns null when no match", () => {
@@ -43,7 +43,7 @@ describe("Unit: Tests buildParams() Function", () => {
     const compiled = compilePath("/a/:x");
     const params = buildParams(compiled, "/a/six/");
 
-    expect(params).toEqual({ x: "six" });
+    expect(params).toStrictEqual({ x: "six" });
   });
 });
 
@@ -52,25 +52,25 @@ describe("Unit: Tests createRouter() Function", () => {
 
   it("Dispatched to matching GET route", async () => {
     const router = createRouter();
-    router.get("/hello-world", () => new Response("Hello World"));
+    router.get("/hello-world", () => Response.json({ data: "Hello World" }));
     const response = await router.fetch(makeRequest("/hello-world"));
 
     expect(response.status).toBe(200);
-    expect(await response.text()).toBe("Hello World");
+    await expect(response.json()).resolves.toStrictEqual({ data: "Hello World" });
   });
 
   it("Injects params into handler context", async () => {
     const router = createRouter();
-    router.get("/users/:id", ({ params }) => new Response(params.id));
+    router.get("/users/:id", ({ params }) => Response.json({ id: params.id }));
     const response = await router.fetch(makeRequest("/users/123"));
 
     expect(response.status).toBe(200);
-    expect(await response.text()).toBe("123");
+    await expect(response.json()).resolves.toStrictEqual({ id: "123" });
   });
 
   it("Returns 404 for unsupported method", async () => {
     const router = createRouter();
-    router.get("/health-check", () => new Response("ok"));
+    router.get("/health-check", () => Response.json({ status: "ok" }));
     const response = await router.fetch(makeRequest("/health-check", { method: "POST" }));
 
     expect(response.status).toBe(404);
@@ -86,7 +86,7 @@ describe("Unit: Tests createRouter() Function", () => {
     const response = await router.fetch(makeRequest("/ping"));
 
     expect(response.status).toBe(500);
-    expect(await response.text()).toBe("Internal Server Error");
+    await expect(response.json()).resolves.toStrictEqual({ message: "Internal Server Error" });
     expect(spy).toHaveBeenCalled();
 
     spy.mockRestore();
@@ -99,16 +99,16 @@ describe("Integration: Tests createRouter() Function", () => {
 
   beforeAll(() => {
     const router = createRouter();
-    router.get("/ping", () => new Response("pong"));
+    router.get("/ping", () => Response.json({ data: "pong" }));
     server = Bun.serve({ port, fetch: router.fetch });
   });
 
   afterAll(() => server.stop());
 
   it("Response to GET Endpoint over HTTP", async () => {
-    const response = await fetch(`http://localhost:${port}/ping`);
+    const response = await fetch(new URL("/ping", server.url));
 
     expect(response.status).toBe(200);
-    expect(await response.text()).toBe("pong");
+    await expect(response.json()).resolves.toStrictEqual({ data: "pong" });
   });
 });

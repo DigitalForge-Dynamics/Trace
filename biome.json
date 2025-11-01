@@ -17,6 +17,16 @@
       "tsconfig.json"
     ]
   },
+  "plugins": [
+    "./lints/zod-strict-object.grit",
+    "./lints/regex-full-search.grit",
+    "./lints/response-json.grit",
+    "./lints/expect-await.grit",
+    "./lints/expect-length.grit",
+    "./lints/expect-boolean.grit",
+    "./lints/expect-strict-equal.grit",
+    "./lints/localhost.grit"
+  ],
   "formatter": {
     "enabled": true,
     "indentStyle": "space",

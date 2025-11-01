@@ -1,0 +1,12 @@
+`new Response($args)` where {
+    not {
+        or {
+            $args <: contains `"Content-Type": "text/html"`,
+            $args <: contains `text`,
+        },
+    },
+    register_diagnostic(
+        span = $args,
+        message = "Prefer `Response.json`, for structured data, over `new Response()`"
+    )
+}

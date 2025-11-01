@@ -1,0 +1,6 @@
+`export const $value` where {
+    register_diagnostic(
+        span = $value,
+        message = "Items should not be exported directly. Prefer export at end of file."
+    )
+}
