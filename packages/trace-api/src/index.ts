@@ -1,4 +1,3 @@
-import { env, serve } from "bun";
 import type { HealthCheckResponse } from "trace-schemas";
 import { authenticateOidc } from "./handlers/auth.ts";
 import { createRouter } from "./routes/router.ts";
@@ -11,8 +10,8 @@ router.get(
 );
 router.post("/auth/oidc", ({ req }) => authenticateOidc(req));
 
-const startServer = (port: number): ReturnType<typeof serve> => {
-  const server = serve({
+const startServer = (port: number): ReturnType<typeof Bun.serve> => {
+  const server = Bun.serve({
     port,
     hostname: "localhost",
     fetch: router.fetch,
@@ -21,7 +20,7 @@ const startServer = (port: number): ReturnType<typeof serve> => {
   return server;
 };
 
-if (env.NODE_ENV !== "test") {
+if (Bun.env.NODE_ENV !== "test") {
   startServer(3000);
 }
 

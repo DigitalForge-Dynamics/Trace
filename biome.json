@@ -57,7 +57,10 @@
       "unsafeParameterDecoratorsEnabled": false,
       "jsxEverywhere": false
     },
-    "jsxRuntime": "transparent"
+    "jsxRuntime": "transparent",
+    "globals": [
+      "Bun"
+    ]
   },
   "json": {
     "parser": {
@@ -138,7 +141,8 @@
         "packages/trace-sdk/src/index.ts",
         "packages/trace-api/src/index.ts",
         "packages/trace-api/src/handlers/auth.ts",
-        "packages/trace-api/src/routes/router.ts"
+        "packages/trace-api/src/routes/router.ts",
+        "packages/trace-sdk/src/client.test.ts"
       ],
       "linter": {
         "rules": {
@@ -152,7 +156,9 @@
       "includes": [
         "packages/trace-api/src/handlers/auth.ts",
         "packages/trace-api/src/routes/router.test.ts",
-        "packages/trace-sdk/src/client.ts"
+        "packages/trace-sdk/src/client.ts",
+        "packages/trace-sdk/src/client.test.ts",
+        "packages/trace-schemas/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -165,7 +171,8 @@
     {
       "includes": [
         "packages/trace-api/src/index.ts",
-        "packages/trace-schemas/src/index.ts"
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-web/src/oidc-manager.ts"
       ],
       "linter": {
         "rules": {
@@ -177,7 +184,6 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/index.ts",
         "packages/trace-api/src/index.test.ts",
         "packages/trace-api/src/routes/router.test.ts",
         "packages/trace-sdk/src/client.test.ts"
@@ -204,7 +210,8 @@
       "includes": [
         "packages/trace-api/src/routes/router.ts",
         "packages/trace-api/src/routes/router.test.ts",
-        "packages/trace-api/src/index.ts"
+        "packages/trace-api/src/index.ts",
+        "packages/trace-web/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -230,7 +237,8 @@
       "includes": [
         "packages/trace-api/src/routes/router.test.ts",
         "packages/trace-api/src/index.ts",
-        "packages/trace-sdk/src/client.test.ts"
+        "packages/trace-sdk/src/client.test.ts",
+        "packages/trace-schemas/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -242,19 +250,9 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/routes/router.test.ts"
-      ],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUndeclaredVariables": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "packages/trace-sdk/src/client.ts"
+        "packages/trace-sdk/src/client.ts",
+        "packages/trace-web/src/oidc-manager.ts",
+        "packages/trace-schemas/src/index.ts"
       ],
       "linter": {
         "rules": {
