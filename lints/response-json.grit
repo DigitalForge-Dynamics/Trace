@@ -1,8 +1,7 @@
 `new Response($args)` where {
     not {
         or {
-            $args <: contains `"Content-Type": "text/html"`,
-            $args <: contains `text`,
+            $args <: contains `"Content-Type"`,
         },
     },
     register_diagnostic(

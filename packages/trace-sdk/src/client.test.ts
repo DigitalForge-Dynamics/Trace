@@ -23,7 +23,7 @@ describe("Integration: APIClient", () => {
 
   describe("Tests authenticateOidc(string) Method", () => {
     it.if(Bun.env.IDP_TOKEN !== undefined)("Returns the validated token claims.", async () => {
-      const idpToken = Bun.env.IDP_TOKEN!;
+      const idpToken = Bun.env.IDP_TOKEN as Exclude<typeof Bun.env.IDP_TOKEN, undefined>;
       const response = await apiClient.authenticateOidc(idpToken);
       expect(response).toMatchObject({
         message: "Authenticated",
