@@ -54,8 +54,8 @@ Bun.serve({
     },
     "/favicon.ico": async () => {
       const assetFile = Bun.file("./assets/favicon-32x32.png");
-      const text = await assetFile.text();
-      return new Response(text, { headers: { "Content-Type": assetFile.type } });
+      const contents = await assetFile.text();
+      return new Response(contents, { headers: { "Content-Type": assetFile.type } });
     },
     "/oidc-manager.js": serveJs("oidc-manager.ts"),
     "/hydrate.js": serveJs("hydrate.tsx"),
