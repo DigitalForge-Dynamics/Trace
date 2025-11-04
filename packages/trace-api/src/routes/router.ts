@@ -75,12 +75,12 @@ const createRouter = (): Router => {
     const route = routes.find((r) => r.method === method && r.pattern.regex.test(url.pathname));
 
     if (!route) {
-      return new Response("Not Found", { status: 404 });
+      return Response.json({ message: "Not Found" }, { status: 404 });
     }
 
     const params = buildParams(route.pattern, url.pathname);
     if (!params) {
-      return new Response("Not Found", { status: 404 });
+      return Response.json({ message: "Not Found" }, { status: 404 });
     }
 
     const ctx: Context = { req, url, params };
@@ -89,7 +89,7 @@ const createRouter = (): Router => {
       return await route.handler(ctx);
     } catch (err) {
       console.error("Handler error:", err);
-      return new Response("Internal Server Error", { status: 500 });
+      return Response.json({ message: "Internal Server Error" }, { status: 500 });
     }
   };
   return { on, get, post, fetch };

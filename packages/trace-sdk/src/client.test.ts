@@ -22,12 +22,8 @@ describe("Integration: APIClient", () => {
   });
 
   describe("Tests authenticateOidc(string) Method", () => {
-    it("Returns the validated token claims.", async () => {
-      const idpToken = Bun.env.IDP_TOKEN;
-      if (!idpToken) {
-        console.warn("[WARN]: Skipping Test for authenticateOidc, due to not being provided an IdP token.");
-        return;
-      }
+    it.if(Bun.env.IDP_TOKEN !== undefined)("Returns the validated token claims.", async () => {
+      const idpToken = Bun.env.IDP_TOKEN as Exclude<typeof Bun.env.IDP_TOKEN, undefined>;
       const response = await apiClient.authenticateOidc(idpToken);
       expect(response).toMatchObject({
         message: "Authenticated",

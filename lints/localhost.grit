@@ -1,0 +1,7 @@
+`fetch($url)` where {
+    $url <: r".*localhost.*",
+    register_diagnostic(
+        span = $url,
+        message = "Prefer `server.url`, instead of hardcoding `localhost`, for integration tests.",
+    )
+}

@@ -31,8 +31,8 @@ Bun.serve({
   routes: {
     "/oidc-callback": async () => {
       const srcFile = Bun.file("./src/oidc-callback.html");
-      const contents = await srcFile.text();
-      return new Response(contents, { headers: { "Content-Type": srcFile.type } });
+      const text = await srcFile.text();
+      return new Response(text, { headers: { "Content-Type": srcFile.type } });
     },
     "/oidc-token": async (req: Request) => {
       console.log("req", req);

@@ -20,7 +20,7 @@ const oidcResponse = z
   .strictObject({
     message: z.literal("Authenticated"),
     data: z
-      .object({
+      .strictObject({
         sub: z.string(),
         iss: z.url().transform((url) => new URL(url)),
         aud: z.string(),
@@ -28,6 +28,7 @@ const oidcResponse = z
         nbf: z.number().transform((seconds) => new Date(seconds * 1000)),
         exp: z.number().transform((seconds) => new Date(seconds * 1000)),
       })
+      .loose()
       .readonly(),
   })
   .readonly();
