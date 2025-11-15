@@ -7,7 +7,10 @@
   "scripts": {
     "e2e": "playwright test"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "trace-api": "workspace:",
+    "trace-web": "workspace:"
+  },
   "peerDependencies": {
     "typescript": "catalog:"
   },
