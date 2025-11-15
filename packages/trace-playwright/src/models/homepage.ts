@@ -4,16 +4,16 @@ class Homepage {
   private readonly page: Page;
   private readonly loginButton: Locator;
 
-  public constructor(page: Page) {
+  constructor(page: Page) {
     this.page = page;
-    this.loginButton = page.locator("[text=Login]");
+    this.loginButton = page.getByRole("button", { name: "Login" });
   }
 
-  public async goto() {
+  async goto() {
     await this.page.goto("/");
   }
 
-  public async login() {
+  async login() {
     await this.loginButton.click();
   }
 }

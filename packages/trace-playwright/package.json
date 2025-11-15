@@ -12,7 +12,8 @@
     "trace-web": "workspace:"
   },
   "peerDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "dotenv": "catalog:"
   },
   "dependencies": {
     "@playwright/test": "^1.56.1"
