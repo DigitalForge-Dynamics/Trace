@@ -2,25 +2,27 @@ import { expect, test } from "@playwright/test";
 import { config } from "dotenv";
 import { Homepage } from "../models/homepage.ts";
 import { KeycloakLogin } from "../models/keycloak.ts";
-import { waitFor } from "../utils.ts";
+import { waitForPredicate } from "../utils.ts";
 
 config({ quiet: true });
 
-//test.skip("Is able to login, using an existing IdP token", () => {});
-
-test("Is able to login, using OIDC against an IdP", async ({ context }) => {
+test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
   const page = await context.newPage();
-  const homepage = new Homepage(page);
-  await homepage.goto();
-  await homepage.login();
-
-  const keycloak = new KeycloakLogin(page);
-  if (!(process.env.KEYCLOAK_USERNAME && process.env.KEYCLOAK_PASSWORD)) {
-    throw new Error("Missing KeyCloak Credentials");
+  {
+    const homepage = new Homepage(page);
+    await homepage.goto();
+    await homepage.login();
   }
-  await keycloak.login(process.env.KEYCLOAK_USERNAME, process.env.KEYCLOAK_PASSWORD);
 
-  await waitFor(() => !page.url().includes("/oidc-callback"));
+  {
+    const keycloak = new KeycloakLogin(page);
+    if (!(process.env.KEYCLOAK_USERNAME && process.env.KEYCLOAK_PASSWORD)) {
+      throw new Error("Missing KeyCloak Credentials");
+    }
+    await keycloak.login(process.env.KEYCLOAK_USERNAME, process.env.KEYCLOAK_PASSWORD);
+  }
+
+  await waitForPredicate(() => !page.url().includes("/oidc-callback"));
   const url = new URL(page.url());
   expect(url.pathname).toBe("/");
 
@@ -30,5 +32,3 @@ test("Is able to login, using OIDC against an IdP", async ({ context }) => {
     code: expect.any(String),
   });
 });
-
-//test.skip("Is able to logout", () => {});

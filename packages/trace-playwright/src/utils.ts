@@ -7,7 +7,7 @@ type WaitForOptions = {
   readonly interval?: number;
 };
 
-const waitFor = (predicate: () => boolean, options?: WaitForOptions): Promise<void> =>
+const waitForPredicate = (predicate: () => boolean, options?: WaitForOptions): Promise<void> =>
   new Promise((resolve, reject) => {
     let count = 0;
     const interval = setInterval(() => {
@@ -16,10 +16,21 @@ const waitFor = (predicate: () => boolean, options?: WaitForOptions): Promise<vo
         return resolve();
       }
       if (options?.limit && count >= options?.limit) {
+        clearInterval(interval);
         return reject(count);
       }
       count += 1;
     }, options?.interval ?? DEFAULT_WAITFOR_INTERVAL_MS);
   });
 
-export { sleep, waitFor };
+const waitFor = (functor: () => unknown, options?: WaitForOptions): Promise<void> =>
+  waitForPredicate(() => {
+    try {
+      functor();
+      return true;
+    } catch {
+      return false;
+    }
+  }, options);
+
+export { sleep, waitForPredicate, waitFor };
