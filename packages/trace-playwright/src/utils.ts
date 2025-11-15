@@ -1,17 +1,25 @@
+const DEFAULT_WAITFOR_INTERVAL_MS = 50;
+
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(() => resolve(), ms));
-const waitFor = async (predicate: () => boolean, limit?: number): Promise<void> =>
-  new Promise(async (resolve, reject) => {
+
+type WaitForOptions = {
+  readonly limit?: number;
+  readonly interval?: number;
+};
+
+const waitFor = (predicate: () => boolean, options?: WaitForOptions): Promise<void> =>
+  new Promise((resolve, reject) => {
     let count = 0;
-    while (true) {
+    const interval = setInterval(() => {
       if (predicate()) {
+        clearInterval(interval);
         return resolve();
       }
-      if (limit && count >= limit) {
+      if (options?.limit && count >= options?.limit) {
         return reject(count);
       }
-      await sleep(50);
       count += 1;
-    }
+    }, options?.interval ?? DEFAULT_WAITFOR_INTERVAL_MS);
   });
 
 export { sleep, waitFor };

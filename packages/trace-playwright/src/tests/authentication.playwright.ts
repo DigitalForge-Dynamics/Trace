@@ -1,14 +1,12 @@
-import { test, expect } from "@playwright/test";
-import { Homepage } from "../models/homepage";
-import { KeycloakLogin } from "../models/keycloak";
+import { expect, test } from "@playwright/test";
 import { config } from "dotenv";
-import { waitFor } from "../utils";
+import { Homepage } from "../models/homepage.ts";
+import { KeycloakLogin } from "../models/keycloak.ts";
+import { waitFor } from "../utils.ts";
 
 config({ quiet: true });
 
-test.skip("Is able to login, using an existing IdP token", async ({ context }) => {
-  void context;
-});
+//test.skip("Is able to login, using an existing IdP token", () => {});
 
 test("Is able to login, using OIDC against an IdP", async ({ context }) => {
   const page = await context.newPage();
@@ -17,7 +15,10 @@ test("Is able to login, using OIDC against an IdP", async ({ context }) => {
   await homepage.login();
 
   const keycloak = new KeycloakLogin(page);
-  await keycloak.login(process.env.KEYCLOAK_USERNAME!, process.env.KEYCLOAK_PASSWORD!);
+  if (!(process.env.KEYCLOAK_USERNAME && process.env.KEYCLOAK_PASSWORD)) {
+    throw new Error("Missing KeyCloak Credentials");
+  }
+  await keycloak.login(process.env.KEYCLOAK_USERNAME, process.env.KEYCLOAK_PASSWORD);
 
   await waitFor(() => !page.url().includes("/oidc-callback"));
   const url = new URL(page.url());
@@ -30,4 +31,4 @@ test("Is able to login, using OIDC against an IdP", async ({ context }) => {
   });
 });
 
-test.skip("Is able to logout", () => {});
+//test.skip("Is able to logout", () => {});

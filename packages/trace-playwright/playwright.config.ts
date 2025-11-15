@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: "src/tests/",
   testMatch: "**/*.playwright.ts",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
+  forbidOnly: process.env.CI !== undefined,
   retries: 0,
   use: {
     baseURL: "https://localhost:5173",

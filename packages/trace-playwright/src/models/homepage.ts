@@ -1,4 +1,4 @@
-import type { Page, Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 class Homepage {
   private readonly page: Page;
@@ -9,11 +9,11 @@ class Homepage {
     this.loginButton = page.getByRole("button", { name: "Login" });
   }
 
-  async goto() {
+  async goto(): Promise<void> {
     await this.page.goto("/");
   }
 
-  async login() {
+  async login(): Promise<void> {
     await this.loginButton.click();
   }
 }
