@@ -16,3 +16,5 @@ jobs:
     uses: ./.github/workflows/action-oidc.yml
   Lint:
     uses: ./.github/workflows/action-lint.yml
+  E2E:
+    uses: ./.github/workflows/action-e2e.yml
