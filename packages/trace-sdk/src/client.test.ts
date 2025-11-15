@@ -6,8 +6,7 @@ describe("Integration: APIClient", () => {
   let apiClient: APIClient;
 
   beforeAll(() => {
-    const port = 3000 + Math.floor(1000 * Math.random());
-    const apiServer = startServer(port);
+    const apiServer = startServer(0);
     const netClient = new NetClient(apiServer.url);
     apiClient = new APIClient(netClient);
   });
