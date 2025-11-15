@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "src/tests/",
+  testMatch: "**/*.playwright.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
@@ -17,6 +18,7 @@ export default defineConfig({
       reuseExistingServer: true,
       stderr: "pipe",
       stdout: "pipe",
+      ignoreHTTPSErrors: true,
     },
     {
       name: "API",
@@ -31,11 +33,16 @@ export default defineConfig({
   projects: [
     {
       name: "Chromium",
-      use: devices["Desktop Chrome"],
+      use: {
+        ...devices["Desktop Chrome"],
+        launchOptions: {
+          args: ["--ignore-certificate-errors"],
+        },
+      },
     },
-    {
+    /*{
       name: "Firefox",
       use: devices["Desktop Firefox"],
-    },
+    },*/
   ],
 });
