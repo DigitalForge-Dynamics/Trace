@@ -43,6 +43,7 @@ const getOidcConfig = async (): Promise<Response> => {
   const config = oidcConfig.map((idpConfig) => ({
     issuer: idpConfig.issuer,
     audience: idpConfig.audience,
+    label: idpConfig.label,
   }));
   return Response.json({ config } satisfies z.input<typeof oidcConfigResponse>);
 };

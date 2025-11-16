@@ -45,7 +45,10 @@ describe("Integration: APIClient", () => {
         expect(idp).toStrictEqual({
           issuer: expect.any(URL),
           audience: expect.any(String),
+          label: expect.any(String),
         });
+        expect(idp.audience).not.toBeEmpty();
+        expect(idp.label).not.toBeEmpty();
       }
     });
   });

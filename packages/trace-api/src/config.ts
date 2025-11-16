@@ -1,5 +1,6 @@
 const oidcConfig = [
   {
+    label: "GitHub Actions",
     issuer: "https://token.actions.githubusercontent.com",
     audience: "trace-api",
     subject:

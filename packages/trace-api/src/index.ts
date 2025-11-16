@@ -14,7 +14,7 @@ router.get("/auth/oidc/config", getOidcConfig);
 const startServer = (port: number): ReturnType<typeof Bun.serve> => {
   const server = Bun.serve({
     port,
-    hostname: "localhost",
+    hostname: "127.0.0.1",
     fetch: router.fetch,
   });
   console.log(`Server running at ${server.url}`);

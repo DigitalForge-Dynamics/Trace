@@ -38,8 +38,9 @@ type OIDCResponse = z.infer<typeof oidcResponse>;
 const oidcConfigResponse = z.strictObject({
   config: z
     .strictObject({
+      label: z.string().min(1),
       issuer: z.url().transform((url) => new URL(url)),
-      audience: z.string(),
+      audience: z.string().min(1),
     })
     .readonly()
     .array(),
