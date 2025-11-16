@@ -1,6 +1,6 @@
 import type { HealthCheckResponse } from "trace-schemas";
 import { authenticateOidc } from "./handlers/auth.ts";
-import { Router } from "./routes/native.ts";
+import { Router } from "./router/native.ts";
 
 const router = new Router();
 

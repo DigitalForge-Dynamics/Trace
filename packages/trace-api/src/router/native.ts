@@ -75,7 +75,13 @@ class Router {
   public toNative(): Bun.Serve.Routes<any, any> {
     const result: Bun.Serve.Routes<any, any> = {};
     const accumulatedMiddleware: Middleware[] = [];
-    let errorHandler: ErrorHandler | null = null;
+    let errorHandler: ErrorHandler = (req, error): Response => {
+      console.error(`Unexpected error when handling ${req.method} ${req.url}`);
+      if (error instanceof Error) {
+        console.error(`Further info: ${error.name}, ${error.message}: ${error.stack}`);
+      }
+      return Response.json({ message: "Internal Server Error" }, { status: 500 });
+    };
 
     for (const layer of this.layers) {
       switch (layer.type) {
@@ -112,14 +118,7 @@ class Router {
               }
               return layer.route.handler(req);
             } catch (error) {
-              if (errorHandler !== null) {
-                return errorHandler(req, error);
-              }
-              console.error(`Unexpected error when handling ${req.method} ${req.url}`);
-              if (error instanceof Error) {
-                console.error(`Further info: ${error.name}, ${error.message}: ${error.stack}`);
-              }
-              return Response.json({ message: "Internal Server Error" }, { status: 500 });
+              return errorHandler(req, error);
             }
           };
           // @ts-expect-error
