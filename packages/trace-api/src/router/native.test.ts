@@ -183,3 +183,50 @@ describe("Unit: Native Router", () => {
     await expect(handler()).resolves.toMatchObject({ status: 418 });
   });
 });
+
+describe("Types: Native Router", () => {
+	it("Does not infer parameters that are not present", () => {
+		const router = new Router();
+		router.get("/foo", (req) => {
+			// @ts-expect-error // Intentionally check that type is not present
+			req.params.check_absence;
+			return new Response();
+		});
+	});
+
+	it("Infers parameter on singular handler", () => {
+		const router = new Router();
+		router.get("/:id", (req) => {
+			req.params satisfies { id: string };
+			return new Response(req.params.id);
+		});
+	});
+
+	it("Infers multiple parameters on singular handler", () => {
+		const router = new Router();
+		router.get("/:id/foo/:uuid", (req) => {
+			req.params satisfies { id: string, uuid: string };
+			return Response.json({ id: req.params.id, uuid: req.params.uuid });
+		});
+	});
+
+	it("Transfers the parameters from nested routers", () => {
+		const router = new Router();
+		
+		const subRouter = new Router<{id: string}>();
+		subRouter.get("/:foo", (req) => {
+			req.params satisfies { id: string, foo: string };
+			return new Response(req.params.id);
+		});
+
+		router.mount("/:id", subRouter);
+	});
+
+	it("Requires mounting a router to provide all requested parameters", () => {
+		const router = new Router();
+
+		const subRouter = new Router<{ id: string; bar: string }>();
+		// @ts-expect-error // This should fail to mount, since it's missing the `/:bar` parameter.
+		router.mount("/:id", subRouter);
+	});
+});

@@ -1,47 +1,49 @@
+import type { BunRequest } from "bun";
+type Params = Record<never, never>;
+
 type HttpMethod = "GET" | "POST";
 
-// TODO: Path params with strict types.
-type NativeHandler = (req: Request) => Promise<Response> | Response;
+type NativeHandler<TParams extends Params> = (req: Request & { params: TParams }) => Promise<Response> | Response;
 type ErrorHandler = (req: Request, error: unknown) => Promise<Response> | Response;
-type Route = {
+type Route<TParams extends Params> = {
   readonly path: string;
   readonly method: HttpMethod;
-  readonly handler: NativeHandler;
+  readonly handler: NativeHandler<TParams>;
 };
 type Middleware = (req: Request) => Promise<Response> | Response | Promise<null> | null;
 
 type Layer =
-  | { type: "route"; route: Route }
-  | { type: "router"; prefix: string; router: Router }
+  | { type: "route"; route: Route<Params> }
+  | { type: "router"; prefix: string; router: Router<Params> }
   | { type: "middleware"; middleware: Middleware }
   | { type: "error"; handler: ErrorHandler };
 
-class Router {
+class Router<in out TParams extends Params> {
   private readonly layers: Layer[];
 
   constructor() {
     this.layers = [];
   }
 
-  public get(path: string, handler: NativeHandler): this {
+  public get<TPath extends string>(path: TPath, handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>): this {
     this.layers.push({
       type: "route",
       route: {
         method: "GET",
         path,
-        handler,
+        handler: handler as any,
       },
     });
     return this;
   }
 
-  public post(path: string, handler: NativeHandler): this {
+  public post<TPath extends string>(path: TPath, handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>): this {
     this.layers.push({
       type: "route",
       route: {
         method: "POST",
         path,
-        handler,
+        handler: handler as any,
       },
     });
     return this;
@@ -55,11 +57,11 @@ class Router {
     return this;
   }
 
-  public mount(prefix: string, router: Router): this {
+  public mount<TPath extends string>(prefix: TPath, router: Router<TParams & Bun.Serve.ExtractRouteParams<TPath>>): this {
     this.layers.push({
       type: "router",
       prefix,
-      router,
+      router: router as any,
     });
     return this;
   }
@@ -109,7 +111,7 @@ class Router {
         case "route": {
           result[layer.route.path] = result[layer.route.path] ?? {};
           const middleware = [...accumulatedMiddleware];
-          const generatedHandler = async (req: Request): Promise<Response> => {
+          const generatedHandler = async (req: BunRequest): Promise<Response> => {
             try {
               for (const middle of middleware) {
                 const output = await middle(req);
