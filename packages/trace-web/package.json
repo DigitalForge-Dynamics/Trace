@@ -10,8 +10,7 @@
   "dependencies": {
     "oidc-client-ts": "^3.3.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "trace-sdk": "workspace:"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -19,6 +18,7 @@
     "@types/react-dom": "^19.2.2"
   },
   "peerDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "trace-sdk": "workspace:"
   }
 }
