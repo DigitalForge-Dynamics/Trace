@@ -92,7 +92,6 @@ const createRouter = (): Router => {
       return Response.json({ message: "Internal Server Error" }, { status: 500 });
     }
   };
-
   return { on, get, post, fetch };
 };
 

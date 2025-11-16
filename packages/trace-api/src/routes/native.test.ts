@@ -34,10 +34,14 @@ describe("Unit: Native Router", () => {
 
     const subRouter = new Router();
     subRouter.get("/foo", () => new Response());
+    subRouter.get("/", () => new Response());
     router.mount("/baz", subRouter);
 
     expect(router.toNative()).toStrictEqual({
       "/bar": {
+        GET: expect.anything(),
+      },
+      "/baz": {
         GET: expect.anything(),
       },
       "/baz/foo": {
@@ -77,7 +81,7 @@ describe("Unit: Native Router", () => {
     router.middleware(() => new Response(null, { status: 200 }));
     router.get("/foo", () => new Response(null, { status: 501 }));
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo"].GET;
     await expect(handler()).resolves.toMatchObject({ status: 200 });
   });
@@ -88,7 +92,7 @@ describe("Unit: Native Router", () => {
     router.middleware(() => new Response(null, { status: 204 }));
     router.get("/foo", () => new Response(null, { status: 501 }));
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo"].GET;
     await expect(handler()).resolves.toMatchObject({ status: 204 });
   });
@@ -100,7 +104,7 @@ describe("Unit: Native Router", () => {
     router.middleware(postMiddleware);
 
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo"].GET;
     await expect(handler()).resolves.toBeInstanceOf(Response);
     expect(postMiddleware).not.toHaveBeenCalled();
@@ -113,7 +117,7 @@ describe("Unit: Native Router", () => {
     });
 
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo"].GET;
     const consoleError = spyOn(console, "error").mockImplementation(() => {});
     await expect(handler({ method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
@@ -128,7 +132,7 @@ describe("Unit: Native Router", () => {
     router.get("/foo", () => new Response());
 
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo"].GET;
     const consoleError = spyOn(console, "error").mockImplementation(() => {});
     await expect(handler({ method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
@@ -143,7 +147,7 @@ describe("Unit: Native Router", () => {
     });
 
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo"].GET;
     await expect(handler()).resolves.toMatchObject({ status: 418 });
   });
@@ -157,7 +161,7 @@ describe("Unit: Native Router", () => {
     });
 
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo"].GET;
     await expect(handler()).resolves.toMatchObject({ status: 418 });
   });
@@ -174,7 +178,7 @@ describe("Unit: Native Router", () => {
     router.mount("/foo", mounted);
 
     const routes = router.toNative();
-    // @ts-ignore
+    // @ts-expect-error
     const handler = routes["/foo/bar"].GET;
     await expect(handler()).resolves.toMatchObject({ status: 418 });
   });
