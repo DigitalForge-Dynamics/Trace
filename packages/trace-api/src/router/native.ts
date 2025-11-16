@@ -4,16 +4,17 @@ type Params = Record<never, never>;
 type HttpMethod = "GET" | "POST";
 
 type NativeHandler<TParams extends Params> = (req: Request & { params: TParams }) => Promise<Response> | Response;
+
 type ErrorHandler = (req: Request, error: unknown) => Promise<Response> | Response;
-type Route<TParams extends Params> = {
-  readonly path: string;
+type Route<TParams extends Params, TPath extends string> = {
+  readonly path: TPath;
   readonly method: HttpMethod;
-  readonly handler: NativeHandler<TParams>;
+  readonly handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>;
 };
 type Middleware = (req: Request) => Promise<Response> | Response | Promise<null> | null;
 
 type Layer =
-  | { type: "route"; route: Route<Params> }
+  | { type: "route"; route: Route<Params, string> }
   | { type: "router"; prefix: string; router: Router<Params> }
   | { type: "middleware"; middleware: Middleware }
   | { type: "error"; handler: ErrorHandler };
@@ -25,7 +26,10 @@ class Router<in out TParams extends Params> {
     this.layers = [];
   }
 
-  public get<TPath extends string>(path: TPath, handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>): this {
+  public get<TPath extends string>(
+    path: TPath,
+    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
     this.layers.push({
       type: "route",
       route: {
@@ -37,7 +41,10 @@ class Router<in out TParams extends Params> {
     return this;
   }
 
-  public post<TPath extends string>(path: TPath, handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>): this {
+  public post<TPath extends string>(
+    path: TPath,
+    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
     this.layers.push({
       type: "route",
       route: {
@@ -57,7 +64,10 @@ class Router<in out TParams extends Params> {
     return this;
   }
 
-  public mount<TPath extends string>(prefix: TPath, router: Router<TParams & Bun.Serve.ExtractRouteParams<TPath>>): this {
+  public mount<TPath extends string>(
+    prefix: TPath,
+    router: Router<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
     this.layers.push({
       type: "router",
       prefix,
@@ -74,8 +84,12 @@ class Router<in out TParams extends Params> {
     return this;
   }
 
-  public toNative(): Bun.Serve.Routes<any, any> {
-    const result: Bun.Serve.Routes<any, any> = {};
+  public toNative(): Bun.Serve.Routes<unknown, string> &
+    Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>> {
+    const result: Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>> = {} satisfies Bun.Serve.Routes<
+      unknown,
+      string
+    >;
     const accumulatedMiddleware: Middleware[] = [];
     let errorHandler: ErrorHandler = (req, error): Response => {
       console.error(`Unexpected error when handling ${req.method} ${req.url}`);
@@ -109,7 +123,6 @@ class Router<in out TParams extends Params> {
           continue;
         }
         case "route": {
-          result[layer.route.path] = result[layer.route.path] ?? {};
           const middleware = [...accumulatedMiddleware];
           const generatedHandler = async (req: BunRequest): Promise<Response> => {
             try {
@@ -123,8 +136,11 @@ class Router<in out TParams extends Params> {
               return errorHandler(req, error);
             }
           };
-          // @ts-expect-error
-          result[layer.route.path][layer.route.method] = generatedHandler;
+
+          result[layer.route.path] = {
+            ...result[layer.route.path],
+            [layer.route.method]: generatedHandler,
+          };
           continue;
         }
         default: {

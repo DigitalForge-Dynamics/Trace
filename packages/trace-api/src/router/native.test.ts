@@ -2,6 +2,11 @@ import { describe, expect, it, mock, spyOn } from "bun:test";
 import { Router } from "./native.ts";
 
 describe("Unit: Native Router", () => {
+  const request = {
+    ...new Request("https://localhost:0"),
+    params: {},
+  };
+
   it("Generates a routes object, from a series of direct routes", () => {
     const router = new Router();
     router.get("/foo", () => new Response());
@@ -81,9 +86,8 @@ describe("Unit: Native Router", () => {
     router.middleware(() => new Response(null, { status: 200 }));
     router.get("/foo", () => new Response(null, { status: 501 }));
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo"].GET;
-    await expect(handler()).resolves.toMatchObject({ status: 200 });
+    const handler = routes["/foo"]!.GET!;
+    await expect(handler(request)).resolves.toMatchObject({ status: 200 });
   });
 
   it("Invoked pre-defined middleware, until a Response is generated", async () => {
@@ -92,9 +96,8 @@ describe("Unit: Native Router", () => {
     router.middleware(() => new Response(null, { status: 204 }));
     router.get("/foo", () => new Response(null, { status: 501 }));
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo"].GET;
-    await expect(handler()).resolves.toMatchObject({ status: 204 });
+    const handler = routes["/foo"]!.GET!;
+    await expect(handler(request)).resolves.toMatchObject({ status: 204 });
   });
 
   it("Does not invoke post-defined middleware", async () => {
@@ -104,9 +107,8 @@ describe("Unit: Native Router", () => {
     router.middleware(postMiddleware);
 
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo"].GET;
-    await expect(handler()).resolves.toBeInstanceOf(Response);
+    const handler = routes["/foo"]!.GET!;
+    await expect(handler(request)).resolves.toBeInstanceOf(Response);
     expect(postMiddleware).not.toHaveBeenCalled();
   });
 
@@ -117,10 +119,9 @@ describe("Unit: Native Router", () => {
     });
 
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo"].GET;
+    const handler = routes["/foo"]!.GET!;
     const consoleError = spyOn(console, "error").mockImplementation(() => {});
-    await expect(handler({ method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
+    await expect(handler({ ...request, method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
     consoleError.mockRestore();
   });
 
@@ -132,10 +133,9 @@ describe("Unit: Native Router", () => {
     router.get("/foo", () => new Response());
 
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo"].GET;
+    const handler = routes["/foo"]!.GET!;
     const consoleError = spyOn(console, "error").mockImplementation(() => {});
-    await expect(handler({ method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
+    await expect(handler({ ...request, method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
     consoleError.mockRestore();
   });
 
@@ -147,9 +147,8 @@ describe("Unit: Native Router", () => {
     });
 
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo"].GET;
-    await expect(handler()).resolves.toMatchObject({ status: 418 });
+    const handler = routes["/foo"]!.GET!;
+    await expect(handler(request)).resolves.toMatchObject({ status: 418 });
   });
 
   it("Invokes the most recent error handler, when an error is thrown", async () => {
@@ -161,9 +160,8 @@ describe("Unit: Native Router", () => {
     });
 
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo"].GET;
-    await expect(handler()).resolves.toMatchObject({ status: 418 });
+    const handler = routes["/foo"]!.GET!;
+    await expect(handler(request)).resolves.toMatchObject({ status: 418 });
   });
 
   it("Invokes the nested errorHandler if defined on a mounted router, when an error is thrown", async () => {
@@ -178,55 +176,68 @@ describe("Unit: Native Router", () => {
     router.mount("/foo", mounted);
 
     const routes = router.toNative();
-    // @ts-expect-error
-    const handler = routes["/foo/bar"].GET;
-    await expect(handler()).resolves.toMatchObject({ status: 418 });
+    const handler = routes["/foo/bar"]!.GET!;
+    await expect(handler(request)).resolves.toMatchObject({ status: 418 });
   });
 });
 
 describe("Types: Native Router", () => {
-	it("Does not infer parameters that are not present", () => {
-		const router = new Router();
-		router.get("/foo", (req) => {
-			// @ts-expect-error // Intentionally check that type is not present
-			req.params.check_absence;
-			return new Response();
-		});
-	});
+  it("Does not infer parameters that are not present", () => {
+    const router = new Router();
+    router.get("/foo", (req) => {
+      // @ts-expect-error // Intentionally check that type is not present
+      req.params.check_absence;
+      return new Response();
+    });
+  });
 
-	it("Infers parameter on singular handler", () => {
-		const router = new Router();
-		router.get("/:id", (req) => {
-			req.params satisfies { id: string };
-			return new Response(req.params.id);
-		});
-	});
+  it("Infers parameter on singular handler", () => {
+    const router = new Router();
+    router.get("/:id", (req) => {
+      req.params satisfies { id: string };
+      return new Response(req.params.id);
+    });
+  });
 
-	it("Infers multiple parameters on singular handler", () => {
-		const router = new Router();
-		router.get("/:id/foo/:uuid", (req) => {
-			req.params satisfies { id: string, uuid: string };
-			return Response.json({ id: req.params.id, uuid: req.params.uuid });
-		});
-	});
+  it("Infers multiple parameters on singular handler", () => {
+    const router = new Router();
+    router.get("/:id/foo/:uuid", (req) => {
+      req.params satisfies { id: string; uuid: string };
+      return Response.json({ id: req.params.id, uuid: req.params.uuid });
+    });
+  });
 
-	it("Transfers the parameters from nested routers", () => {
-		const router = new Router();
-		
-		const subRouter = new Router<{id: string}>();
-		subRouter.get("/:foo", (req) => {
-			req.params satisfies { id: string, foo: string };
-			return new Response(req.params.id);
-		});
+  it("Transfers the parameters from nested routers", () => {
+    const router = new Router();
 
-		router.mount("/:id", subRouter);
-	});
+    const subRouter = new Router<{ id: string }>();
+    subRouter.get("/:foo", (req) => {
+      req.params satisfies { id: string; foo: string };
+      return new Response(req.params.id);
+    });
 
-	it("Requires mounting a router to provide all requested parameters", () => {
-		const router = new Router();
+    router.mount("/:id", subRouter);
+  });
 
-		const subRouter = new Router<{ id: string; bar: string }>();
-		// @ts-expect-error // This should fail to mount, since it's missing the `/:bar` parameter.
-		router.mount("/:id", subRouter);
-	});
+  it("Requires mounting a router to provide all requested parameters", () => {
+    const router = new Router();
+
+    const subRouter = new Router<{ id: string; bar: string }>();
+    // @ts-expect-error // This should fail to mount, since it's missing the `/:bar` parameter.
+    router.mount("/:id", subRouter);
+  });
+
+  it("Allows the nesting of path parameters", () => {
+    const outer = new Router();
+    const inner = new Router<{ foo: string }>();
+    const child = new Router<{ foo: string; bar: string }>();
+
+    child.get("/:baz", (req) => {
+      req.params satisfies { foo: string; bar: string; baz: string };
+      return new Response();
+    });
+
+    inner.mount("/:bar", child);
+    outer.mount("/:foo", inner);
+  });
 });
