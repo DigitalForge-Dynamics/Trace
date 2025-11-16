@@ -151,7 +151,8 @@
         "packages/trace-sdk/src/index.ts",
         "packages/trace-api/src/index.ts",
         "packages/trace-api/src/handlers/auth.ts",
-        "packages/trace-api/src/routes/router.ts",
+        "packages/trace-api/src/router/router.ts",
+        "packages/trace-api/src/router/native.ts",
         "packages/trace-sdk/src/client.test.ts"
       ],
       "linter": {
@@ -165,7 +166,8 @@
     {
       "includes": [
         "packages/trace-api/src/handlers/auth.ts",
-        "packages/trace-api/src/routes/router.test.ts",
+        "packages/trace-api/src/router/router.test.ts",
+        "packages/trace-api/src/router/native.test.ts",
         "packages/trace-sdk/src/client.ts",
         "packages/trace-sdk/src/client.test.ts",
         "packages/trace-schemas/src/index.ts"
@@ -195,7 +197,9 @@
     {
       "includes": [
         "packages/trace-api/src/index.test.ts",
-        "packages/trace-api/src/routes/router.test.ts",
+        "packages/trace-api/src/router/native.ts",
+        "packages/trace-api/src/router/native.test.ts",
+        "packages/trace-api/src/router/router.test.ts",
         "packages/trace-sdk/src/client.test.ts"
       ],
       "linter": {
@@ -221,7 +225,8 @@
         "packages/trace-api/src/routes/router.ts",
         "packages/trace-api/src/routes/router.test.ts",
         "packages/trace-api/src/index.ts",
-        "packages/trace-web/src/index.ts"
+        "packages/trace-web/src/index.ts",
+        "packages/**/*"
       ],
       "linter": {
         "rules": {
@@ -233,7 +238,8 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/routes/router.ts"
+        "packages/trace-api/src/router/router.ts",
+        "packages/trace-api/src/router/native.ts"
       ],
       "linter": {
         "rules": {
@@ -245,7 +251,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/routes/router.test.ts",
+        "packages/trace-api/src/router/router.test.ts",
         "packages/trace-api/src/index.ts",
         "packages/trace-sdk/src/client.test.ts",
         "packages/trace-schemas/src/index.ts"
@@ -260,6 +266,8 @@
     },
     {
       "includes": [
+        "packages/trace-api/src/router/native.ts",
+        "packages/trace-api/src/router/native.test.ts",
         "packages/trace-sdk/src/client.ts",
         "packages/trace-web/src/oidc-manager.ts",
         "packages/trace-schemas/src/index.ts"
@@ -280,6 +288,55 @@
         "rules": {
           "style": {
             "useConsistentMemberAccessibility": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/router/native.ts",
+        "packages/trace-api/src/router/native.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noUnusedExpressions": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/router/native.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noAwaitInLoops": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/router/native.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/router/native.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": "off"
           }
         }
       }

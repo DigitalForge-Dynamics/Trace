@@ -9,8 +9,8 @@ describe("Unit: Native Router", () => {
 
   it("Generates a routes object, from a series of direct routes", () => {
     const router = new Router();
-    router.get("/foo", () => new Response());
-    router.post("/bar", () => new Response());
+    router.get("/foo", () => new Response(null, { status: 204 }));
+    router.post("/bar", () => new Response(null, { status: 204 }));
     expect(router.toNative()).toStrictEqual({
       "/foo": {
         GET: expect.anything(),
@@ -23,8 +23,8 @@ describe("Unit: Native Router", () => {
 
   it("Generates multiple method routes, on the same path", () => {
     const router = new Router();
-    router.get("/foo", () => new Response());
-    router.post("/foo", () => new Response());
+    router.get("/foo", () => new Response(null, { status: 204 }));
+    router.post("/foo", () => new Response(null, { status: 204 }));
     expect(router.toNative()).toStrictEqual({
       "/foo": {
         GET: expect.anything(),
@@ -35,11 +35,11 @@ describe("Unit: Native Router", () => {
 
   it("Generates a routes object from a mounted router", () => {
     const router = new Router();
-    router.get("/bar", () => new Response());
+    router.get("/bar", () => new Response(null, { status: 204 }));
 
     const subRouter = new Router();
-    subRouter.get("/foo", () => new Response());
-    subRouter.get("/", () => new Response());
+    subRouter.get("/foo", () => new Response(null, { status: 204 }));
+    subRouter.get("/", () => new Response(null, { status: 204 }));
     router.mount("/baz", subRouter);
 
     expect(router.toNative()).toStrictEqual({
@@ -57,13 +57,13 @@ describe("Unit: Native Router", () => {
 
   it("Generates a routes object from a double mounted router", () => {
     const router = new Router();
-    router.get("/outer", () => new Response());
+    router.get("/outer", () => new Response(null, { status: 204 }));
 
     const inner = new Router();
-    inner.get("/inner", () => new Response());
+    inner.get("/inner", () => new Response(null, { status: 204 }));
 
     const nested = new Router();
-    nested.get("/nested", () => new Response());
+    nested.get("/nested", () => new Response(null, { status: 204 }));
 
     inner.mount("/inner-nested", nested);
     router.mount("/outer-inner", inner);
@@ -83,32 +83,35 @@ describe("Unit: Native Router", () => {
 
   it("Invokes pre-defined middleware, returning Response if generated", async () => {
     const router = new Router();
-    router.middleware(() => new Response(null, { status: 200 }));
-    router.get("/foo", () => new Response(null, { status: 501 }));
+    router.middleware(() => Response.json({ status: "OK" }, { status: 200 }));
+    router.get("/foo", () => Response.json({ message: "Unimplemented" }, { status: 501 }));
     const routes = router.toNative();
-    const handler = routes["/foo"]!.GET!;
-    await expect(handler(request)).resolves.toMatchObject({ status: 200 });
+    const handler = routes["/foo"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 200 });
   });
 
   it("Invoked pre-defined middleware, until a Response is generated", async () => {
     const router = new Router();
     router.middleware(() => null);
     router.middleware(() => new Response(null, { status: 204 }));
-    router.get("/foo", () => new Response(null, { status: 501 }));
+    router.get("/foo", () => Response.json({ message: "Unimplemented" }, { status: 501 }));
     const routes = router.toNative();
-    const handler = routes["/foo"]!.GET!;
-    await expect(handler(request)).resolves.toMatchObject({ status: 204 });
+    const handler = routes["/foo"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 204 });
   });
 
   it("Does not invoke post-defined middleware", async () => {
     const router = new Router();
     const postMiddleware = mock();
-    router.get("/foo", () => new Response());
+    router.get("/foo", () => new Response(null, { status: 204 }));
     router.middleware(postMiddleware);
 
     const routes = router.toNative();
-    const handler = routes["/foo"]!.GET!;
-    await expect(handler(request)).resolves.toBeInstanceOf(Response);
+    const handler = routes["/foo"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toBeInstanceOf(Response);
     expect(postMiddleware).not.toHaveBeenCalled();
   });
 
@@ -119,9 +122,10 @@ describe("Unit: Native Router", () => {
     });
 
     const routes = router.toNative();
-    const handler = routes["/foo"]!.GET!;
+    const handler = routes["/foo"]?.GET;
     const consoleError = spyOn(console, "error").mockImplementation(() => {});
-    await expect(handler({ ...request, method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
+    expect(handler).toBeDefined();
+    await expect(handler?.({ ...request, method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
     consoleError.mockRestore();
   });
 
@@ -130,54 +134,60 @@ describe("Unit: Native Router", () => {
     router.middleware(() => {
       throw new Error("Unexpected error");
     });
-    router.get("/foo", () => new Response());
+    router.get("/foo", () => new Response(null, { status: 204 }));
 
     const routes = router.toNative();
-    const handler = routes["/foo"]!.GET!;
+    const handler = routes["/foo"]?.GET;
     const consoleError = spyOn(console, "error").mockImplementation(() => {});
-    await expect(handler({ ...request, method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
+    expect(handler).toBeDefined();
+    await expect(handler?.({ ...request, method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
     consoleError.mockRestore();
   });
 
   it("Invokes an error handler if defined when an error is thrown", async () => {
     const router = new Router();
-    router.errorHandler(() => new Response(null, { status: 418 }));
+    router.errorHandler(() => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
     router.get("/foo", () => {
       throw new Error("Unexpected error");
     });
 
     const routes = router.toNative();
-    const handler = routes["/foo"]!.GET!;
-    await expect(handler(request)).resolves.toMatchObject({ status: 418 });
+    const handler = routes["/foo"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
   });
 
   it("Invokes the most recent error handler, when an error is thrown", async () => {
     const router = new Router();
-    router.errorHandler(() => new Response(null, { status: 500 }));
-    router.errorHandler(() => new Response(null, { status: 418 }));
+    router.errorHandler(() => Response.json({ error: "Unkown error" }, { status: 500 }));
+    router.errorHandler(() => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
     router.get("/foo", () => {
       throw new Error("Unexpected error");
     });
 
     const routes = router.toNative();
-    const handler = routes["/foo"]!.GET!;
-    await expect(handler(request)).resolves.toMatchObject({ status: 418 });
+    const handler = routes["/foo"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
   });
 
   it("Invokes the nested errorHandler if defined on a mounted router, when an error is thrown", async () => {
     const router = new Router();
-    router.errorHandler(() => new Response(null, { status: 500 }));
+    router.errorHandler(() =>
+      Response.json({ error: "Parent Error Handler that should not be called" }, { status: 500 }),
+    );
 
     const mounted = new Router();
-    mounted.errorHandler(() => new Response(null, { status: 418 }));
+    mounted.errorHandler(() => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
     mounted.get("/bar", () => {
       throw new Error("Unexpected error");
     });
     router.mount("/foo", mounted);
 
     const routes = router.toNative();
-    const handler = routes["/foo/bar"]!.GET!;
-    await expect(handler(request)).resolves.toMatchObject({ status: 418 });
+    const handler = routes["/foo/bar"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
   });
 });
 
@@ -187,7 +197,7 @@ describe("Types: Native Router", () => {
     router.get("/foo", (req) => {
       // @ts-expect-error // Intentionally check that type is not present
       req.params.check_absence;
-      return new Response();
+      return new Response(null, { status: 204 });
     });
   });
 
@@ -195,7 +205,7 @@ describe("Types: Native Router", () => {
     const router = new Router();
     router.get("/:id", (req) => {
       req.params satisfies { id: string };
-      return new Response(req.params.id);
+      return Response.json({ id: req.params.id });
     });
   });
 
@@ -213,7 +223,7 @@ describe("Types: Native Router", () => {
     const subRouter = new Router<{ id: string }>();
     subRouter.get("/:foo", (req) => {
       req.params satisfies { id: string; foo: string };
-      return new Response(req.params.id);
+      return Response.json({ id: req.params.id });
     });
 
     router.mount("/:id", subRouter);
@@ -234,7 +244,7 @@ describe("Types: Native Router", () => {
 
     child.get("/:baz", (req) => {
       req.params satisfies { foo: string; bar: string; baz: string };
-      return new Response();
+      return new Response(null, { status: 204 });
     });
 
     inner.mount("/:bar", child);

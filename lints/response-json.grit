@@ -2,6 +2,7 @@
     not {
         or {
             $args <: contains `"Content-Type"`,
+            $args <: contains `{ status: 204 }`,
         },
     },
     register_diagnostic(

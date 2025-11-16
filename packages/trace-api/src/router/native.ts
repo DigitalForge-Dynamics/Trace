@@ -1,4 +1,5 @@
 import type { BunRequest } from "bun";
+
 type Params = Record<never, never>;
 
 type HttpMethod = "GET" | "POST";
@@ -26,7 +27,7 @@ class Router<in out TParams extends Params> {
     this.layers = [];
   }
 
-  public get<TPath extends string>(
+  get<TPath extends `/${string}`>(
     path: TPath,
     handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
   ): this {
@@ -35,13 +36,14 @@ class Router<in out TParams extends Params> {
       route: {
         method: "GET",
         path,
-        handler: handler as any,
+        // Type cast needed, as the internal implementation details of `layers` is more weakly typed than the strictly typed function parameters.
+        handler: handler as NativeHandler<Params>,
       },
     });
     return this;
   }
 
-  public post<TPath extends string>(
+  post<TPath extends `/${string}`>(
     path: TPath,
     handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
   ): this {
@@ -50,13 +52,14 @@ class Router<in out TParams extends Params> {
       route: {
         method: "POST",
         path,
-        handler: handler as any,
+        // Type cast needed, as the internal implementation details of `layers` is more weakly typed than the strictly typed function parameters.
+        handler: handler as NativeHandler<Params>,
       },
     });
     return this;
   }
 
-  public middleware(middleware: Middleware): this {
+  middleware(middleware: Middleware): this {
     this.layers.push({
       type: "middleware",
       middleware,
@@ -64,19 +67,20 @@ class Router<in out TParams extends Params> {
     return this;
   }
 
-  public mount<TPath extends string>(
+  mount<TPath extends `/${string}`>(
     prefix: TPath,
     router: Router<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
   ): this {
     this.layers.push({
       type: "router",
       prefix,
-      router: router as any,
+      // Type cast needed, as the internal implementation details of `layers` is more weakly typed than the strictly typed function parameters.
+      router: router as Router<any>,
     });
     return this;
   }
 
-  public errorHandler(handler: ErrorHandler): this {
+  errorHandler(handler: ErrorHandler): this {
     this.layers.push({
       type: "error",
       handler,
@@ -84,14 +88,13 @@ class Router<in out TParams extends Params> {
     return this;
   }
 
-  public toNative(): Bun.Serve.Routes<unknown, string> &
-    Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>> {
+  toNative(): Bun.Serve.Routes<unknown, string> & Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>> {
     const result: Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>> = {} satisfies Bun.Serve.Routes<
       unknown,
       string
     >;
     const accumulatedMiddleware: Middleware[] = [];
-    let errorHandler: ErrorHandler = (req, error): Response => {
+    let errorHandler: ErrorHandler = (req: Request, error: unknown): Response => {
       console.error(`Unexpected error when handling ${req.method} ${req.url}`);
       if (error instanceof Error) {
         console.error(`Further info: ${error.name}, ${error.message}: ${error.stack}`);
@@ -112,12 +115,7 @@ class Router<in out TParams extends Params> {
         case "router": {
           const mounted = layer.router.toNative();
           for (const [subPath, value] of Object.entries(mounted)) {
-            const mountedPath =
-              subPath === "/"
-                ? layer.prefix
-                : subPath.startsWith("/")
-                  ? `${layer.prefix}${subPath}`
-                  : `${layer.prefix}/${subPath}`;
+            const mountedPath = subPath === "/" ? layer.prefix : `${layer.prefix}${subPath}`;
             result[mountedPath] = value;
           }
           continue;
@@ -128,7 +126,9 @@ class Router<in out TParams extends Params> {
             try {
               for (const middle of middleware) {
                 const output = await middle(req);
-                if (output === null) continue;
+                if (output === null) {
+                  continue;
+                }
                 return output;
               }
               return layer.route.handler(req);
