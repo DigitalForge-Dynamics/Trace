@@ -1,17 +1,10 @@
 import { createRemoteJWKSet, jwtVerify, jwtDecrypt, type JWTPayload } from "jose";
-
-const HEADER_PREFIX = "Bearer ";
-
-const oidcConfig = [
-  {
-    issuer: "https://token.actions.githubusercontent.com",
-    audience: "trace-api",
-    subject:
-      "^(repo:DigitalForge-Dynamics\/Trace:ref:refs\/heads\/[^/]+)|(repo:DigitalForge-Dynamics\/Trace:pull_request)$",
-  },
-];
+import type { z } from "zod";
+import { oidcConfig } from "../config.ts";
+import type { oidcConfigResponse } from "trace-schemas";
 
 const authenticateOidc = async (req: Request): Promise<Response> => {
+  const HEADER_PREFIX = "Bearer ";
   const header = req.headers.get("authorization");
   if (!header) {
     return Response.json({ message: "Missing Authorization" }, { status: 401 });
@@ -47,7 +40,11 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
 };
 
 const getOidcConfig = async (): Promise<Response> => {
-  return Response.json({ oidcConfig });
+  const config = oidcConfig.map((idpConfig) => ({
+    issuer: idpConfig.issuer,
+    audience: idpConfig.audience,
+  }));
+  return Response.json({ config } satisfies z.input<typeof oidcConfigResponse>);
 };
 
 export { authenticateOidc, getOidcConfig };

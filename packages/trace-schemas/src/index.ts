@@ -35,5 +35,17 @@ const oidcResponse = z
 
 type OIDCResponse = z.infer<typeof oidcResponse>;
 
-export type { HealthCheckResponse, ErrorResponse, OIDCResponse };
-export { healthCheckResponse, errorResponse, oidcResponse };
+const oidcConfigResponse = z.strictObject({
+  config: z
+    .strictObject({
+      issuer: z.url().transform((url) => new URL(url)),
+      audience: z.string(),
+    })
+    .readonly()
+    .array(),
+});
+
+type OIDCConfigResponse = z.infer<typeof oidcConfigResponse>;
+
+export type { HealthCheckResponse, ErrorResponse, OIDCResponse, OIDCConfigResponse };
+export { healthCheckResponse, errorResponse, oidcResponse, oidcConfigResponse };
