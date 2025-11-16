@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, mock, spyOn } from "bun:test";
 import { Router } from "./native.ts";
 
 describe("Unit: Native Router", () => {
@@ -104,5 +104,78 @@ describe("Unit: Native Router", () => {
     const handler = routes["/foo"].GET;
     await expect(handler()).resolves.toBeInstanceOf(Response);
     expect(postMiddleware).not.toHaveBeenCalled();
+  });
+
+  it("Defaults to 500 response when a route throws an error", async () => {
+    const router = new Router();
+    router.get("/foo", () => {
+      throw new Error("Unexpected error");
+    });
+
+    const routes = router.toNative();
+    // @ts-ignore
+    const handler = routes["/foo"].GET;
+    const consoleError = spyOn(console, "error").mockImplementation(() => {});
+    await expect(handler({ method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
+    consoleError.mockRestore();
+  });
+
+  it("Defaults to 500 response when a middleware layer throws an error", async () => {
+    const router = new Router();
+    router.middleware(() => {
+      throw new Error("Unexpected error");
+    });
+    router.get("/foo", () => new Response());
+
+    const routes = router.toNative();
+    // @ts-ignore
+    const handler = routes["/foo"].GET;
+    const consoleError = spyOn(console, "error").mockImplementation(() => {});
+    await expect(handler({ method: "GET", url: "/foo" })).resolves.toMatchObject({ status: 500 });
+    consoleError.mockRestore();
+  });
+
+  it("Invokes an error handler if defined when an error is thrown", async () => {
+    const router = new Router();
+    router.errorHandler(() => new Response(null, { status: 418 }));
+    router.get("/foo", () => {
+      throw new Error("Unexpected error");
+    });
+
+    const routes = router.toNative();
+    // @ts-ignore
+    const handler = routes["/foo"].GET;
+    await expect(handler()).resolves.toMatchObject({ status: 418 });
+  });
+
+  it("Invokes the most recent error handler, when an error is thrown", async () => {
+    const router = new Router();
+    router.errorHandler(() => new Response(null, { status: 500 }));
+    router.errorHandler(() => new Response(null, { status: 418 }));
+    router.get("/foo", () => {
+      throw new Error("Unexpected error");
+    });
+
+    const routes = router.toNative();
+    // @ts-ignore
+    const handler = routes["/foo"].GET;
+    await expect(handler()).resolves.toMatchObject({ status: 418 });
+  });
+
+  it("Invokes the nested errorHandler if defined on a mounted router, when an error is thrown", async () => {
+    const router = new Router();
+    router.errorHandler(() => new Response(null, { status: 500 }));
+
+    const mounted = new Router();
+    mounted.errorHandler(() => new Response(null, { status: 418 }));
+    mounted.get("/bar", () => {
+      throw new Error("Unexpected error");
+    });
+    router.mount("/foo", mounted);
+
+    const routes = router.toNative();
+    // @ts-ignore
+    const handler = routes["/foo/bar"].GET;
+    await expect(handler()).resolves.toMatchObject({ status: 418 });
   });
 });

@@ -2,6 +2,7 @@ type HttpMethod = "GET" | "POST";
 
 // TODO: Path params with strict types.
 type NativeHandler = (req: Request) => Promise<Response> | Response;
+type ErrorHandler = (req: Request, error: unknown) => Promise<Response> | Response;
 type Route = {
   readonly path: string;
   readonly method: HttpMethod;
@@ -12,7 +13,8 @@ type Middleware = (req: Request) => Promise<Response> | Response | Promise<null>
 type Layer =
   | { type: "route"; route: Route }
   | { type: "router"; prefix: string; router: Router }
-  | { type: "middleware"; middleware: Middleware };
+  | { type: "middleware"; middleware: Middleware }
+  | { type: "error"; handler: ErrorHandler };
 
 class Router {
   private layers: Layer[];
@@ -62,9 +64,18 @@ class Router {
     return this;
   }
 
+  public errorHandler(handler: ErrorHandler): this {
+    this.layers.push({
+      type: "error",
+      handler,
+    });
+    return this;
+  }
+
   public toNative(): Bun.Serve.Routes<any, any> {
     const result: Bun.Serve.Routes<unknown, any> = {};
     const accumulatedMiddleware: Middleware[] = [];
+    let errorHandler: ErrorHandler | null = null;
     for (const layer of this.layers) {
       if (layer.type === "middleware") {
         accumulatedMiddleware.push(layer.middleware);
@@ -81,15 +92,31 @@ class Router {
       if (layer.type === "route") {
         result[layer.route.path] = result[layer.route.path] ?? {};
         const middleware = [...accumulatedMiddleware];
-        // @ts-ignore
-        result[layer.route.path]![layer.route.method] = async (req: Request): Response => {
-          for (const middle of middleware) {
-            const output = await middle(req);
-            if (output === null) continue;
-            return output;
+        const generatedHandler = async (req: Request): Promise<Response> => {
+          try {
+            for (const middle of middleware) {
+              const output = await middle(req);
+              if (output === null) continue;
+              return output;
+            }
+            return layer.route.handler(req);
+          } catch (error) {
+            if (errorHandler !== null) {
+              return errorHandler(req, error);
+            }
+            console.error(`Unexpected error when handling ${req.method} ${req.url}`);
+            if (error instanceof Error) {
+              console.error(`Further info: ${error.name}, ${error.message}: ${error.stack}`);
+            }
+            return Response.json({ message: "Internal Server Error" }, { status: 500 });
           }
-          return layer.route.handler(req);
         };
+        // @ts-ignore
+        result[layer.route.path]![layer.route.method] = generatedHandler;
+        continue;
+      }
+      if (layer.type === "error") {
+        errorHandler = layer.handler;
         continue;
       }
       layer satisfies never;
