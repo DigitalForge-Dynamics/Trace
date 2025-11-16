@@ -1,24 +1,24 @@
-import { createRemoteJWKSet, jwtVerify, jwtDecrypt, type JWTPayload } from "jose";
+import { createRemoteJWKSet, type JWTPayload, jwtDecrypt, jwtVerify } from "jose";
+import type { oidcConfigResponse } from "trace-schemas";
 import type { z } from "zod";
 import { oidcConfig } from "../config.ts";
-import type { oidcConfigResponse } from "trace-schemas";
 
 const authenticateOidc = async (req: Request): Promise<Response> => {
-  const HEADER_PREFIX = "Bearer ";
+  const HeaderPrefix = "Bearer ";
   const header = req.headers.get("authorization");
   if (!header) {
     return Response.json({ message: "Missing Authorization" }, { status: 401 });
   }
-  if (!header.startsWith(HEADER_PREFIX)) {
+  if (!header.startsWith(HeaderPrefix)) {
     return Response.json({ message: "Unexpected format" }, { status: 401 });
   }
-  const jwt = header.substring(HEADER_PREFIX.length);
+  const jwt = header.substring(HeaderPrefix.length);
   const unverified = await jwtDecrypt<JWTPayload & Required<Pick<JWTPayload, "iss">>>(
     jwt,
     {},
     { requiredClaims: ["iss"] },
   );
-  const requestedIdp = oidcConfig.find((idp) => idp.issuer === unverified.payload.iss);
+  const requestedIdp = oidcConfig.find((idp) => idp.issuer.toString() === unverified.payload.iss);
   if (requestedIdp === undefined) {
     return Response.json({ message: "Unknown Token issuer" }, { status: 401 });
   }
@@ -27,7 +27,7 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
     jwt,
     jwks,
     {
-      issuer: requestedIdp.issuer,
+      issuer: requestedIdp.issuer.toString(),
       audience: requestedIdp.audience,
       requiredClaims: ["sub", "iat", "nbf"],
     },
@@ -39,9 +39,9 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
   return Response.json({ message: "Authenticated", data: payload }, { status: 200 });
 };
 
-const getOidcConfig = async (): Promise<Response> => {
+const getOidcConfig = (): Response => {
   const config = oidcConfig.map((idpConfig) => ({
-    issuer: idpConfig.issuer,
+    issuer: idpConfig.issuer.toString(),
     audience: idpConfig.audience,
     label: idpConfig.label,
   }));

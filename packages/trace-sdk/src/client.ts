@@ -1,10 +1,10 @@
 import {
   type HealthCheckResponse,
   healthCheckResponse,
-  type OIDCResponse,
-  oidcResponse,
   type OIDCConfigResponse,
+  type OIDCResponse,
   oidcConfigResponse,
+  oidcResponse,
 } from "trace-schemas";
 
 class NetClient {
