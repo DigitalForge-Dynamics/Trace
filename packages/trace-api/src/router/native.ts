@@ -2,7 +2,7 @@ import type { BunRequest } from "bun";
 
 type Params = Record<never, never>;
 
-type HttpMethod = "GET" | "POST";
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 type NativeHandler<TParams extends Params> = (req: Request & { params: TParams }) => Promise<Response> | Response;
 
@@ -27,14 +27,15 @@ class Router<in out TParams extends Params> {
     this.layers = [];
   }
 
-  get<TPath extends `/${string}`>(
+  on<TPath extends `/${string}`>(
+    method: HttpMethod,
     path: TPath,
     handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
   ): this {
     this.layers.push({
       type: "route",
       route: {
-        method: "GET",
+        method,
         path,
         // Type cast needed, as the internal implementation details of `layers` is more weakly typed than the strictly typed function parameters.
         handler: handler as NativeHandler<Params>,
@@ -43,20 +44,39 @@ class Router<in out TParams extends Params> {
     return this;
   }
 
+  get<TPath extends `/${string}`>(
+    path: TPath,
+    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
+    return this.on("GET", path, handler);
+  }
+
   post<TPath extends `/${string}`>(
     path: TPath,
     handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
   ): this {
-    this.layers.push({
-      type: "route",
-      route: {
-        method: "POST",
-        path,
-        // Type cast needed, as the internal implementation details of `layers` is more weakly typed than the strictly typed function parameters.
-        handler: handler as NativeHandler<Params>,
-      },
-    });
-    return this;
+    return this.on("POST", path, handler);
+  }
+
+  put<TPath extends `/${string}`>(
+    path: TPath,
+    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
+    return this.on("PUT", path, handler);
+  }
+
+  patch<TPath extends `/${string}`>(
+    path: TPath,
+    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
+    return this.on("PATCH", path, handler);
+  }
+
+  delete<TPath extends `/${string}`>(
+    path: TPath,
+    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
+    return this.on("DELETE", path, handler);
   }
 
   middleware(middleware: Middleware): this {
@@ -112,7 +132,7 @@ class Router<in out TParams extends Params> {
             handler: errorHandler,
           });
           const mounted = layer.router.toNative();
-		  layer.router.layers.shift();
+          layer.router.layers.shift();
           for (const [subPath, value] of Object.entries(mounted)) {
             const mountedPath = subPath === "/" ? layer.prefix : `${layer.prefix}${subPath}`;
             result[mountedPath] = value;
