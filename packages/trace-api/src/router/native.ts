@@ -4,20 +4,22 @@ type Params = Record<never, never>;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-type NativeHandler<TParams extends Params> = (req: Request & { params: TParams }) => Promise<Response> | Response;
+type NativeHandler<TParams extends Params> = (req: BunRequest & { params: TParams }) => Promise<Response> | Response;
 
-type ErrorHandler = (req: Request, error: unknown) => Promise<Response> | Response;
+type ErrorHandler = (req: BunRequest, error: unknown) => Promise<Response> | Response;
 type Route<TParams extends Params, TPath extends string> = {
   readonly path: TPath;
   readonly method: HttpMethod;
   readonly handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>;
 };
-type Middleware = (req: Request) => Promise<Response> | Response | Promise<null> | null;
+type Middleware<TParams extends Params> = (
+  req: BunRequest & { params: TParams },
+) => Promise<Response> | Response | Promise<null> | null;
 
 type Layer =
   | { type: "route"; route: Route<Params, string> }
   | { type: "router"; prefix: string; router: Router<Params> }
-  | { type: "middleware"; middleware: Middleware }
+  | { type: "middleware"; middleware: Middleware<Params> }
   | { type: "error"; handler: ErrorHandler };
 
 class Router<in out TParams extends Params> {
@@ -79,10 +81,11 @@ class Router<in out TParams extends Params> {
     return this.on("DELETE", path, handler);
   }
 
-  middleware(middleware: Middleware): this {
+  middleware(middleware: Middleware<TParams>): this {
     this.layers.push({
       type: "middleware",
-      middleware,
+      // Type cast needed, as the internal implementation details of `layers` is more weakly typed than the strictly typed function parameters.
+      middleware: middleware as Middleware<Params>,
     });
     return this;
   }
@@ -113,7 +116,7 @@ class Router<in out TParams extends Params> {
       unknown,
       string
     >;
-    const accumulatedMiddleware: Middleware[] = [];
+    const accumulatedMiddleware: Middleware<Params>[] = [];
     let errorHandler: ErrorHandler = Router.defaultErrorHandler;
 
     for (const layer of this.layers) {
@@ -142,7 +145,7 @@ class Router<in out TParams extends Params> {
         case "route": {
           const middleware = [...accumulatedMiddleware];
           const savedErrorHandler = errorHandler;
-          const generatedHandler = async (req: BunRequest): Promise<Response> => {
+          const generatedHandler = async (req: BunRequest & { params: TParams }): Promise<Response> => {
             try {
               for (const middle of middleware) {
                 const output = await middle(req);
@@ -171,7 +174,7 @@ class Router<in out TParams extends Params> {
     return result;
   }
 
-  static defaultErrorHandler(req: Request, error: unknown): Response {
+  static defaultErrorHandler(req: BunRequest, error: unknown): Response {
     console.error(`Unexpected error when handling ${req.method} ${req.url}`);
     if (error instanceof Error) {
       console.error(`Further info: ${error.name}, ${error.message}: ${error.stack}`);

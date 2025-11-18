@@ -1,11 +1,14 @@
 import { describe, expect, it, mock, spyOn } from "bun:test";
+import type { BunRequest } from "bun";
 import { Router } from "./native.ts";
 
 describe("Unit: Native Router", () => {
-  const request = {
+  const request: BunRequest = {
     ...new Request("https://localhost:0"),
     params: {},
-  };
+    cookies: new Bun.CookieMap(),
+    headers: new Headers(),
+  } as BunRequest;
 
   it("Generates a routes object, from a series of direct routes", () => {
     const router = new Router();
@@ -279,5 +282,13 @@ describe("Types: Native Router", () => {
 
     inner.mount("/:bar", child);
     outer.mount("/:foo", inner);
+  });
+
+  it("Allows path parameter types within middleware handlers", () => {
+    const inner = new Router<{ id: string }>();
+    inner.middleware((req) => {
+      req.params satisfies { id: string };
+      return new Response(null, { status: 204 });
+    });
   });
 });
