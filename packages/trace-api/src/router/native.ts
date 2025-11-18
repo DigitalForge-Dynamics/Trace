@@ -112,6 +112,7 @@ class Router<in out TParams extends Params> {
             handler: errorHandler,
           });
           const mounted = layer.router.toNative();
+		  layer.router.layers.shift();
           for (const [subPath, value] of Object.entries(mounted)) {
             const mountedPath = subPath === "/" ? layer.prefix : `${layer.prefix}${subPath}`;
             result[mountedPath] = value;
