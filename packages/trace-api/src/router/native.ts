@@ -94,13 +94,7 @@ class Router<in out TParams extends Params> {
       string
     >;
     const accumulatedMiddleware: Middleware[] = [];
-    let errorHandler: ErrorHandler = (req: Request, error: unknown): Response => {
-      console.error(`Unexpected error when handling ${req.method} ${req.url}`);
-      if (error instanceof Error) {
-        console.error(`Further info: ${error.name}, ${error.message}: ${error.stack}`);
-      }
-      return Response.json({ message: "Internal Server Error" }, { status: 500 });
-    };
+    let errorHandler: ErrorHandler = Router.defaultErrorHandler;
 
     for (const layer of this.layers) {
       switch (layer.type) {
@@ -113,6 +107,10 @@ class Router<in out TParams extends Params> {
           continue;
         }
         case "router": {
+          layer.router.layers.unshift({
+            type: "error",
+            handler: errorHandler,
+          });
           const mounted = layer.router.toNative();
           for (const [subPath, value] of Object.entries(mounted)) {
             const mountedPath = subPath === "/" ? layer.prefix : `${layer.prefix}${subPath}`;
@@ -122,6 +120,7 @@ class Router<in out TParams extends Params> {
         }
         case "route": {
           const middleware = [...accumulatedMiddleware];
+          const savedErrorHandler = errorHandler;
           const generatedHandler = async (req: BunRequest): Promise<Response> => {
             try {
               for (const middle of middleware) {
@@ -133,7 +132,7 @@ class Router<in out TParams extends Params> {
               }
               return layer.route.handler(req);
             } catch (error) {
-              return errorHandler(req, error);
+              return savedErrorHandler(req, error);
             }
           };
 
@@ -149,6 +148,14 @@ class Router<in out TParams extends Params> {
       }
     }
     return result;
+  }
+
+  static defaultErrorHandler(req: Request, error: unknown): Response {
+    console.error(`Unexpected error when handling ${req.method} ${req.url}`);
+    if (error instanceof Error) {
+      console.error(`Further info: ${error.name}, ${error.message}: ${error.stack}`);
+    }
+    return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
 

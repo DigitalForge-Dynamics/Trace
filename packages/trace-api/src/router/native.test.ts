@@ -91,7 +91,7 @@ describe("Unit: Native Router", () => {
     await expect(handler?.(request)).resolves.toMatchObject({ status: 200 });
   });
 
-  it("Invoked pre-defined middleware, until a Response is generated", async () => {
+  it("Invokes pre-defined middleware, until a Response is generated", async () => {
     const router = new Router();
     router.middleware(() => null);
     router.middleware(() => new Response(null, { status: 204 }));
@@ -171,6 +171,20 @@ describe("Unit: Native Router", () => {
     await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
   });
 
+  it("Does not invoke an error handler, that is defined after the layer throwing an error", async () => {
+    const router = new Router();
+    router.errorHandler(() => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
+    router.get("/foo", () => {
+      throw new Error("Unexpected error");
+    });
+    router.errorHandler(() => Response.json({ error: "Error handler that should not be invoked" }, { status: 500 }));
+
+    const routes = router.toNative();
+    const handler = routes["/foo"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
+  });
+
   it("Invokes the nested errorHandler if defined on a mounted router, when an error is thrown", async () => {
     const router = new Router();
     router.errorHandler(() =>
@@ -179,6 +193,22 @@ describe("Unit: Native Router", () => {
 
     const mounted = new Router();
     mounted.errorHandler(() => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
+    mounted.get("/bar", () => {
+      throw new Error("Unexpected error");
+    });
+    router.mount("/foo", mounted);
+
+    const routes = router.toNative();
+    const handler = routes["/foo/bar"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
+  });
+
+  it("Invokes an errorHandler on a parent router, if a mounted router without a defined errorHandler, throws an error", async () => {
+    const router = new Router();
+    router.errorHandler(() => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
+
+    const mounted = new Router();
     mounted.get("/bar", () => {
       throw new Error("Unexpected error");
     });
