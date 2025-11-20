@@ -4,3 +4,4 @@ node_modules
 tls
 packages/trace-web/src/.config.ts
 assets
+test-results

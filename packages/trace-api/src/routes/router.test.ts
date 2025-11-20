@@ -95,12 +95,11 @@ describe("Unit: Tests createRouter() Function", () => {
 
 describe("Integration: Tests createRouter() Function", () => {
   let server: ReturnType<typeof Bun.serve>;
-  const port = 3456;
 
   beforeAll(() => {
     const router = createRouter();
     router.get("/ping", () => Response.json({ data: "pong" }));
-    server = Bun.serve({ port, fetch: router.fetch });
+    server = Bun.serve({ port: 0, fetch: router.fetch });
   });
 
   afterAll(() => server.stop());

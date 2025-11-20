@@ -16,3 +16,8 @@ jobs:
     uses: ./.github/workflows/action-oidc.yml
   Lint:
     uses: ./.github/workflows/action-lint.yml
+  E2E:
+    # TODO: Resolve IdP and configuration. Currently locally using Keycloak instance.
+    if: false
+    uses: ./.github/workflows/action-e2e.yml
+    needs: [Test]
