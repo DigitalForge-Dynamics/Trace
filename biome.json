@@ -134,12 +134,40 @@
   "overrides": [
     {
       "includes": [
-        "**/*.test.ts"
+        "**/*.test.ts",
+        "**/*.playwright.ts"
       ],
       "linter": {
         "rules": {
           "suspicious": {
             "noEmptyBlockStatements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-playwright/**/*"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noProcessEnv": "off"
+          },
+          "correctness": {
+            "noProcessGlobal": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.ts"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useQwikValidLexicalScope": "off"
           }
         }
       }
@@ -222,10 +250,6 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/routes/router.ts",
-        "packages/trace-api/src/routes/router.test.ts",
-        "packages/trace-api/src/index.ts",
-        "packages/trace-web/src/index.ts",
         "packages/**/*"
       ],
       "linter": {
@@ -239,7 +263,8 @@
     {
       "includes": [
         "packages/trace-api/src/router/router.ts",
-        "packages/trace-api/src/router/native.ts"
+        "packages/trace-api/src/router/native.ts",
+        "packages/trace-playwright/src/utils.ts"
       ],
       "linter": {
         "rules": {
@@ -270,7 +295,8 @@
         "packages/trace-api/src/router/native.test.ts",
         "packages/trace-sdk/src/client.ts",
         "packages/trace-web/src/oidc-manager.ts",
-        "packages/trace-schemas/src/index.ts"
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-playwright/playwright.config.ts"
       ],
       "linter": {
         "rules": {
@@ -337,6 +363,18 @@
         "rules": {
           "complexity": {
             "noExcessiveLinesPerFunction": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-playwright/playwright.config.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
           }
         }
       }
