@@ -291,4 +291,23 @@ describe("Types: Native Router", () => {
       return new Response(null, { status: 204 });
     });
   });
+
+  it("Requires the router's generic parameter to have values of string", () => {
+    const outer = new Router();
+    const inner = new Router<{ id: unknown }>();
+    inner.middleware((req) => {
+      req.params satisfies { id: any };
+      return new Response(null, { status: 204 });
+    });
+    // @ts-expect-error // Should fail, as `unknown` does not satisfy `string`.
+    outer.mount("/:id", inner);
+  });
+
+  it("Does not permit defining path parameters, that are not accepted by mounted routers", () => {
+    const outer = new Router();
+    const inner = new Router<{ id: string }>();
+
+    // @ts-expect-error // Should fail, as `{ id: string }` is unused by `inner` - so is indicative of user error.
+    outer.mount("/:id/:foo", inner);
+  });
 });
