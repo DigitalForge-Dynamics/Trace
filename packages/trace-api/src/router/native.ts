@@ -143,10 +143,11 @@ class Router<in out TParams extends Params> {
           continue;
         }
         case "route": {
-          const middleware = [...accumulatedMiddleware];
+          const middlewareCount = accumulatedMiddleware.length;
           const savedErrorHandler = errorHandler;
           const generatedHandler = async (req: BunRequest & { params: TParams }): Promise<Response> => {
             try {
+              const middleware = accumulatedMiddleware.slice(0, middlewareCount);
               for (const middle of middleware) {
                 const output = await middle(req);
                 if (output === null) {
