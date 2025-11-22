@@ -211,6 +211,7 @@
     {
       "includes": [
         "packages/trace-api/src/index.ts",
+        "packages/trace-api/src/env.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-web/src/oidc-manager.ts"
       ],
@@ -250,18 +251,6 @@
     },
     {
       "includes": [
-        "packages/**/*"
-      ],
-      "linter": {
-        "rules": {
-          "nursery": {
-            "useQwikValidLexicalScope": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": [
         "packages/trace-api/src/router/router.ts",
         "packages/trace-api/src/router/native.ts",
         "packages/trace-playwright/src/utils.ts"
@@ -293,6 +282,8 @@
       "includes": [
         "packages/trace-api/src/router/native.ts",
         "packages/trace-api/src/router/native.test.ts",
+        "packages/trace-api/src/env.ts",
+        "packages/trace-api/src/config.ts",
         "packages/trace-sdk/src/client.ts",
         "packages/trace-web/src/oidc-manager.ts",
         "packages/trace-schemas/src/index.ts",

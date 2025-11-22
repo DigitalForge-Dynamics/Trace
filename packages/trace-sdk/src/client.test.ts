@@ -36,4 +36,20 @@ describe("Integration: APIClient", () => {
       });
     });
   });
+
+  describe("Tests getOidcConfig() Method", () => {
+    it("Returns a successful contents", async () => {
+      const response = await apiClient.getOidcConfig();
+      expect(response.config).toBeArray();
+      for (const idp of response.config) {
+        expect(idp).toStrictEqual({
+          issuer: expect.any(URL),
+          audience: expect.any(String),
+          label: expect.any(String),
+        });
+        expect(idp.audience).not.toBeEmpty();
+        expect(idp.label).not.toBeEmpty();
+      }
+    });
+  });
 });

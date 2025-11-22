@@ -1,3 +1,5 @@
+import { corsHeaders } from "../config.ts";
+
 type HttpMethod = "GET" | "POST";
 type Context = {
   readonly req: Request;
@@ -86,7 +88,13 @@ const createRouter = (): Router => {
     const ctx: Context = { req, url, params };
 
     try {
-      return await route.handler(ctx);
+      const response = await route.handler(ctx);
+      corsHeaders.forEach((value, key) => {
+        if (!response.headers.has(key)) {
+          response.headers.set(key, value);
+        }
+      });
+      return response;
     } catch (err) {
       console.error("Handler error:", err);
       return Response.json({ message: "Internal Server Error" }, { status: 500 });
