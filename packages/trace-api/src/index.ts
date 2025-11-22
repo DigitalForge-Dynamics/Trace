@@ -1,20 +1,20 @@
 import type { HealthCheckResponse } from "trace-schemas";
 import { authenticateOidc } from "./handlers/auth.ts";
-import { createRouter } from "./routes/router.ts";
+import { Router } from "./router/native.ts";
 
-const router = createRouter();
+const router = new Router();
 
 router.get(
   "/health-check",
   (): Response => Response.json({ health: "OK" } satisfies HealthCheckResponse, { status: 200 }),
 );
-router.post("/auth/oidc", ({ req }) => authenticateOidc(req));
+router.post("/auth/oidc", authenticateOidc);
 
 const startServer = (port: number): ReturnType<typeof Bun.serve> => {
   const server = Bun.serve({
     port,
     hostname: "localhost",
-    fetch: router.fetch,
+    routes: router.toNative(),
   });
   console.log(`Server running at ${server.url}`);
   return server;
