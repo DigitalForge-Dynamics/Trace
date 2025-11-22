@@ -224,7 +224,7 @@ describe("Unit: Native Router", () => {
     await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
   });
 
-  it("Throws an error when multiple handlers are directly defined for a route", async () => {
+  it("Throws an error when multiple handlers are directly defined for a route", () => {
     const router = new Router();
     router.get("/foo", () => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
     router.get("/foo", () => Response.json({ error: "Later definition that should not be called" }, { status: 500 }));
@@ -232,7 +232,7 @@ describe("Unit: Native Router", () => {
     expect(() => router.toNative()).toThrowError();
   });
 
-  it("Throws an error when multiple handlers are indirectly defined for a route, using mounted routers", async () => {
+  it("Throws an error when multiple handlers are indirectly defined for a route, using mounted routers", () => {
     const outer = new Router();
     const inner = new Router();
 
@@ -330,7 +330,7 @@ describe("Types: Native Router", () => {
     const outer = new Router();
     const inner = new Router<{ id: unknown }>();
     inner.middleware((req) => {
-      req.params satisfies { id: any };
+      req.params satisfies { id: unknown };
       return new Response(null, { status: 204 });
     });
     // @ts-expect-error // Should fail, as `unknown` does not satisfy `string`.

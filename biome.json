@@ -357,12 +357,25 @@
     },
     {
       "includes": [
+        "packages/trace-api/src/router/native.ts",
         "packages/trace-api/src/router/native.test.ts"
       ],
       "linter": {
         "rules": {
           "complexity": {
             "noExcessiveLinesPerFunction": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/router/native.ts"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           }
         }
       }
