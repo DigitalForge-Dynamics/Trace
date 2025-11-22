@@ -84,6 +84,18 @@ describe("Unit: Native Router", () => {
     });
   });
 
+  it("Does not generate a double / for a router mounted at root path", () => {
+    const outer = new Router();
+    const inner = new Router();
+    inner.get("/foo", () => new Response(null, { status: 204 }));
+    outer.mount("/", inner);
+
+    const routes = outer.toNative();
+    expect(routes).toMatchObject({
+      "/foo": expect.anything(),
+    });
+  });
+
   it("Invokes pre-defined middleware, returning Response if generated", async () => {
     const router = new Router();
     router.middleware(() => Response.json({ status: "OK" }, { status: 200 }));
@@ -117,6 +129,21 @@ describe("Unit: Native Router", () => {
     expect(handler).toBeDefined();
     await expect(handler?.(request)).resolves.toBeInstanceOf(Response);
     expect(postMiddleware).not.toHaveBeenCalled();
+  });
+
+  it("Does invoke pre-defined middleware on parent router, for mounted routes", async () => {
+    const router = new Router();
+    const inner = new Router();
+    const middleware = mock().mockReturnValueOnce(null);
+    router.middleware(middleware);
+    inner.get("/foo", () => new Response(null, { status: 204 }));
+    router.mount("/", inner);
+
+    const routes = router.toNative();
+    const handler = routes["/foo"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 204 });
+    expect(middleware).toHaveBeenCalled();
   });
 
   it("Defaults to 500 response when a route throws an error", async () => {

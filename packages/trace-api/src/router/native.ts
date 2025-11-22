@@ -136,15 +136,34 @@ class Router<in out TParams extends Params> {
           });
           const mounted = layer.router.toNative();
           layer.router.layers.shift();
+          const middlewareCount = accumulatedMiddleware.length;
           for (const [subPath, value] of Object.entries(mounted)) {
-            const mountedPath = subPath === "/" ? layer.prefix : `${layer.prefix}${subPath}`;
+            const mountedPath = (() => {
+              if (subPath === "/") {
+                return layer.prefix;
+              }
+              if (layer.prefix === "/") {
+                return subPath;
+              }
+              return `${layer.prefix}${subPath}`;
+            })();
             for (const [method, handler] of Object.entries(value)) {
               if (result[mountedPath] && method in result[mountedPath]) {
                 throw new Error(`Cannot indirectly redefine route handler for ${method} ${mountedPath}`);
               }
               result[mountedPath] = {
                 ...result[mountedPath],
-                [method]: handler,
+                [method]: async (req: BunRequest & { params: TParams }): Promise<Response> => {
+                  const middleware = accumulatedMiddleware.slice(0, middlewareCount);
+                  for (const middle of middleware) {
+                    const output = await middle(req);
+                    if (output === null) {
+                      continue;
+                    }
+                    return output;
+                  }
+                  return handler(req);
+                },
               };
             }
           }
