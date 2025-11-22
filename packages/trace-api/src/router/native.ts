@@ -138,7 +138,15 @@ class Router<in out TParams extends Params> {
           layer.router.layers.shift();
           for (const [subPath, value] of Object.entries(mounted)) {
             const mountedPath = subPath === "/" ? layer.prefix : `${layer.prefix}${subPath}`;
-            result[mountedPath] = value;
+            for (const [method, handler] of Object.entries(value)) {
+              if (result[mountedPath] && method in result[mountedPath]) {
+                throw new Error(`Cannot indirectly redefine route handler for ${method} ${mountedPath}`);
+              }
+              result[mountedPath] = {
+                ...result[mountedPath],
+                [method]: handler,
+              };
+            }
           }
           continue;
         }
@@ -160,6 +168,10 @@ class Router<in out TParams extends Params> {
               return savedErrorHandler(req, error);
             }
           };
+
+          if (result[layer.route.path]?.[layer.route.method]) {
+            throw new Error(`Cannot redefine route handler for ${layer.route.method} ${layer.route.path}`);
+          }
 
           result[layer.route.path] = {
             ...result[layer.route.path],

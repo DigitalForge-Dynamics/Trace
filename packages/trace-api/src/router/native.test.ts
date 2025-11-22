@@ -99,6 +99,7 @@ describe("Unit: Native Router", () => {
     router.middleware(() => null);
     router.middleware(() => new Response(null, { status: 204 }));
     router.get("/foo", () => Response.json({ message: "Unimplemented" }, { status: 501 }));
+
     const routes = router.toNative();
     const handler = routes["/foo"]?.GET;
     expect(handler).toBeDefined();
@@ -219,6 +220,39 @@ describe("Unit: Native Router", () => {
 
     const routes = router.toNative();
     const handler = routes["/foo/bar"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
+  });
+
+  it("Throws an error when multiple handlers are directly defined for a route", async () => {
+    const router = new Router();
+    router.get("/foo", () => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
+    router.get("/foo", () => Response.json({ error: "Later definition that should not be called" }, { status: 500 }));
+
+    expect(() => router.toNative()).toThrowError();
+  });
+
+  it("Throws an error when multiple handlers are indirectly defined for a route, using mounted routers", async () => {
+    const outer = new Router();
+    const inner = new Router();
+
+    inner.get("/", () => Response.json({ error: "Conflicting route, that should not be invoked" }, { status: 500 }));
+    outer.get("/foo", () => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
+    outer.mount("/foo", inner);
+
+    expect(() => outer.toNative()).toThrowError();
+  });
+
+  it("Permits split route definitions, as long as they do not conflict on methods", async () => {
+    const outer = new Router();
+    const inner = new Router();
+
+    inner.post("/", () => Response.json(null, { status: 204 }));
+    outer.get("/foo", () => Response.json({ error: "Cannot brew coffee" }, { status: 418 }));
+    outer.mount("/foo", inner);
+
+    const routes = outer.toNative();
+    const handler = routes["/foo"]?.GET;
     expect(handler).toBeDefined();
     await expect(handler?.(request)).resolves.toMatchObject({ status: 418 });
   });
