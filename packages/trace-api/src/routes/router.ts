@@ -89,12 +89,12 @@ const createRouter = (): Router => {
 
     try {
       const response = await route.handler(ctx);
-	  corsHeaders.forEach((value, key) => {
-	  	if (!response.headers.has(key)) {
-			response.headers.set(key, value);
-		}
-	  });
-	  return response;
+      corsHeaders.forEach((value, key) => {
+        if (!response.headers.has(key)) {
+          response.headers.set(key, value);
+        }
+      });
+      return response;
     } catch (err) {
       console.error("Handler error:", err);
       return Response.json({ message: "Internal Server Error" }, { status: 500 });
