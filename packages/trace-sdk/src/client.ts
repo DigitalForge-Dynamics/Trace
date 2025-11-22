@@ -1,4 +1,11 @@
-import { type HealthCheckResponse, healthCheckResponse, type OIDCResponse, oidcResponse } from "trace-schemas";
+import {
+  type HealthCheckResponse,
+  healthCheckResponse,
+  type OIDCConfigResponse,
+  type OIDCResponse,
+  oidcConfigResponse,
+  oidcResponse,
+} from "trace-schemas";
 
 class NetClient {
   private readonly baseURL: URL;
@@ -92,6 +99,11 @@ class APIClient {
       },
     });
     return oidcResponse.parse(body);
+  }
+
+  public async getOidcConfig(): Promise<OIDCConfigResponse> {
+    const body = await this.netClient.get("/auth/oidc/config");
+    return oidcConfigResponse.parse(body);
   }
 }
 

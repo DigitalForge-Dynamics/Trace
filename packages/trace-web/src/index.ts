@@ -1,6 +1,5 @@
 import { renderToReadableStream } from "react-dom/server";
 import { App } from "./App.tsx";
-import { metadata } from "./oidc-manager.ts";
 
 const serveJs = (filename: string) => async (): Promise<Response> => {
   const buildRes = await Bun.build({
@@ -33,24 +32,6 @@ Bun.serve({
       const srcFile = Bun.file("./src/oidc-callback.html");
       const text = await srcFile.text();
       return new Response(text, { headers: { "Content-Type": srcFile.type } });
-    },
-    "/oidc-token": async (req: Request) => {
-      console.log("req", req);
-
-      const newUrl = new URL(req.url);
-      newUrl.hostname = new URL(metadata.token_endpoint).hostname;
-      newUrl.pathname = new URL(metadata.token_endpoint).pathname;
-      newUrl.port = new URL(metadata.token_endpoint).port;
-      console.log("newUrl", newUrl);
-
-      const newReq = new Request(newUrl, req);
-      newReq.headers.set("referer", "https://localhost:5173/");
-      console.log("newReq", newReq);
-
-      const response = await fetch(newReq);
-      console.log("response", response);
-
-      return response;
     },
     "/favicon.ico": async () => {
       const assetFile = Bun.file("./assets/favicon-32x32.png");

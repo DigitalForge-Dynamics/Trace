@@ -209,6 +209,7 @@
     {
       "includes": [
         "packages/trace-api/src/index.ts",
+        "packages/trace-api/src/env.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-web/src/oidc-manager.ts"
       ],
@@ -274,6 +275,8 @@
     },
     {
       "includes": [
+        "packages/trace-api/src/env.ts",
+        "packages/trace-api/src/config.ts",
         "packages/trace-sdk/src/client.ts",
         "packages/trace-web/src/oidc-manager.ts",
         "packages/trace-schemas/src/index.ts",
