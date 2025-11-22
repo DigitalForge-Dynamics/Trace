@@ -40,4 +40,8 @@ if (env.GITHUB_AUDIENCE) {
   });
 }
 
-export { oidcConfig };
+const corsHeaders = new Headers({
+ 	"Access-Control-Allow-Origin": "*",
+  });
+
+export { oidcConfig, corsHeaders };
