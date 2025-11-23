@@ -1,5 +1,4 @@
 import type { BunRequest } from "bun";
-import { corsHeaders } from "../config.ts";
 
 type Params = Record<never, never>;
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -150,11 +149,10 @@ class Router<in out TParams extends Params> {
    * Create a Bun Routes object, from the middleware stack.
    * @return Bun Routes - The aggregated handlers, accounting for error handling, and middleware stacks.
    */
-  toNative(): Bun.Serve.Routes<unknown, string> & GeneratedRoutes {
+  toNative(headers?: Headers): Bun.Serve.Routes<unknown, string> & GeneratedRoutes {
     const result: GeneratedRoutes = {} satisfies Bun.Serve.Routes<unknown, string>;
     const accumulatedMiddleware: Middleware<Params>[] = [];
     let errorHandler: ErrorHandler = Router.defaultErrorHandler;
-
     for (const layer of this.layers) {
       switch (layer.type) {
         case "error": {
@@ -196,9 +194,11 @@ class Router<in out TParams extends Params> {
             try {
               const middleware = accumulatedMiddleware.slice(0, middlewareCount);
               const response = await Router.handleWithMiddleware(req, layer.route.handler, middleware);
-              corsHeaders.forEach((value, key) => {
-                response.headers.set(key, response.headers.get(key) ?? value);
-              });
+              if (headers) {
+                headers.forEach((value, key) => {
+                  response.headers.set(key, response.headers.get(key) ?? value);
+                });
+              }
               return response;
             } catch (error) {
               return savedErrorHandler(req, error);

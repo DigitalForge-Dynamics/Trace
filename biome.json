@@ -188,8 +188,7 @@
       "includes": [
         "index.ts",
         "packages/trace-api/src/index.ts",
-        "packages/trace-api/src/router/native.ts",
-        "packages/trace-api/src/router/router.ts"
+        "packages/trace-router/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -202,8 +201,7 @@
     {
       "includes": [
         "packages/trace-api/src/handlers/auth.ts",
-        "packages/trace-api/src/router/native.test.ts",
-        "packages/trace-api/src/router/router.test.ts",
+        "packages/trace-router/src/index.test.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-sdk/src/client.test.ts",
         "packages/trace-sdk/src/client.ts"
@@ -232,9 +230,8 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/router/native.test.ts",
-        "packages/trace-api/src/router/native.ts",
-        "packages/trace-api/src/router/router.test.ts",
+        "packages/trace-router/src/index.test.ts",
+        "packages/trace-router/src/index.ts",
         "packages/trace-sdk/src/client.test.ts"
       ],
       "linter": {
@@ -248,7 +245,6 @@
     {
       "includes": [
         "packages/trace-api/src/index.ts",
-        "packages/trace-api/src/router/router.test.ts",
         "packages/trace-schemas/src/index.ts"
       ],
       "linter": {
@@ -263,9 +259,9 @@
       "includes": [
         "packages/trace-api/src/config.ts",
         "packages/trace-api/src/env.ts",
-        "packages/trace-api/src/router/native.ts",
-        "packages/trace-api/src/router/native.test.ts",
         "packages/trace-playwright/playwright.config.ts",
+        "packages/trace-router/src/index.ts",
+        "packages/trace-router/src/index.test.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-sdk/src/client.ts",
         "packages/trace-web/src/oidc-manager.ts"
@@ -292,8 +288,8 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/router/native.ts",
-        "packages/trace-api/src/router/native.test.ts"
+        "packages/trace-router/src/index.ts",
+        "packages/trace-router/src/index.test.ts"
       ],
       "linter": {
         "rules": {
@@ -305,7 +301,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/router/native.ts"
+        "packages/trace-router/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -317,7 +313,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/router/native.ts"
+        "packages/trace-router/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -329,7 +325,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/router/native.test.ts"
+        "packages/trace-router/src/index.test.ts"
       ],
       "linter": {
         "rules": {
@@ -341,7 +337,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/router/native.ts"
+        "packages/trace-router/src/index.ts"
       ],
       "linter": {
         "rules": {

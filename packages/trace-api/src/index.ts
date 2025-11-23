@@ -1,6 +1,7 @@
+import { Router } from "trace-router";
 import type { HealthCheckResponse } from "trace-schemas";
+import { corsHeaders } from "./config.ts";
 import { authenticateOidc, getOidcConfig } from "./handlers/auth.ts";
-import { Router } from "./router/native.ts";
 
 const router: Router<Record<string, never>> = new Router();
 
@@ -15,7 +16,7 @@ const startServer = (port: number): ReturnType<typeof Bun.serve> => {
   const server = Bun.serve({
     port,
     hostname: "localhost",
-    routes: router.toNative(),
+    routes: router.toNative(corsHeaders),
   });
   console.log(`Server running at ${server.url}`);
   return server;

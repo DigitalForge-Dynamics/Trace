@@ -1,6 +1,6 @@
 import { describe, expect, it, mock, spyOn } from "bun:test";
 import type { BunRequest } from "bun";
-import { Router } from "./native.ts";
+import { Router } from "./index.ts";
 
 describe("Unit: Native Router", () => {
   const request: BunRequest = {

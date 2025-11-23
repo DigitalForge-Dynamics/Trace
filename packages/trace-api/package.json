@@ -15,7 +15,8 @@
   "peerDependencies": {
     "typescript": "catalog:",
     "zod": "catalog:",
-    "trace-schemas": "workspace:"
+    "trace-schemas": "workspace:",
+    "trace-router": "workspace:"
   },
   "dependencies": {
     "jose": "catalog:"
