@@ -146,6 +146,21 @@ describe("Unit: Native Router", () => {
     expect(middleware).toHaveBeenCalled();
   });
 
+  it("Does not invoke post-defined middleware on parent router, for mounted routes", async () => {
+    const router = new Router();
+    const inner = new Router();
+    const postMiddleware = mock();
+    inner.get("/bar", () => new Response(null, { status: 204 }));
+    router.mount("/foo", inner);
+    router.middleware(postMiddleware);
+
+    const routes = router.toNative();
+    const handler = routes["/foo/bar"]?.GET;
+    expect(handler).toBeDefined();
+    await expect(handler?.(request)).resolves.toMatchObject({ status: 204 });
+    expect(postMiddleware).not.toHaveBeenCalled();
+  });
+
   it("Defaults to 500 response when a route throws an error", async () => {
     const router = new Router();
     router.get("/foo", () => {

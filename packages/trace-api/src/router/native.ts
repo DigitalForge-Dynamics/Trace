@@ -2,11 +2,9 @@ import type { BunRequest } from "bun";
 import { corsHeaders } from "../config.ts";
 
 type Params = Record<never, never>;
-
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 type NativeHandler<TParams extends Params> = (req: BunRequest & { params: TParams }) => Promise<Response> | Response;
-
 type ErrorHandler = (req: BunRequest, error: unknown) => Promise<Response> | Response;
 type Route<TParams extends Params, TPath extends string> = {
   readonly path: TPath;
@@ -22,6 +20,8 @@ type Layer =
   | { type: "router"; prefix: string; router: Router<Params> }
   | { type: "middleware"; middleware: Middleware<Params> }
   | { type: "error"; handler: ErrorHandler };
+
+type GeneratedRoutes = Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>>;
 
 /**
  * Custom middleware based routing, allowing for ExpressJS style interface.
@@ -150,11 +150,8 @@ class Router<in out TParams extends Params> {
    * Create a Bun Routes object, from the middleware stack.
    * @return Bun Routes - The aggregated handlers, accounting for error handling, and middleware stacks.
    */
-  toNative(): Bun.Serve.Routes<unknown, string> & Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>> {
-    const result: Record<string, Partial<Record<HttpMethod, NativeHandler<Params>>>> = {} satisfies Bun.Serve.Routes<
-      unknown,
-      string
-    >;
+  toNative(): Bun.Serve.Routes<unknown, string> & GeneratedRoutes {
+    const result: GeneratedRoutes = {} satisfies Bun.Serve.Routes<unknown, string>;
     const accumulatedMiddleware: Middleware<Params>[] = [];
     let errorHandler: ErrorHandler = Router.defaultErrorHandler;
 
@@ -176,33 +173,17 @@ class Router<in out TParams extends Params> {
           const mounted = layer.router.toNative();
           layer.router.layers.shift();
           const middlewareCount = accumulatedMiddleware.length;
+          const middleware = accumulatedMiddleware.slice(0, middlewareCount);
+
           for (const [subPath, value] of Object.entries(mounted)) {
-            const mountedPath = (() => {
-              if (subPath === "/") {
-                return layer.prefix;
-              }
-              if (layer.prefix === "/") {
-                return subPath;
-              }
-              return `${layer.prefix}${subPath}`;
-            })();
+            const mountedPath = Router.genMountPath(layer.prefix, subPath);
             for (const [method, handler] of Object.entries(value)) {
               if (result[mountedPath] && method in result[mountedPath]) {
                 throw new Error(`Cannot indirectly redefine route handler for ${method} ${mountedPath}`);
               }
               result[mountedPath] = {
                 ...result[mountedPath],
-                [method]: async (req: BunRequest & { params: TParams }): Promise<Response> => {
-                  const middleware = accumulatedMiddleware.slice(0, middlewareCount);
-                  for (const middle of middleware) {
-                    const output = await middle(req);
-                    if (output === null) {
-                      continue;
-                    }
-                    return output;
-                  }
-                  return handler(req);
-                },
+                [method]: (req: BunRequest): Promise<Response> => Router.handleWithMiddleware(req, handler, middleware),
               };
             }
           }
@@ -214,14 +195,7 @@ class Router<in out TParams extends Params> {
           const generatedHandler = async (req: BunRequest & { params: TParams }): Promise<Response> => {
             try {
               const middleware = accumulatedMiddleware.slice(0, middlewareCount);
-              for (const middle of middleware) {
-                const output = await middle(req);
-                if (output === null) {
-                  continue;
-                }
-                return output;
-              }
-              const response = await layer.route.handler(req);
+              const response = await Router.handleWithMiddleware(req, layer.route.handler, middleware);
               corsHeaders.forEach((value, key) => {
                 if (!response.headers.has(key)) {
                   response.headers.set(key, value);
@@ -265,6 +239,21 @@ class Router<in out TParams extends Params> {
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
 
+  private static async handleWithMiddleware(
+    req: BunRequest,
+    handler: NativeHandler<Params>,
+    middleware: Middleware<Params>[],
+  ): Promise<Response> {
+    for (const middle of middleware) {
+      const output = await middle(req);
+      if (output === null) {
+        continue;
+      }
+      return output;
+    }
+    return handler(req);
+  }
+
   private on<TPath extends `/${string}`>(
     method: HttpMethod,
     path: TPath,
@@ -280,6 +269,16 @@ class Router<in out TParams extends Params> {
       },
     });
     return this;
+  }
+
+  private static genMountPath(prefix: string, subPath: string): string {
+    if (prefix === "/") {
+      return subPath;
+    }
+    if (subPath === "/") {
+      return prefix;
+    }
+    return `${prefix}${subPath}`;
   }
 }
 
