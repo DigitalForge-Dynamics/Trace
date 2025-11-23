@@ -16,6 +16,8 @@ const envSchema = z.strictObject({
     .url()
     .transform((url) => new URL(url))
     .optional(),
+  TRACE_ADMIN_ISSUER: z.url().transform((url) => new URL(url)),
+  TRACE_ADMIN_SUB: z.string(),
 });
 
 type Env = z.infer<typeof envSchema>;

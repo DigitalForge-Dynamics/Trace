@@ -38,6 +38,15 @@ const setupConfiguration = async (db: Database): Promise<void> => {
       subject: regexAny,
     });
   }
+
+  const traceAdmin = await db.createUser({
+    username: "TRACE_ADMIN",
+  });
+  const idp = await db.findIdp(env.TRACE_ADMIN_ISSUER);
+  if (idp === null) {
+    throw new Error("Unable to locate IdP configured for bootstrap ADMIN access.");
+  }
+  await db.linkUser(traceAdmin.uid, idp.uid, env.TRACE_ADMIN_SUB);
 };
 
 const corsHeaders: Headers = new Headers({
