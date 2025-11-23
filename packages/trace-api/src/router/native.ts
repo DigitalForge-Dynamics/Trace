@@ -197,20 +197,16 @@ class Router<in out TParams extends Params> {
               const middleware = accumulatedMiddleware.slice(0, middlewareCount);
               const response = await Router.handleWithMiddleware(req, layer.route.handler, middleware);
               corsHeaders.forEach((value, key) => {
-                if (!response.headers.has(key)) {
-                  response.headers.set(key, value);
-                }
+                response.headers.set(key, response.headers.get(key) ?? value);
               });
               return response;
             } catch (error) {
               return savedErrorHandler(req, error);
             }
           };
-
           if (result[layer.route.path]?.[layer.route.method]) {
             throw new Error(`Cannot redefine route handler for ${layer.route.method} ${layer.route.path}`);
           }
-
           result[layer.route.path] = {
             ...result[layer.route.path],
             [layer.route.method]: generatedHandler,

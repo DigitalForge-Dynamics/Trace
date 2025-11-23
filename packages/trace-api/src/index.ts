@@ -2,7 +2,7 @@ import type { HealthCheckResponse } from "trace-schemas";
 import { authenticateOidc, getOidcConfig } from "./handlers/auth.ts";
 import { Router } from "./router/native.ts";
 
-const router = new Router();
+const router: Router<Record<string, never>> = new Router();
 
 router.get(
   "/health-check",
