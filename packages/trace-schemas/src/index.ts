@@ -30,6 +30,10 @@ const oidcResponse = z
       })
       .loose()
       .readonly(),
+    user: z.strictObject({
+      uid: z.uuidv7(),
+      username: z.string(),
+    }),
   })
   .readonly();
 
