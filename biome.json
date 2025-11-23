@@ -230,6 +230,7 @@
     },
     {
       "includes": [
+        "packages/trace-db/src/index.ts",
         "packages/trace-router/src/index.test.ts",
         "packages/trace-router/src/index.ts",
         "packages/trace-sdk/src/client.test.ts"
