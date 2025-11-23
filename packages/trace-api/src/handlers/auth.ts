@@ -58,9 +58,14 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
     return Response.json({ message: "Unauthorised", sub: payload.sub }, { status: 403 });
   }
 
+  const user = await db.findUser(requestedIdp.issuer, payload.sub);
+  if (user === null) {
+    return Response.json({ message: "Unknown user" }, { status: 403 });
+  }
+
   // Return generated user token
   // TODO: Generate User Token, and return in request.
-  return Response.json({ message: "Authenticated", data: payload }, { status: 200 });
+  return Response.json({ message: "Authenticated", data: payload, user }, { status: 200 });
 };
 
 const getOidcConfig = async (): Promise<Response> => {
