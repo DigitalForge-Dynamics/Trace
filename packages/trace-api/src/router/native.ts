@@ -1,4 +1,5 @@
 import type { BunRequest } from "bun";
+import { corsHeaders } from "../config.ts";
 
 type Params = Record<never, never>;
 
@@ -182,7 +183,13 @@ class Router<in out TParams extends Params> {
                 }
                 return output;
               }
-              return layer.route.handler(req);
+              const response = await layer.route.handler(req);
+              corsHeaders.forEach((value, key) => {
+                if (!response.headers.has(key)) {
+                  response.headers.set(key, value);
+                }
+              });
+              return response;
             } catch (error) {
               return savedErrorHandler(req, error);
             }
