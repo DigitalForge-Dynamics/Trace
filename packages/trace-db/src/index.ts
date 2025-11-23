@@ -5,6 +5,7 @@ type User = { uid: string; username: string };
 
 type CreateIdp = { issuer: URL; label: string; audience: string; subject?: RegExp };
 type Idp = Required<CreateIdp> & { uid: string };
+type IdpModel = Omit<Idp, "issuer" | "subject"> & { issuer: string; subject: string };
 
 class Database {
   private readonly driver: SQL;
@@ -83,7 +84,7 @@ class Database {
 
   async findIdp(issuer: URL): Promise<Idp | null> {
     const response = await this.driver`
-		SELECT * from idps
+		SELECT * FROM idps
 		WHERE idps.issuer = ${issuer.toString()}
 	`;
     if (response.length === 0) {
@@ -98,6 +99,17 @@ class Database {
       issuer: new URL(idp.issuer),
       subject: new RegExp(idp.subject),
     };
+  }
+
+  async listIdps(): Promise<Idp[]> {
+    const response = await this.driver`
+		SELECT * FROM idps
+	`;
+    return response.map((idp: IdpModel) => ({
+      ...idp,
+      issuer: new URL(idp.issuer),
+      subject: new RegExp(idp.subject),
+    }));
   }
 
   async linkUser(userId: string, idpId: string, idpSub: string): Promise<void> {

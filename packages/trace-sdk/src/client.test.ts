@@ -5,8 +5,8 @@ import { APIClient, NetClient } from "./client.ts";
 describe("Integration: APIClient", () => {
   let apiClient: APIClient;
 
-  beforeAll(() => {
-    const apiServer = startServer(0);
+  beforeAll(async () => {
+    const apiServer = await startServer(0);
     const netClient = new NetClient(apiServer.url);
     apiClient = new APIClient(netClient);
   });

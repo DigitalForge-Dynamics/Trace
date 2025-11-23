@@ -63,5 +63,14 @@ describe("Database", () => {
     it("findIdp returns null if the IdP does not exist", async () => {
       await expect(db.findIdp(new URL("https://localhost:0"))).resolves.toBeNull();
     });
+
+    it("listIdps returns an empty list if there are no IdPs", async () => {
+      await expect(db.listIdps()).resolves.toBeArrayOfSize(0);
+    });
+
+    it("listIdps maps non-string fields", async () => {
+      const createdIdp = await db.createIdp({ issuer: new URL("https://localhost:0"), label: "Foo", audience: "Bar" });
+      await expect(db.listIdps()).resolves.toStrictEqual([createdIdp]);
+    });
   });
 });
