@@ -19,8 +19,8 @@
   },
   "peerDependencies": {
     "typescript": "catalog:",
-	"jose": "catalog:",
+    "jose": "catalog:",
     "trace-sdk": "workspace:",
-	"trace-router": "workspace:"
+    "trace-router": "workspace:"
   }
 }

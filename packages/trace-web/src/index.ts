@@ -1,6 +1,6 @@
 import { renderToReadableStream } from "react-dom/server";
 import { Router } from "trace-router";
-import { App } from "./App.tsx";
+import { LoginPage } from "./pages/LoginPage/index.tsx";
 
 const serveJs = (filename: string) => async (): Promise<Response> => {
   const buildRes = await Bun.build({
@@ -24,26 +24,27 @@ const serveJs = (filename: string) => async (): Promise<Response> => {
 
 const router: Router<Record<string, never>> = new Router();
 
-router.get("/oidc-manager.js", serveJs("oidc-manager.ts"));
-router.get("/oidc-callback", async () => {
-  const srcFile = Bun.file("./src/oidc-callback.html");
-  const text = await srcFile.text();
-  return new Response(text, { headers: { "Content-Type": srcFile.type } });
-});
-
-router.get("/favicon.ico", async () => {
-  const assetFile = Bun.file("./assets/favicon-32x32.png");
-  const contents = await assetFile.text();
-  return new Response(contents, { headers: { "Content-Type": assetFile.type } });
-});
-
-router.get("/hydrate.js", serveJs("hydrate.tsx"));
-router.get("/", async () => {
-  const stream = await renderToReadableStream(App(), {
-    bootstrapModules: ["/hydrate.js"],
+router.get("/config.js", serveJs("./config.ts"));
+router.get("/oidc-callback", () => new Response(Bun.file("./src/oidc-callback.html")));
+router.get("/login/hydrate.js", serveJs("./pages/LoginPage/hydrate.tsx"));
+router.get("/login", async () => {
+  const stream = await renderToReadableStream(LoginPage(), {
+    bootstrapModules: ["/login/hydrate.js"],
   });
   return new Response(stream, { headers: { "Content-Type": "text/html" } });
 });
+
+router.middleware(
+  () =>
+    new Response("", {
+      headers: {
+        Location: "/login",
+      },
+      status: 307,
+    }),
+);
+
+router.get("/*", () => new Response(null, { status: 501 }));
 
 Bun.serve({
   port: 5173,
