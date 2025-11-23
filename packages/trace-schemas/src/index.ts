@@ -65,7 +65,7 @@ type CreateUserResponse = z.infer<typeof createUserResponse>;
 const linkUserIdpRequest = z.strictObject({
   userId: z.uuidv7(),
   idp: z.union([z.url().transform((url) => new URL(url)), z.uuidv7()]),
-  sub: z.uuidv7(),
+  sub: z.string(),
 });
 
 type LinkUserIdpRequest = z.infer<typeof linkUserIdpRequest>;
