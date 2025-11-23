@@ -48,5 +48,25 @@ const oidcConfigResponse = z.strictObject({
 
 type OIDCConfigResponse = z.infer<typeof oidcConfigResponse>;
 
-export type { HealthCheckResponse, ErrorResponse, OIDCResponse, OIDCConfigResponse };
-export { healthCheckResponse, errorResponse, oidcResponse, oidcConfigResponse };
+const createUserRequest = z.strictObject({
+  username: z.string(),
+});
+
+type CreateUserRequest = z.infer<typeof createUserRequest>;
+
+const createUserResponse = z.strictObject({
+  username: z.string(),
+  uid: z.uuidv7(),
+});
+
+type CreateUserResponse = z.infer<typeof createUserResponse>;
+
+export type {
+  HealthCheckResponse,
+  ErrorResponse,
+  OIDCResponse,
+  OIDCConfigResponse,
+  CreateUserRequest,
+  CreateUserResponse,
+};
+export { healthCheckResponse, errorResponse, oidcResponse, oidcConfigResponse, createUserRequest, createUserResponse };

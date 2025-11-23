@@ -3,6 +3,7 @@ import type { HealthCheckResponse } from "trace-schemas";
 import { corsHeaders, setupConfiguration } from "./config.ts";
 import { db } from "./db.ts";
 import { authenticateOidc, getOidcConfig } from "./handlers/auth.ts";
+import { createUser } from "./handlers/users.ts";
 
 const router: Router<Record<string, never>> = new Router();
 
@@ -12,6 +13,7 @@ router.get(
 );
 router.post("/auth/oidc", authenticateOidc);
 router.get("/auth/oidc/config", getOidcConfig);
+router.post("/user", createUser);
 
 const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> => {
   await db.baseline();

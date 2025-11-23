@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
 import { startServer } from "trace-api";
+import type { CreateUserRequest } from "trace-schemas";
 import { APIClient, NetClient } from "./client.ts";
 
 describe("Integration: APIClient", () => {
@@ -50,6 +51,17 @@ describe("Integration: APIClient", () => {
         expect(idp.audience).not.toBeEmpty();
         expect(idp.label).not.toBeEmpty();
       }
+    });
+  });
+
+  describe("Tests createUser Method", () => {
+    const createInfo: CreateUserRequest = { username: "Foo" };
+    it("Returns a successful contents", async () => {
+      const response = await apiClient.createUser(createInfo);
+      expect(response).toStrictEqual({
+        ...createInfo,
+        uid: expect.any(String),
+      });
     });
   });
 });
