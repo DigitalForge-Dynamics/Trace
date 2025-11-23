@@ -31,8 +31,8 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
   }
 
   // Verify Token against issuer
-  const { jwks_uri } = await fetch(new URL(".well-known/openid-configuration", `${requestedIdp.issuer}/`)).then((req) =>
-    req.json(),
+  const { jwks_uri } = await fetch(new URL(".well-known/openid-configuration", `${requestedIdp.issuer}/`)).then(
+    (configReq) => configReq.json(),
   );
   const jwks = createRemoteJWKSet(new URL(jwks_uri));
   let payload: JWTPayload & Required<Pick<JWTPayload, "iss" | "aud" | "sub" | "iat">>;

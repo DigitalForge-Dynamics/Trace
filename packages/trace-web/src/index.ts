@@ -25,7 +25,10 @@ const serveJs = (filename: string) => async (): Promise<Response> => {
 const router: Router<Record<string, never>> = new Router();
 
 router.get("/config.js", serveJs("./config.ts"));
-router.get("/oidc-callback", () => new Response(Bun.file("./src/oidc-callback.html")));
+router.get(
+  "/oidc-callback",
+  () => new Response(Bun.file("./src/oidc-callback.html"), { headers: { "Content-Type": "text/html" } }),
+);
 router.get("/login/hydrate.js", serveJs("./pages/LoginPage/hydrate.tsx"));
 router.get("/login", async () => {
   const stream = await renderToReadableStream(LoginPage(), {
@@ -38,13 +41,14 @@ router.middleware(
   () =>
     new Response("", {
       headers: {
-        Location: "/login",
+        location: "/login",
+        "Content-Type": "text/html",
       },
       status: 307,
     }),
 );
 
-router.get("/*", () => new Response(null, { status: 501 }));
+router.get("/*", () => new Response(null, { status: 204 }));
 
 Bun.serve({
   port: 5173,
