@@ -25,6 +25,14 @@ describe("Integration: APIClient", () => {
   describe("Tests authenticateOidc(string) Method", () => {
     it.if(Bun.env.IDP_TOKEN !== undefined)("Returns the validated token claims.", async () => {
       const idpToken = Bun.env.IDP_TOKEN as Exclude<typeof Bun.env.IDP_TOKEN, undefined>;
+      const idpTokenPayload = JSON.parse(atob(idpToken.split(".")[1] ?? ""));
+      const user = await apiClient.createUser({ username: "IDP_TOKEN" });
+      await apiClient.linkUserIdp({
+        userId: user.uid,
+        sub: idpTokenPayload.sub,
+        idp: new URL(idpTokenPayload.iss),
+      });
+
       const response = await apiClient.authenticateOidc(idpToken);
       expect(response).toMatchObject({
         message: "Authenticated",
