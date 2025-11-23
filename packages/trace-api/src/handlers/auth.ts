@@ -74,6 +74,7 @@ const getOidcConfig = async (): Promise<Response> => {
     issuer: idp.issuer.toString(),
     audience: idp.audience,
     label: idp.label,
+    uid: idp.uid,
   }));
   return Response.json({ config } satisfies z.input<typeof oidcConfigResponse>);
 };

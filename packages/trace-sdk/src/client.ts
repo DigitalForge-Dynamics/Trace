@@ -4,6 +4,7 @@ import {
   createUserResponse,
   type HealthCheckResponse,
   healthCheckResponse,
+  type LinkUserIdpRequest,
   type OIDCConfigResponse,
   type OIDCResponse,
   oidcConfigResponse,
@@ -112,6 +113,10 @@ class APIClient {
   public async createUser(user: CreateUserRequest): Promise<CreateUserResponse> {
     const body = await this.netClient.post("/user", { body: JSON.stringify(user) });
     return createUserResponse.parse(body);
+  }
+
+  public async linkUserIdp(info: LinkUserIdpRequest): Promise<void> {
+    await this.netClient.post("/user/link", { body: JSON.stringify(info) });
   }
 }
 

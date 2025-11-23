@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { randomUUIDv7 } from "bun";
 import { startServer } from "trace-api";
-import type { CreateUserRequest } from "trace-schemas";
+import type { CreateUserRequest, LinkUserIdpRequest } from "trace-schemas";
 import { APIClient, NetClient } from "./client.ts";
 
 describe("Integration: APIClient", () => {
@@ -47,6 +48,7 @@ describe("Integration: APIClient", () => {
           issuer: expect.any(URL),
           audience: expect.any(String),
           label: expect.any(String),
+          uid: expect.any(String),
         });
         expect(idp.audience).not.toBeEmpty();
         expect(idp.label).not.toBeEmpty();
@@ -54,7 +56,7 @@ describe("Integration: APIClient", () => {
     });
   });
 
-  describe("Tests createUser Method", () => {
+  describe("Tests createUser() Method", () => {
     const createInfo: CreateUserRequest = { username: "Foo" };
     it("Returns a successful contents", async () => {
       const response = await apiClient.createUser(createInfo);
@@ -62,6 +64,18 @@ describe("Integration: APIClient", () => {
         ...createInfo,
         uid: expect.any(String),
       });
+    });
+  });
+
+  describe("Tests linkUserIdp() Method", () => {
+    const linkInfo: LinkUserIdpRequest = {
+      userId: randomUUIDv7(),
+      idp: new URL("https://token.actions.githubusercontent.com"),
+      sub: randomUUIDv7(),
+    };
+    it("Returns a successful response", async () => {
+      const response = await apiClient.linkUserIdp(linkInfo);
+      expect(response).toBeUndefined();
     });
   });
 });
