@@ -327,7 +327,8 @@
     },
     {
       "includes": [
-        "packages/trace-router/src/index.test.ts"
+        "packages/trace-router/src/index.test.ts",
+        "packages/trace-db/src/index.test.ts"
       ],
       "linter": {
         "rules": {

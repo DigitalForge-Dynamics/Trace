@@ -3,8 +3,8 @@ import { randomUUIDv7, type SQL } from "bun";
 type CreateUser = { username: string };
 type User = { uid: string; username: string };
 
-type CreateIdp = { issuer: URL };
-type Idp = { uid: string; issuer: URL };
+type CreateIdp = { issuer: URL; label: string; audience: string; subject?: RegExp };
+type Idp = Required<CreateIdp> & { uid: string };
 
 class Database {
   private readonly driver: SQL;
@@ -16,21 +16,24 @@ class Database {
   async baseline(): Promise<void> {
     await this.driver`
 		CREATE TABLE users (
-			uid BINARY(16) PRIMARY KEY,
-			username STRING
+			uid BINARY(16) PRIMARY KEY NOT NULL,
+			username STRING NOT NULL
 		)
 	`;
     await this.driver`
 		CREATE TABLE idps (
-			uid BINARY(16) PRIMARY KEY,
-			issuer URL
+			uid BINARY(16) PRIMARY KEY NOT NULL,
+			issuer URL NOT NULL,
+			label STRING NOT NULL,
+			audience STRING NOT NULL,
+			subject STRING NOT NULL
 		)
 	`;
     await this.driver`
 		CREATE TABLE user_idps (
-			idp BINARY(16),
-			sub STRING,
-			user BINARY(16),
+			idp BINARY(16) NOT NULL,
+			sub STRING NOT NULL,
+			user BINARY(16) NOT NULL,
 			PRIMARY KEY (idp, sub)
 			FOREIGN KEY (idp) REFERENCES idps(uid),
 			FOREIGN KEY (user) REFERENCES users(uid)
@@ -67,13 +70,14 @@ class Database {
   async createIdp(idp: CreateIdp): Promise<Idp> {
     const uid = randomUUIDv7();
     const [response] = await this.driver`
-		INSERT INTO idps (uid, issuer)
-		VALUES (${uid}, ${idp.issuer.toString()})
+		INSERT INTO idps (uid, issuer, label, audience, subject)
+		VALUES (${uid}, ${idp.issuer.toString()}, ${idp.label}, ${idp.audience}, ${idp.subject?.source ?? "/^.*$/"})
 		RETURNING *
 	`;
     return {
       ...response,
       issuer: new URL(response.issuer),
+      subject: new RegExp(response.subject),
     };
   }
 
@@ -82,7 +86,18 @@ class Database {
 		SELECT * from idps
 		WHERE idps.issuer = ${issuer.toString()}
 	`;
-    return response;
+    if (response.length === 0) {
+      return null;
+    }
+    if (response.length > 1) {
+      throw new Error("Duplicate IdPs.");
+    }
+    const [idp] = response;
+    return {
+      ...idp,
+      issuer: new URL(idp.issuer),
+      subject: new RegExp(idp.subject),
+    };
   }
 
   async linkUser(userId: string, idpId: string, idpSub: string): Promise<void> {
