@@ -12,6 +12,10 @@ const envSchema = z.strictObject({
     .optional(),
   CLOUDFLARE_AUDIENCE: z.string().optional(),
   GITHUB_AUDIENCE: z.string().optional(),
+  DATABASE_URL: z
+    .url()
+    .transform((url) => new URL(url))
+    .optional(),
 });
 
 type Env = z.infer<typeof envSchema>;

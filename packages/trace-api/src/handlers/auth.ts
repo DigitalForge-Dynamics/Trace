@@ -2,7 +2,7 @@ import { createRemoteJWKSet, decodeJwt, type JWTPayload, jwtVerify } from "jose"
 import { JWTClaimValidationFailed, JWTExpired } from "jose/errors";
 import type { oidcConfigResponse } from "trace-schemas";
 import type { z } from "zod";
-import { oidcConfig } from "../config.ts";
+import { db } from "../db.ts";
 
 const authenticateOidc = async (req: Request): Promise<Response> => {
   // Load Token
@@ -25,8 +25,8 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
     return Response.json({ message: "Invalid issuer" }, { status: 401 });
   }
   const requestedIssuer = new URL(unverified.iss);
-  const requestedIdp = oidcConfig.find((idp) => idp.issuer.toString() === requestedIssuer.toString());
-  if (requestedIdp === undefined) {
+  const requestedIdp = await db.findIdp(requestedIssuer);
+  if (requestedIdp === null) {
     return Response.json({ message: "Unknown Token issuer" }, { status: 401 });
   }
 
@@ -58,16 +58,23 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
     return Response.json({ message: "Unauthorised", sub: payload.sub }, { status: 403 });
   }
 
+  const user = await db.findUser(requestedIdp.issuer, payload.sub);
+  if (user === null) {
+    return Response.json({ message: "Unknown user" }, { status: 403 });
+  }
+
   // Return generated user token
   // TODO: Generate User Token, and return in request.
-  return Response.json({ message: "Authenticated", data: payload }, { status: 200 });
+  return Response.json({ message: "Authenticated", data: payload, user }, { status: 200 });
 };
 
-const getOidcConfig = (): Response => {
-  const config = oidcConfig.map((idpConfig) => ({
-    issuer: idpConfig.issuer.toString(),
-    audience: idpConfig.audience,
-    label: idpConfig.label,
+const getOidcConfig = async (): Promise<Response> => {
+  const idps = await db.listIdps();
+  const config = idps.map((idp) => ({
+    issuer: idp.issuer.toString(),
+    audience: idp.audience,
+    label: idp.label,
+    uid: idp.uid,
   }));
   return Response.json({ config } satisfies z.input<typeof oidcConfigResponse>);
 };

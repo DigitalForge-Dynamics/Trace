@@ -30,6 +30,10 @@ const oidcResponse = z
       })
       .loose()
       .readonly(),
+    user: z.strictObject({
+      uid: z.uuidv7(),
+      username: z.string(),
+    }),
   })
   .readonly();
 
@@ -41,6 +45,7 @@ const oidcConfigResponse = z.strictObject({
       label: z.string().min(1),
       issuer: z.url().transform((url) => new URL(url)),
       audience: z.string().min(1),
+      uid: z.uuidv7(),
     })
     .readonly()
     .array(),
@@ -48,5 +53,42 @@ const oidcConfigResponse = z.strictObject({
 
 type OIDCConfigResponse = z.infer<typeof oidcConfigResponse>;
 
-export type { HealthCheckResponse, ErrorResponse, OIDCResponse, OIDCConfigResponse };
-export { healthCheckResponse, errorResponse, oidcResponse, oidcConfigResponse };
+const createUserRequest = z.strictObject({
+  username: z.string(),
+});
+
+type CreateUserRequest = z.infer<typeof createUserRequest>;
+
+const createUserResponse = z.strictObject({
+  username: z.string(),
+  uid: z.uuidv7(),
+});
+
+type CreateUserResponse = z.infer<typeof createUserResponse>;
+
+const linkUserIdpRequest = z.strictObject({
+  userId: z.uuidv7(),
+  idp: z.union([z.url().transform((url) => new URL(url)), z.uuidv7()]),
+  sub: z.string(),
+});
+
+type LinkUserIdpRequest = z.infer<typeof linkUserIdpRequest>;
+
+export type {
+  HealthCheckResponse,
+  ErrorResponse,
+  OIDCResponse,
+  OIDCConfigResponse,
+  CreateUserRequest,
+  CreateUserResponse,
+  LinkUserIdpRequest,
+};
+export {
+  healthCheckResponse,
+  errorResponse,
+  oidcResponse,
+  oidcConfigResponse,
+  createUserRequest,
+  createUserResponse,
+  linkUserIdpRequest,
+};

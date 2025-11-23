@@ -11,6 +11,15 @@ export default defineConfig({
   },
   webServer: [
     {
+      name: "API",
+      command: "bun dev",
+      cwd: "../trace-api",
+      url: "http://localhost:3000/health-check",
+      reuseExistingServer: true,
+      stderr: "pipe",
+      stdout: "pipe",
+    },
+    {
       name: "Web",
       command: "bun dev",
       cwd: "../trace-web",
@@ -19,15 +28,6 @@ export default defineConfig({
       stderr: "pipe",
       stdout: "pipe",
       ignoreHTTPSErrors: true,
-    },
-    {
-      name: "API",
-      command: "bun dev",
-      cwd: "../trace-api",
-      url: "http://localhost:3000/health-check",
-      reuseExistingServer: true,
-      stderr: "pipe",
-      stdout: "pipe",
     },
   ],
   projects: [
