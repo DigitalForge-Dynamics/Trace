@@ -50,7 +50,7 @@ const setupConfiguration = async (db: Database): Promise<void> => {
 };
 
 const corsHeaders: Headers = new Headers({
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://localhost:5173",
 });
 
 export { setupConfiguration, corsHeaders };
