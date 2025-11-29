@@ -42,7 +42,7 @@ graph
 	trace-playwright --> dotenv
 	trace-playwright --> trace-api
 	trace-playwright --> trace-web
-	trace-playwright --> playwright[@playwright/test]
+	trace-playwright --> playwright["@playwright/test"]
 
 	trace-schemas --> zod
 
