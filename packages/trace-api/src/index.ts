@@ -23,7 +23,7 @@ router.get(
   "/health-check",
   (): Response => Response.json({ health: "OK" } satisfies HealthCheckResponse, { status: 200 }),
 );
-router.options("/auth/oidc", () => new Response(null, { status: 200, headers: corsHeaders }));
+//router.options("/auth/oidc", () => new Response(null, { status: 200, headers: corsHeaders }));
 router.post("/auth/oidc", authenticateOidc);
 router.get("/auth/oidc/config", getOidcConfig);
 router.post("/user", createUser);
