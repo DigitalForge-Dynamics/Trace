@@ -97,12 +97,14 @@ describe("Database", () => {
   describe("User IDPs", () => {
     let userId: string;
     let idpId: string;
+    let idpIssuer: URL;
 
     beforeEach(async () => {
       const user = await db.createUser({ username: "Foo" });
       const idp = await db.createIdp({ issuer: new URL("https://localhost:0"), label: "Baz", audience: "Bar" });
       userId = user.uid;
       idpId = idp.uid;
+      idpIssuer = idp.issuer;
     });
 
     it("Is able to link a user with an IDP", async () => {
@@ -121,6 +123,7 @@ describe("Database", () => {
       await db.linkUser(userId, idpId, "Foo");
       await db.linkUser(userId, idpId, "Bar");
     });
+
     it("Is able to link a user to multiple IDPs", async () => {
       const idpTwo = await db.createIdp({ issuer: new URL("https://localhost:1"), label: "Baz", audience: "Bar" });
       await db.linkUser(userId, idpId, "Foo");
@@ -138,6 +141,10 @@ describe("Database", () => {
     it("Does not create an already existing link", async () => {
       await db.linkUser(userId, idpId, "Foo");
       await db.linkUser(userId, idpId, "Foo");
+      const user = await db.findUser(idpIssuer, "Foo");
+      expect(user).toMatchObject({
+        uid: userId,
+      });
     });
   });
 
@@ -168,6 +175,7 @@ describe("Database", () => {
 
   describe("Assets", () => {
     let locationId: string;
+
     beforeEach(async () => {
       const location = await db.createLocation({ name: "Foo" });
       locationId = location.uid;
