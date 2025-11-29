@@ -12,17 +12,26 @@ const { apiClient, genUserManager } = await import("/config.js");
 const url = new URL(window.location);
 const iss = new URL(url.searchParams.get("iss"));
 
+console.log("A");
+
 const idpConfigs = await apiClient.getOidcConfig();
+console.log("B", idpConfigs);
 const idp = idpConfigs.config.find((idp) => idp.issuer.toString() === iss.toString());
 if (!idp) {
 	throw new Error("Unable to identify IdP in callback");
 }
+console.log("C", idp);
 const userManager = genUserManager(idp);
+console.log("C1", userManager);
 const user = await userManager.signinCallback();
+console.log("D", JSON.stringify(user));
 const { id_token } = user;
+console.log("D1", id_token);
 
 const traceUser = await apiClient.authenticateOidc(id_token);
+console.log("E", traceUser);
 console.log(traceUser);
+window.location.href = "/";
 
 </script>
 </body>

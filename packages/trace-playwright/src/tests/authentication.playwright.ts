@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { config } from "dotenv";
-import { Homepage } from "../models/homepage.ts";
 import { KeycloakLogin } from "../models/keycloak.ts";
+import { Loginpage } from "../models/loginpage.ts";
 import { waitForPredicate } from "../utils.ts";
 
 config({ quiet: true });
@@ -9,9 +9,10 @@ config({ quiet: true });
 test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
   const page = await context.newPage();
   {
-    const homepage = new Homepage(page);
-    await homepage.goto();
-    await homepage.login();
+    const loginpage = new Loginpage(page);
+    await loginpage.goto();
+    await loginpage.selectIdp("Keycloak");
+    await loginpage.login();
   }
 
   {
