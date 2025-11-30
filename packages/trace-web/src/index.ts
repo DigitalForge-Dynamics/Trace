@@ -42,6 +42,7 @@ router.get("/login/cookie", (req) => {
   if (auth) {
     // TODO: Conduct Token Verification
     req.cookies.set("Authorization", auth);
+    // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
     return new Response(null, {
       headers: {
         location: "/",
@@ -58,6 +59,7 @@ router.middleware((req) => {
     // TODO: Conduct Token Verification
     return null;
   }
+  // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
   return new Response(null, {
     headers: {
       location: "/login",
@@ -67,6 +69,7 @@ router.middleware((req) => {
   });
 });
 
+// biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
 router.get("/*", () => new Response("", { status: 200 }));
 
 Bun.serve({
