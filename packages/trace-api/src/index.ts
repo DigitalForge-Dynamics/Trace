@@ -19,11 +19,16 @@ router.errorHandler((req, error) => {
   return res;
 });
 
+router.middleware((req) => {
+  console.log(req.method, req.url);
+  return null;
+});
+
 router.get(
   "/health-check",
   (): Response => Response.json({ health: "OK" } satisfies HealthCheckResponse, { status: 200 }),
 );
-//router.options("/auth/oidc", () => new Response(null, { status: 200, headers: corsHeaders }));
+router.options("/auth/oidc", () => new Response(null, { status: 200, headers: corsHeaders }));
 router.post("/auth/oidc", authenticateOidc);
 router.get("/auth/oidc/config", getOidcConfig);
 router.post("/user", createUser);
@@ -36,6 +41,10 @@ const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> 
     port,
     hostname: "localhost",
     routes: router.toNative(corsHeaders),
+    fetch(req) {
+      console.log("Unhandled", req.method, req.url);
+      return new Response(null, { status: 204 });
+    },
   });
   console.log(`Server running at ${server.url}`);
   return server;

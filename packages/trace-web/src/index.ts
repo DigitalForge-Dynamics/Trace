@@ -37,18 +37,37 @@ router.get("/login", async () => {
   return new Response(stream, { headers: { "Content-Type": "text/html" } });
 });
 
-router.middleware(
-  () =>
-    new Response("", {
+router.get("/login/cookie", (req) => {
+  const auth = req.headers.get("Authorization");
+  if (auth) {
+    // TODO: Conduct Token Verification
+    req.cookies.set("Authorization", auth);
+    return new Response(null, {
       headers: {
-        location: "/login",
-        "Content-Type": "text/html",
+        location: "/",
+        "Access-Control-Allow-Origin": "*",
       },
       status: 307,
-    }),
-);
+    });
+  }
+  return Response.json({ message: "Missing Token" }, { status: 401 });
+});
 
-router.get("/*", () => new Response(null, { status: 204 }));
+router.middleware((req) => {
+  if (req.cookies.has("Authorization")) {
+    // TODO: Conduct Token Verification
+    return null;
+  }
+  return new Response(null, {
+    headers: {
+      location: "/login",
+      "Access-Control-Allow-Origin": "*",
+    },
+    status: 307,
+  });
+});
+
+router.get("/*", () => new Response("", { status: 200 }));
 
 Bun.serve({
   port: 5173,

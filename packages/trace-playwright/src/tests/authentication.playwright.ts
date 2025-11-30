@@ -23,7 +23,7 @@ test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
     await keycloak.login(process.env.KEYCLOAK_USERNAME, process.env.KEYCLOAK_PASSWORD);
   }
 
-  await waitForPredicate(() => !page.url().includes("/oidc-callback"));
+  await waitForPredicate(() => !page.url().includes("/oidc-callback"), { limit: 50, interval: 100 });
   const url = new URL(page.url());
   expect(url.pathname).toBe("/");
 

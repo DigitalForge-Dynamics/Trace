@@ -10,7 +10,8 @@
     "fmt:fix": "biome format --fix",
     "dev:api": "cd packages/trace-api/ && bun dev",
     "dev:web": "cd packages/trace-web/ && bun dev",
-    "e2e": "cd packages/trace-playwright/ && bun e2e"
+    "e2e": "cd packages/trace-playwright/ && bun e2e",
+    "e2e:ui": "cd packages/trace-playwright/ && bun e2e:ui"
   },
   "devDependencies": {
     "@types/bun": "latest"
