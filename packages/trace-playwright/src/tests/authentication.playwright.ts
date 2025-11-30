@@ -5,6 +5,8 @@ import { Loginpage } from "../models/loginpage.ts";
 import { waitForPredicate } from "../utils.ts";
 
 config({ quiet: true });
+const welcomeRegex = /^\nWelcome TRACE_ADMIN\n\n\n\t$/;
+
 
 test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
   const page = await context.newPage();
@@ -32,4 +34,6 @@ test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
     state: expect.any(String),
     code: expect.any(String),
   });
+
+  expect(page.getByText(welcomeRegex)).toBeVisible({ timeout: 10_000 });
 });

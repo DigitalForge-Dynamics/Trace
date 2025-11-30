@@ -69,6 +69,19 @@ router.middleware((req) => {
   });
 });
 
+router.get("/", (req) => {
+  const username = JSON.parse(req.cookies.get("Authorization") ?? "{}").user.username;
+  const contents = `
+<!DOCTYPE html>
+<html>
+<body>
+Welcome ${username}
+</body>
+</html>
+	`;
+  return new Response(contents, { headers: { "Content-Type": "text/html" } });
+});
+
 // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
 router.get("/*", () => new Response("", { status: 200 }));
 
