@@ -25,7 +25,10 @@ const oidcResponse = z
         iss: z.url().transform((url) => new URL(url)),
         aud: z.string(),
         iat: z.number().transform((seconds) => new Date(seconds * 1000)),
-        nbf: z.number().transform((seconds) => new Date(seconds * 1000)),
+        nbf: z
+          .number()
+          .transform((seconds) => new Date(seconds * 1000))
+          .optional(),
         exp: z.number().transform((seconds) => new Date(seconds * 1000)),
       })
       .loose()

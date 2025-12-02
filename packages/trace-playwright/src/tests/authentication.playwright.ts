@@ -1,17 +1,19 @@
 import { expect, test } from "@playwright/test";
 import { config } from "dotenv";
-import { Homepage } from "../models/homepage.ts";
 import { KeycloakLogin } from "../models/keycloak.ts";
+import { Loginpage } from "../models/loginpage.ts";
 import { waitForPredicate } from "../utils.ts";
 
 config({ quiet: true });
+const welcomeRegex = /^\nWelcome TRACE_ADMIN\n\n\n\t$/;
 
 test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
   const page = await context.newPage();
   {
-    const homepage = new Homepage(page);
-    await homepage.goto();
-    await homepage.login();
+    const loginpage = new Loginpage(page);
+    await loginpage.goto();
+    await loginpage.selectIdp("Keycloak");
+    await loginpage.login();
   }
 
   {
@@ -22,7 +24,7 @@ test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
     await keycloak.login(process.env.KEYCLOAK_USERNAME, process.env.KEYCLOAK_PASSWORD);
   }
 
-  await waitForPredicate(() => !page.url().includes("/oidc-callback"));
+  await waitForPredicate(() => !page.url().includes("/oidc-callback"), { limit: 50, interval: 100 });
   const url = new URL(page.url());
   expect(url.pathname).toBe("/");
 
@@ -31,4 +33,6 @@ test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
     state: expect.any(String),
     code: expect.any(String),
   });
+
+  expect(page.getByText(welcomeRegex)).toBeVisible({ timeout: 10_000 });
 });

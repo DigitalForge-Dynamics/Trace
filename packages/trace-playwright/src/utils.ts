@@ -17,7 +17,7 @@ const waitForPredicate = (predicate: () => boolean, options?: WaitForOptions): P
       }
       if (options?.limit && count >= options?.limit) {
         clearInterval(interval);
-        return reject(count);
+        return reject({ message: "Timeout waiting for predicate", count, options });
       }
       count += 1;
     }, options?.interval ?? DEFAULT_WAITFOR_INTERVAL_MS);

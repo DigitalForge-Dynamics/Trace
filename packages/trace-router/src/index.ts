@@ -1,7 +1,7 @@
 import type { BunRequest } from "bun";
 
 type Params = Record<never, never>;
-type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
 
 type NativeHandler<TParams extends Params> = (req: BunRequest & { params: TParams }) => Promise<Response> | Response;
 type ErrorHandler = (req: BunRequest, error: unknown) => Promise<Response> | Response;
@@ -97,6 +97,19 @@ class Router<in out TParams extends Params> {
     handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
   ): this {
     return this.on("DELETE", path, handler);
+  }
+
+  /**
+   * Define a route, with handler for the OPTION HTTP Method
+   * @param path - Path on which to define handler.
+   * @param hander - Strictly typed handler, for corresponding path.
+   * @return Router to allow for chaining definitions.
+   */
+  options<TPath extends `/${string}`>(
+    path: TPath,
+    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+  ): this {
+    return this.on("OPTIONS", path, handler);
   }
 
   /**
