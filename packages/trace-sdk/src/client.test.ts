@@ -27,11 +27,22 @@ describe("Integration: APIClient", () => {
       const idpToken = Bun.env.IDP_TOKEN as Exclude<typeof Bun.env.IDP_TOKEN, undefined>;
       const idpTokenPayload = JSON.parse(atob(idpToken.split(".")[1] ?? ""));
       const user = await apiClient.createUser({ username: "IDP_TOKEN" });
-      await apiClient.linkUserIdp({
-        userId: user.uid,
-        sub: idpTokenPayload.sub,
-        idp: new URL(idpTokenPayload.iss),
-      });
+      try {
+        await apiClient.linkUserIdp({
+          userId: user.uid,
+          sub: idpTokenPayload.sub,
+          idp: new URL(idpTokenPayload.iss),
+        });
+      } catch (err) {
+        if (!(err instanceof Error)) {
+          throw err;
+        }
+        if (err.message !== "Request to /user/link with method POST failed with status: 500") {
+          throw err;
+        }
+        // Assume user is already linked, most likely by TRACE_ADMIN bootstrap setup.
+        // If not, then following step will fail to authenticate as a user.
+      }
 
       const response = await apiClient.authenticateOidc(idpToken);
       expect(response).toMatchObject({
