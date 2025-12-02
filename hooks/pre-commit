@@ -1,7 +1,0 @@
-set -e
-
-npx tsc -p api
-npx tsc -p web
-
-npm run test:unit --prefix api
-npm run test --prefix web

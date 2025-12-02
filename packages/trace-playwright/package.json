@@ -1,0 +1,20 @@
+{
+  "name": "trace-playwright",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "e2e": "playwright test --trace on",
+    "e2e:ui": "playwright test --ui"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:",
+    "dotenv": "catalog:",
+    "trace-api": "workspace:",
+    "trace-web": "workspace:"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

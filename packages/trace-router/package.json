@@ -1,0 +1,13 @@
+{
+  "name": "trace-router",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

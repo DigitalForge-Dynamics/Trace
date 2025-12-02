@@ -1,1 +1,7 @@
 .vscode
+node_modules
+.env
+tls
+packages/trace-web/src/.config.ts
+assets
+test-results

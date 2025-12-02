@@ -1,0 +1,10 @@
+`$regex` where {
+    and {
+        $regex <: r"^/.*/$",
+        not $regex <: r"^/\^.*\$/$",
+    },
+    register_diagnostic(
+        span = $regex,
+        message = "Prefer full content matches for regex. Consider adding `/^` to the start, and `$/` to the end.",
+    )
+}

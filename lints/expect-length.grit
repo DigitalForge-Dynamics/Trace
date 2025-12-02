@@ -1,0 +1,6 @@
+`expect($expr.length).toBe($val)` where {
+    register_diagnostic(
+        span = $expr,
+        message = "Prefer `expect($expr).toHaveLength($val)`, over `expect($expr.length).toBe($val)`.",
+    )
+}

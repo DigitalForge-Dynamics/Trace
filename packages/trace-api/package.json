@@ -1,0 +1,25 @@
+{
+  "name": "trace-api",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:",
+    "zod": "catalog:",
+    "trace-schemas": "workspace:",
+    "trace-router": "workspace:",
+    "trace-db": "workspace:"
+  },
+  "dependencies": {
+    "jose": "catalog:"
+  }
+}

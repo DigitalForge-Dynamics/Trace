@@ -1,0 +1,10 @@
+`$expr` where {
+    and {
+        $expr <: contains `await $t`,
+        $expr <: contains `return`,
+    },
+    register_diagnostic(
+        span = $expr,
+        message = "Prefer `return $expr` over `return await $expr`. Unless intentionally wanting the error to be thrown here."
+    )
+}
