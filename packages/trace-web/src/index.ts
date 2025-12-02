@@ -82,9 +82,6 @@ Welcome ${username}
   return new Response(contents, { headers: { "Content-Type": "text/html" } });
 });
 
-// biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
-router.get("/*", () => new Response("", { status: 200 }));
-
 Bun.serve({
   port: 5173,
   tls: {

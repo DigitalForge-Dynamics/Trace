@@ -7,7 +7,6 @@ import { waitForPredicate } from "../utils.ts";
 config({ quiet: true });
 const welcomeRegex = /^\nWelcome TRACE_ADMIN\n\n\n\t$/;
 
-
 test("Is able to login, using OIDC against Keycloak", async ({ context }) => {
   const page = await context.newPage();
   {
