@@ -76,13 +76,16 @@ describe("Integration: APIClient", () => {
   });
 
   describe("Tests linkUserIdp() Method", () => {
-    const linkInfo: LinkUserIdpRequest = {
-      userId: randomUUIDv7(),
+    const linkInfo: Omit<LinkUserIdpRequest, "userId"> = {
       idp: new URL("https://token.actions.githubusercontent.com"),
       sub: randomUUIDv7(),
     };
     it("Returns a successful response", async () => {
-      const response = await apiClient.linkUserIdp(linkInfo);
+      const user = await apiClient.createUser({ username: "Foo" });
+      const response = await apiClient.linkUserIdp({
+        ...linkInfo,
+        userId: user.uid,
+      });
       expect(response).toBeUndefined();
     });
   });
