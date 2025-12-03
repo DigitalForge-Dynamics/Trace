@@ -1,6 +1,6 @@
 .vscode
 node_modules
-.env
+.env.*
 tls
 packages/trace-web/src/.config.ts
 assets
