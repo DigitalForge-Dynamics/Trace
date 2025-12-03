@@ -31,17 +31,16 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
   }
 
   // Verify Token against issuer
-  const jwks = createRemoteJWKSet(new URL("/.well-known/jwks", requestedIdp.issuer));
-  let payload: JWTPayload & Required<Pick<JWTPayload, "iss" | "aud" | "sub" | "iat" | "nbf">>;
+  const { jwks_uri } = await fetch(new URL(".well-known/openid-configuration", `${requestedIdp.issuer}/`)).then(
+    (configReq) => configReq.json(),
+  );
+  const jwks = createRemoteJWKSet(new URL(jwks_uri));
+  let payload: JWTPayload & Required<Pick<JWTPayload, "iss" | "aud" | "sub" | "iat">>;
   try {
-    const result = await jwtVerify<JWTPayload & Required<Pick<JWTPayload, "iss" | "aud" | "sub" | "iat" | "nbf">>>(
-      jwt,
-      jwks,
-      {
-        audience: requestedIdp.audience,
-        requiredClaims: ["iss", "sub", "iat", "nbf"],
-      },
-    );
+    const result = await jwtVerify<JWTPayload & Required<Pick<JWTPayload, "iss" | "aud" | "sub" | "iat">>>(jwt, jwks, {
+      audience: requestedIdp.audience,
+      requiredClaims: ["iss", "sub", "iat"],
+    });
     payload = result.payload;
   } catch (err) {
     if (err instanceof JWTClaimValidationFailed) {

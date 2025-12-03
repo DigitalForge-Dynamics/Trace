@@ -91,6 +91,8 @@
         "@types/react-dom": "^19.2.2",
       },
       "peerDependencies": {
+        "jose": "catalog:",
+        "trace-router": "workspace:",
         "trace-sdk": "workspace:",
         "typescript": "catalog:",
       },

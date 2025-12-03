@@ -64,6 +64,7 @@ class NetClient {
       ...init,
       method,
       tls: this.tls,
+      mode: "cors",
       headers: {
         ...init?.headers,
         ...this.headers,
