@@ -14,7 +14,7 @@ KEYCLOAK_ADMIN_PASSWORD=""
 
 # DB settings
 KC_DB=""
-KC_DB_URL=jdbc:driver://username:port/database
+KC_DB_URL=jdbc:username://host:port/database
 KC_DB_USERNAME=""
 KC_DB_PASSWORD=""
 

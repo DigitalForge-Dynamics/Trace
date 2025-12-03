@@ -7,7 +7,6 @@ services:
     restart: unless-stopped
     command: >
       start
-      --optimized
       --hostname-strict=false
       --https-key-store-file=/opt/keycloak/certs/keycloak.p12
       --https-key-store-password=${KEYCLOAK_TLS_PASSWORD}
@@ -19,12 +18,14 @@ services:
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/tls.crt
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/tls.key
     volumes:
-      - ./certs:/opt/keycloak/certs:ro
+      - ./.certs:/opt/keycloak/certs:ro
   
   postgres-keycloak:
-    image: postgres:18
+    image: postgres:15
     container_name: keycloak-postgres
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     env_file:
       - .env.development
     volumes:
