@@ -37,6 +37,7 @@ const oidcResponse = z
       uid: z.uuidv7(),
       username: z.string(),
     }),
+    token: z.jwt(),
   })
   .readonly();
 

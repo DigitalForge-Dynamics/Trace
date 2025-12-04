@@ -1,6 +1,14 @@
+import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose";
 import { renderToReadableStream } from "react-dom/server";
 import { Router } from "trace-router";
+import type { APIClient } from "trace-sdk";
+import { API_URL } from "./config.ts";
 import { LoginPage } from "./pages/LoginPage/index.tsx";
+
+type OIDCResponse = Awaited<ReturnType<typeof APIClient.prototype.authenticateOidc>>;
+const jwks: ReturnType<typeof createRemoteJWKSet> = createRemoteJWKSet(
+  new URL("./auth/oidc/.well-known/jwks", API_URL),
+);
 
 const serveJs = (filename: string) => async (): Promise<Response> => {
   const buildRes = await Bun.build({
@@ -22,6 +30,24 @@ const serveJs = (filename: string) => async (): Promise<Response> => {
   return new Response(text, { headers: { "Content-Type": script.type } });
 };
 
+type HeaderVerification =
+  | { valid: false; info: "Missing Authentication" }
+  | { valid: false; info: "Invalid Token" }
+  | { valid: true; token: string; payload: JWTPayload & OIDCResponse };
+
+const verifyAuthToken = async (header: string | null): Promise<HeaderVerification> => {
+  if (!header) {
+    return { valid: false, info: "Missing Authentication" };
+  }
+  const token = header.startsWith("Bearer ") ? header.substring("Bearer ".length) : header;
+  try {
+    const { payload } = await jwtVerify<OIDCResponse>(token, jwks);
+    return { valid: true, token, payload };
+  } catch {
+    return { valid: false, info: "Invalid Token" };
+  }
+};
+
 const router: Router<Record<string, never>> = new Router();
 
 router.get("/config.js", serveJs("./config.ts"));
@@ -37,26 +63,25 @@ router.get("/login", async () => {
   return new Response(stream, { headers: { "Content-Type": "text/html" } });
 });
 
-router.get("/login/cookie", (req) => {
-  const auth = req.headers.get("Authorization");
-  if (auth) {
-    // TODO: Conduct Token Verification
-    req.cookies.set("Authorization", auth);
-    // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
-    return new Response(null, {
-      headers: {
-        location: "/",
-        "Access-Control-Allow-Origin": "*",
-      },
-      status: 307,
-    });
+router.get("/login/cookie", async (req) => {
+  const verification = await verifyAuthToken(req.headers.get("Authorization"));
+  if (!verification.valid) {
+    return Response.json({ message: verification.info }, { status: 401 });
   }
-  return Response.json({ message: "Missing Token" }, { status: 401 });
+  req.cookies.set("Authorization", verification.token);
+  // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
+  return new Response(null, {
+    headers: {
+      location: "/",
+      "Access-Control-Allow-Origin": "*",
+    },
+    status: 307,
+  });
 });
 
-router.middleware((req) => {
-  if (req.cookies.has("Authorization")) {
-    // TODO: Conduct Token Verification
+router.middleware(async (req) => {
+  const verification = await verifyAuthToken(req.cookies.get("Authorization"));
+  if (verification.valid) {
     return null;
   }
   // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
@@ -69,8 +94,13 @@ router.middleware((req) => {
   });
 });
 
-router.get("/", (req) => {
-  const username = JSON.parse(req.cookies.get("Authorization") ?? "{}").user.username;
+router.get("/", async (req) => {
+  const verification = await verifyAuthToken(req.cookies.get("Authorization"));
+  if (!verification.valid) {
+    throw new Error("Should have been caught by middleware. TODO: Inter-stack state.");
+  }
+  const { username } = verification.payload.user;
+
   const contents = `
 <!DOCTYPE html>
 <html>

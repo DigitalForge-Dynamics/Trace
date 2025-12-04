@@ -15,4 +15,4 @@ const genUserManager = (idp: Awaited<ReturnType<typeof apiClient.getOidcConfig>>
   return userManager;
 };
 
-export { apiClient, genUserManager };
+export { apiClient, netClient, genUserManager, API_URL };

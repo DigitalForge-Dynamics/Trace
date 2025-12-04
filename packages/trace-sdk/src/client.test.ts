@@ -54,6 +54,7 @@ describe("Integration: APIClient", () => {
           iat: expect.any(Date),
           exp: expect.any(Date),
         },
+        token: expect.any(String),
       });
     });
   });

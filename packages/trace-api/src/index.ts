@@ -38,7 +38,7 @@ router.get("/auth/oidc/config", getOidcConfig);
 router.middleware(async (req) => {
   try {
     // biome-ignore lint/security/noSecrets: String literal is not a secret
-    const token = req.headers.get("Authorization")?.substring("Bearer: ".length);
+    const token = req.headers.get("Authorization")?.substring("Bearer ".length);
     if (!token) {
       throw new Error("Missing Token");
     }
