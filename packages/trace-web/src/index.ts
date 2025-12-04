@@ -66,6 +66,7 @@ router.get("/login", async () => {
 router.get("/login/cookie", async (req) => {
   const verification = await verifyAuthToken(req.headers.get("Authorization"));
   if (!verification.valid) {
+    req.cookies.delete("Authorization");
     return Response.json({ message: verification.info }, { status: 401 });
   }
   req.cookies.set("Authorization", verification.token);
@@ -84,6 +85,7 @@ router.middleware(async (req) => {
   if (verification.valid) {
     return null;
   }
+  req.cookies.delete("Authorization");
   // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
   return new Response(null, {
     headers: {
