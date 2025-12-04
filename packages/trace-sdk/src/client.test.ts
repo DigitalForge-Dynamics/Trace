@@ -4,11 +4,12 @@ import { startServer } from "trace-api";
 import type { CreateUserRequest, LinkUserIdpRequest } from "trace-schemas";
 import { APIClient, NetClient } from "./client.ts";
 
-describe("Integration: APIClient", () => {
+const apiServer: ReturnType<typeof Bun.serve> = await startServer(0);
+
+describe("Integration > APIClient > Unauthenticated", () => {
   let apiClient: APIClient;
 
-  beforeAll(async () => {
-    const apiServer = await startServer(0);
+  beforeAll(() => {
     const netClient = new NetClient(apiServer.url);
     apiClient = new APIClient(netClient);
   });
@@ -18,43 +19,6 @@ describe("Integration: APIClient", () => {
       const response = await apiClient.getHealth();
       expect(response).toStrictEqual({
         health: "OK",
-      });
-    });
-  });
-
-  describe("Tests authenticateOidc(string) Method", () => {
-    it.if(Bun.env.IDP_TOKEN !== undefined)("Returns the validated token claims.", async () => {
-      const idpToken = Bun.env.IDP_TOKEN as Exclude<typeof Bun.env.IDP_TOKEN, undefined>;
-      const idpTokenPayload = JSON.parse(atob(idpToken.split(".")[1] ?? ""));
-      const user = await apiClient.createUser({ username: "IDP_TOKEN" });
-      try {
-        await apiClient.linkUserIdp({
-          userId: user.uid,
-          sub: idpTokenPayload.sub,
-          idp: new URL(idpTokenPayload.iss),
-        });
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          throw err;
-        }
-        if (err.message !== "Request to /user/link with method POST failed with status: 500") {
-          throw err;
-        }
-        // Assume user is already linked, most likely by TRACE_ADMIN bootstrap setup.
-        // If not, then following step will fail to authenticate as a user.
-      }
-
-      const response = await apiClient.authenticateOidc(idpToken);
-      expect(response).toMatchObject({
-        message: "Authenticated",
-        data: {
-          sub: expect.any(String),
-          iss: expect.any(URL),
-          aud: expect.any(String),
-          iat: expect.any(Date),
-          exp: expect.any(Date),
-        },
-        token: expect.any(String),
       });
     });
   });
@@ -74,6 +38,40 @@ describe("Integration: APIClient", () => {
         expect(idp.label).not.toBeEmpty();
       }
     });
+  });
+
+  describe("Tests authenticateOidc(string) Method", () => {
+    it.if(Bun.env.IDP_TOKEN !== undefined)("Returns the validated token claims.", async () => {
+      const idpToken = Bun.env.IDP_TOKEN as Exclude<typeof Bun.env.IDP_TOKEN, undefined>;
+      // Assumes IDP_TOKEN is already linked to a user.
+      // This is most likely done through the TRACE_ADMIN bootstrap setup.
+
+      const response = await apiClient.authenticateOidc(idpToken);
+      expect(response).toMatchObject({
+        message: "Authenticated",
+        data: {
+          sub: expect.any(String),
+          iss: expect.any(URL),
+          aud: expect.any(String),
+          iat: expect.any(Date),
+          exp: expect.any(Date),
+        },
+        token: expect.any(String),
+      });
+    });
+  });
+});
+
+describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenticated", () => {
+  let apiClient: APIClient;
+
+  beforeAll(async () => {
+    const netClient = new NetClient(apiServer.url);
+    apiClient = new APIClient(netClient);
+
+    const idpToken = Bun.env.IDP_TOKEN as Exclude<typeof Bun.env.IDP_TOKEN, undefined>;
+    const { token } = await apiClient.authenticateOidc(idpToken);
+    netClient.setAuthorisation(token);
   });
 
   describe("Tests createUser() Method", () => {
