@@ -11,7 +11,7 @@ import {
   oidcResponse,
 } from "trace-schemas";
 
-type SDKHeadersInit = Headers; //Exclude<HeadersInit, Array<unknown>>;
+type SDKHeadersInit = Headers;
 type SDKRequestInit = Omit<RequestInit, "headers"> & { headers?: SDKHeadersInit };
 
 class NetClient {
