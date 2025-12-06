@@ -4,13 +4,13 @@ import {
   createUserResponse,
   type HealthCheckResponse,
   healthCheckResponse,
+  type JWKSResponse,
+  jwksResponse,
   type LinkUserIdpRequest,
   type OIDCConfigResponse,
   type OIDCResponse,
   oidcConfigResponse,
   oidcResponse,
-  type JWKSResponse,
-  jwksResponse,
 } from "trace-schemas";
 
 type SDKHeadersInit = Headers;
