@@ -5,7 +5,7 @@ import type { APIClient } from "trace-sdk";
 import { API_URL } from "./config.ts";
 import { LoginPage } from "./pages/LoginPage/index.tsx";
 
-type OIDCResponse = Awaited<ReturnType<typeof APIClient.prototype.authenticateOidc>>;
+type OIDCResponseUser = Pick<Awaited<ReturnType<typeof APIClient.prototype.authenticateOidc>>, "user">;
 const jwks: ReturnType<typeof createRemoteJWKSet> = createRemoteJWKSet(
   new URL("./auth/oidc/.well-known/jwks", API_URL),
 );
@@ -33,7 +33,7 @@ const serveJs = (filename: string) => async (): Promise<Response> => {
 type HeaderVerification =
   | { valid: false; info: "Missing Authentication" }
   | { valid: false; info: "Invalid Token" }
-  | { valid: true; token: string; payload: JWTPayload & OIDCResponse };
+  | { valid: true; token: string; payload: JWTPayload & OIDCResponseUser };
 
 const verifyAuthToken = async (header: string | null): Promise<HeaderVerification> => {
   if (!header) {
@@ -41,7 +41,9 @@ const verifyAuthToken = async (header: string | null): Promise<HeaderVerificatio
   }
   const token = header.startsWith("Bearer ") ? header.substring("Bearer ".length) : header;
   try {
-    const { payload } = await jwtVerify<OIDCResponse>(token, jwks);
+    const { payload } = await jwtVerify<OIDCResponseUser>(token, jwks, {
+      requiredClaims: ["user"],
+    });
     return { valid: true, token, payload };
   } catch {
     return { valid: false, info: "Invalid Token" };
@@ -56,7 +58,20 @@ router.get(
   () => new Response(Bun.file("./src/oidc-callback.html"), { headers: { "Content-Type": "text/html" } }),
 );
 router.get("/login/hydrate.js", serveJs("./pages/LoginPage/hydrate.tsx"));
-router.get("/login", async () => {
+router.get("/login", async (req) => {
+  const verification = await verifyAuthToken(req.cookies.get("Authorization"));
+  if (verification.valid) {
+    // NOTE: Already authenticated, so redirect away from login page.
+    // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
+    return new Response(null, {
+      headers: {
+        location: "/",
+        "Access-Control-Allow-Origin": "*",
+      },
+      status: 307,
+    });
+  }
+
   const stream = await renderToReadableStream(LoginPage(), {
     bootstrapModules: ["/login/hydrate.js"],
   });
@@ -121,4 +136,13 @@ Bun.serve({
     certFile: "tls/server_cert.pem",
   },
   routes: router.toNative(),
+  fetch: () =>
+    // biome-ignore lint/plugin/response-json: JSON is unintuitive outside of API.
+    new Response(null, {
+      headers: {
+        location: "/login",
+        "Access-Control-Allow-Origin": "*",
+      },
+      status: 307,
+    }),
 });
