@@ -4,12 +4,17 @@ import {
   createUserResponse,
   type HealthCheckResponse,
   healthCheckResponse,
+  type JWKSResponse,
+  jwksResponse,
   type LinkUserIdpRequest,
   type OIDCConfigResponse,
   type OIDCResponse,
   oidcConfigResponse,
   oidcResponse,
 } from "trace-schemas";
+
+type SDKHeadersInit = Headers;
+type SDKRequestInit = Omit<RequestInit, "headers"> & { headers?: SDKHeadersInit };
 
 class NetClient {
   private readonly baseURL: URL;
@@ -46,7 +51,7 @@ class NetClient {
     return this;
   }
 
-  public async fetch(path: string, method: "GET" | "POST", init?: RequestInit): Promise<unknown> {
+  public async fetch(path: string, method: "GET" | "POST", init?: SDKRequestInit): Promise<unknown> {
     if (!(path.startsWith("./") || path.startsWith("/"))) {
       throw new Error(`Invalid path prefix provided to fetch: ${path}, with method: ${method}`);
     }
@@ -59,28 +64,36 @@ class NetClient {
       // This takes the blanket approach of banning all escapes, due to their ability to bypass checks preventing path traversal.
       throw new Error("Character escapes are not currently permitted within NetClient");
     }
+    const headers = new Headers();
+    if (init?.headers) {
+      init.headers.forEach((value, key) => {
+        headers.set(key, value);
+      });
+    }
+    this.headers.forEach((value, key) => {
+      headers.set(key, headers.get(key) ?? value);
+    });
+
     const url = new URL(relativePath, this.baseURL);
     const response = await fetch(url, {
       ...init,
       method,
       tls: this.tls,
       mode: "cors",
-      headers: {
-        ...init?.headers,
-        ...this.headers,
-      },
+      headers,
     });
     if (!response.ok) {
-      throw new Error(`Request to ${path} with method ${method} failed with status: ${response.status}`);
+      const body = await response.text();
+      throw new Error(`Request to ${method} ${path} failed with status: ${response.status}, and body ${body}`);
     }
     return response.json();
   }
 
-  public get(path: string, init?: RequestInit): Promise<unknown> {
+  public get(path: string, init?: SDKRequestInit): Promise<unknown> {
     return this.fetch(path, "GET", init);
   }
 
-  public post(path: string, init?: RequestInit): Promise<unknown> {
+  public post(path: string, init?: SDKRequestInit): Promise<unknown> {
     return this.fetch(path, "POST", init);
   }
 }
@@ -98,17 +111,20 @@ class APIClient {
   }
 
   public async authenticateOidc(idpToken: string): Promise<OIDCResponse> {
-    const body = await this.netClient.post("/auth/oidc", {
-      headers: {
-        authorization: `Bearer ${idpToken}`,
-      },
-    });
+    const headers = new Headers();
+    headers.set("Authorization", `Bearer ${idpToken}`);
+    const body = await this.netClient.post("/auth/oidc", { headers });
     return oidcResponse.parse(body);
   }
 
   public async getOidcConfig(): Promise<OIDCConfigResponse> {
     const body = await this.netClient.get("/auth/oidc/config");
     return oidcConfigResponse.parse(body);
+  }
+
+  public async getJwks(): Promise<JWKSResponse> {
+    const body = await this.netClient.get("/auth/oidc/.well-known/jwks");
+    return jwksResponse.parse(body);
   }
 
   public async createUser(user: CreateUserRequest): Promise<CreateUserResponse> {

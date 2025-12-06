@@ -12,7 +12,7 @@ type Route<TParams extends Params, TPath extends string> = {
 };
 type Middleware<TParams extends Params> = (
   req: BunRequest & { params: TParams },
-) => Promise<Response> | Response | Promise<null> | null;
+) => Promise<Response> | Response | Promise<null> | null | Promise<Response | null>;
 
 type Layer =
   | { type: "route"; route: Route<Params, string> }

@@ -200,7 +200,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/handlers/auth.ts",
+        "packages/trace-api/src/handlers/oidc.ts",
         "packages/trace-router/src/index.test.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-sdk/src/client.test.ts",
@@ -268,7 +268,8 @@
         "packages/trace-router/src/index.test.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-sdk/src/client.ts",
-        "packages/trace-web/src/config.ts"
+        "packages/trace-web/src/config.ts",
+        "packages/trace-web/src/index.ts"
       ],
       "linter": {
         "rules": {
