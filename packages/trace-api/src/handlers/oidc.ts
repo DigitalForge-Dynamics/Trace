@@ -1,10 +1,10 @@
-import { createRemoteJWKSet, decodeJwt, type JWTPayload, jwtVerify } from "jose";
+import { createRemoteJWKSet, decodeJwt, type GenerateKeyPairResult, type JWTPayload, jwtVerify, SignJWT } from "jose";
 import { JWTClaimValidationFailed, JWTExpired } from "jose/errors";
 import type { oidcConfigResponse } from "trace-schemas";
 import type { z } from "zod";
 import { db } from "../db.ts";
 
-const authenticateOidc = async (req: Request): Promise<Response> => {
+const authenticateOidc = async (req: Request, signingJwks: GenerateKeyPairResult): Promise<Response> => {
   // Load Token
   const HeaderPrefix = "Bearer ";
   const header = req.headers.get("authorization");
@@ -63,9 +63,20 @@ const authenticateOidc = async (req: Request): Promise<Response> => {
   }
 
   // Return generated user token
-  // TODO: Generate User Token, and return in request.
-  return Response.json({ message: "Authenticated", data: payload, user }, { status: 200 });
+  const token = await genToken(user, signingJwks.privateKey);
+  return Response.json({ message: "Authenticated", data: payload, user, token }, { status: 200 });
 };
+
+const genToken = (user: object, privateKey: CryptoKey): Promise<string> =>
+  new SignJWT({
+    user,
+  })
+    .setProtectedHeader({ alg: "ES256" })
+    .setIssuedAt()
+    .setExpirationTime("30m")
+    .setIssuer("http://localhost:3000/auth/oidc")
+    .setAudience(["trace"])
+    .sign(privateKey);
 
 const getOidcConfig = async (): Promise<Response> => {
   const idps = await db.listIdps();

@@ -7,7 +7,7 @@
 You have reached an OIDC Callback page.
 <a href="/">Home</a>
 <script type="module">
-const { apiClient, genUserManager } = await import("/config.js");
+const { apiClient, netClient, genUserManager } = await import("/config.js");
 
 // Load current state
 const url = new URL(window.location);
@@ -23,11 +23,12 @@ const userManager = genUserManager(idp);
 const user = await userManager.signinCallback();
 const { id_token } = user;
 const traceUser = await apiClient.authenticateOidc(id_token);
+netClient.setAuthorisation(traceUser.token);
 
 // Navigate to authenticated homepage.
 await fetch("/login/cookie", {
 	headers: {
-		Authorization: JSON.stringify(traceUser),
+		Authorization: traceUser.token,
 	}
 });
 window.location.href = "/";
