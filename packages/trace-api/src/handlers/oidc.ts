@@ -71,7 +71,7 @@ const genToken = (user: object, privateKey: CryptoKey): Promise<string> =>
   new SignJWT({
     user,
   })
-    .setProtectedHeader({ alg: "ES256" })
+    .setProtectedHeader({ alg: "ES512" })
     .setIssuedAt()
     .setExpirationTime("30m")
     .setIssuer("http://localhost:3000/auth/oidc")

@@ -60,7 +60,7 @@ type OIDCConfigResponse = z.infer<typeof oidcConfigResponse>;
 const jwksResponse = z.strictObject({
   keys: z
     .strictObject({
-      crv: z.enum(["P-256"]),
+      crv: z.enum(["P-521"]),
       kty: z.literal("EC"),
       x: z.string(),
       y: z.string(),

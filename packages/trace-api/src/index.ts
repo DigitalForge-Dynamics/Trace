@@ -8,7 +8,7 @@ import { authenticateOidc, getOidcConfig } from "./handlers/oidc.ts";
 import { createUser, linkUserIdp } from "./handlers/users.ts";
 import { authenticateRequest } from "./middleware/authentication.ts";
 
-const jwks: GenerateKeyPairResult = await generateKeyPair("ES256");
+const jwks: GenerateKeyPairResult = await generateKeyPair("ES512");
 const router: Router<Record<string, never>> = new Router();
 
 router.errorHandler((req, error) => {
