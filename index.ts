@@ -34,6 +34,35 @@ const envFiles: EnvFiles = {
       required: true,
     },
   ],
+  "trace-playwright": [
+    {
+      name: "KEYCLOAK_USERNAME",
+      required: true,
+    },
+    {
+      name: "KEYCLOAK_PASSWORD",
+      required: true,
+    },
+  ],
+  // TODO: These are only required when running `bun test`. Add `test` script to `package.json` to account for this, using `cwd`.
+  "..": [
+    {
+      name: "KEYCLOAK_ISSUER",
+      required: true,
+    },
+    {
+      name: "KEYCLOAK_AUDIENCE",
+      required: true,
+    },
+    {
+      name: "TRACE_ADMIN_ISSUER",
+      required: true,
+    },
+    {
+      name: "TRACE_ADMIN_SUB",
+      required: true,
+    },
+  ],
 };
 
 const setupEnvFiles = async (): Promise<void> => {
