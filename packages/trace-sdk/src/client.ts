@@ -9,6 +9,8 @@ import {
   type OIDCResponse,
   oidcConfigResponse,
   oidcResponse,
+  type JWKSResponse,
+  jwksResponse,
 } from "trace-schemas";
 
 type SDKHeadersInit = Headers;
@@ -118,6 +120,11 @@ class APIClient {
   public async getOidcConfig(): Promise<OIDCConfigResponse> {
     const body = await this.netClient.get("/auth/oidc/config");
     return oidcConfigResponse.parse(body);
+  }
+
+  public async getJwks(): Promise<JWKSResponse> {
+    const body = await this.netClient.get("/auth/oidc/.well-known/jwks");
+    return jwksResponse.parse(body);
   }
 
   public async createUser(user: CreateUserRequest): Promise<CreateUserResponse> {

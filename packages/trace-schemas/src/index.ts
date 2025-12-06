@@ -57,6 +57,19 @@ const oidcConfigResponse = z.strictObject({
 
 type OIDCConfigResponse = z.infer<typeof oidcConfigResponse>;
 
+const jwksResponse = z.strictObject({
+  keys: z
+    .strictObject({
+      crv: z.enum(["P-256"]),
+      kty: z.literal("EC"),
+      x: z.string(),
+      y: z.string(),
+    })
+    .array()
+    .min(1),
+});
+type JWKSResponse = z.infer<typeof jwksResponse>;
+
 const createUserRequest = z.strictObject({
   username: z.string(),
 });
@@ -83,6 +96,7 @@ export type {
   ErrorResponse,
   OIDCResponse,
   OIDCConfigResponse,
+  JWKSResponse,
   CreateUserRequest,
   CreateUserResponse,
   LinkUserIdpRequest,
@@ -92,6 +106,7 @@ export {
   errorResponse,
   oidcResponse,
   oidcConfigResponse,
+  jwksResponse,
   createUserRequest,
   createUserResponse,
   linkUserIdpRequest,

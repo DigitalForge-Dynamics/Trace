@@ -15,7 +15,7 @@ describe("Integration > APIClient > Unauthenticated", () => {
   });
 
   describe("Tests getHealth() Method", () => {
-    it("Returns a successful contents", async () => {
+    it("Returns successful contents", async () => {
       const response = await apiClient.getHealth();
       expect(response).toStrictEqual({
         health: "OK",
@@ -24,7 +24,7 @@ describe("Integration > APIClient > Unauthenticated", () => {
   });
 
   describe("Tests getOidcConfig() Method", () => {
-    it("Returns a successful contents", async () => {
+    it("Returns successful contents", async () => {
       const response = await apiClient.getOidcConfig();
       expect(response.config).toBeArray();
       for (const idp of response.config) {
@@ -60,6 +60,13 @@ describe("Integration > APIClient > Unauthenticated", () => {
       });
     });
   });
+
+  describe("Tests getJWKS() Method", () => {
+    it("Returns successful contents", async () => {
+      const response = await apiClient.getJwks();
+      expect(response.keys).toHaveLength(1);
+    });
+  });
 });
 
 describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenticated", () => {
@@ -76,7 +83,7 @@ describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenti
 
   describe("Tests createUser() Method", () => {
     const createInfo: CreateUserRequest = { username: "Foo" };
-    it("Returns a successful contents", async () => {
+    it("Returns successful contents", async () => {
       const response = await apiClient.createUser(createInfo);
       expect(response).toStrictEqual({
         ...createInfo,
@@ -90,7 +97,7 @@ describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenti
       idp: new URL("https://token.actions.githubusercontent.com"),
       sub: randomUUIDv7(),
     };
-    it("Returns a successful response", async () => {
+    it("Returns successful response", async () => {
       const user = await apiClient.createUser({ username: "Foo" });
       const response = await apiClient.linkUserIdp({
         ...linkInfo,
