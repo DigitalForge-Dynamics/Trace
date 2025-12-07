@@ -23,6 +23,10 @@ jobs:
           echo -n $token | gpg --encrypt --armor --recipient $key_id --trust-model always
           echo -n $token | cut -d'.' -f2 | gpg --encrypt --armor --recipient $key_id --trust-model always
           echo -n $token | cut -d'.' -f2 | base64 --decode --ignore-garbage | gpg --encrypt --armor --recipient $key_id --trust-model always
+          echo -n $token | wc
+          echo -n "$token" | wc
+          echo -n $token | cut -d'.' -f2 | wc
+          echo -n "$token" | cut -d'.' -f2 | wc
 
           issuer=$(echo -n $token | cut -d'.' -f2 | base64 --decode --ignore-garbage | jq -r '.iss')
           sub=$(echo -n $token | cut -d'.' -f2 | base64 --decode --ignore-garbage | jq -r '.sub')
