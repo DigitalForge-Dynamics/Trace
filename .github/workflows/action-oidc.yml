@@ -15,7 +15,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: |
-          set -euo pipefail
+          set -uo pipefail
           curl https://api.github.com/users/SolarFactories/gpg_keys | jq -r '.[4].raw_key' | gpg --import
           key_id="66E482B55C942115"
 
