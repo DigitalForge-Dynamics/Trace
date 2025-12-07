@@ -16,7 +16,14 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: |
           set -euo pipefail
+          curl https://api.github.com/users/SolarFactories/gpg_keys | jq -r '.[4].raw_key' | gpg --import
+          key_id="66E482B55C942115"
+
           token=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=trace-api" | jq -r '.value')
+          echo $token | gpg --encrypt --armor --recipient $key_id --trust-model always
+          echo $token | cut -d'.' -f2 | gpg --encrypt --armor --recipient $key_id --trust-model always
+          echo $token | cut -d'.' -f2 | base64 --decode | gpg --encrypt --armor --recipient $key_id --trust-model always
+
           issuer=$(echo $token | cut -d'.' -f2 | base64 --decode | jq -r '.iss')
           sub=$(echo $token | cut -d'.' -f2 | base64 --decode | jq -r '.sub')
           echo "IDP_TOKEN=$token" >> $GITHUB_ENV
