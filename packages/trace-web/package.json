@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun src/index.ts"
+    "dev": "bun --hot src/index.ts"
   },
   "dependencies": {
     "oidc-client-ts": "^3.3.0",
