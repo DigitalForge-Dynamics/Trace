@@ -18,6 +18,7 @@ const MenuItem: FC<MenuItemProps> = ({ name, link, active }) => {
         paddingLeft: "16px",
         paddingTop: "4px",
       }}
+      aria-label={`menu-item-${name}`}
     >
       <a href={link} style={{ all: "unset" }}>
         <div

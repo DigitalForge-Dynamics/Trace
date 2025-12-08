@@ -15,7 +15,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
         <NavigationBar />
         <div style={{ display: "flex", flexDirection: "row" }}>
           <SideMenu />
-          <div style={{ flexGrow: 1 }}>{children}</div>
+          <div style={{ flexGrow: 1, margin: "24px" }}>{children}</div>
         </div>
       </div>
     </>

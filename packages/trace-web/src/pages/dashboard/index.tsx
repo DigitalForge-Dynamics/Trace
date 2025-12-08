@@ -4,7 +4,7 @@ import { AppLayout } from "../../components/templates/AppLayout";
 const Dashboard = async (): Promise<JSX.Element> => {
     return(
         <AppLayout>
-            <p>Hello World</p>
+            <p style={{ color: "white" }}>Dashboard</p>
         </AppLayout>
     )
 }

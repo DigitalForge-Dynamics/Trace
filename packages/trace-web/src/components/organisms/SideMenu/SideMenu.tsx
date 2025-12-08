@@ -16,7 +16,7 @@ const SideMenu: FC = () => {
         justifyContent: "space-between",
       }}
     >
-      <div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "50px" }}>
         <MenuItemGroup
           group="Operations"
           routes={[
