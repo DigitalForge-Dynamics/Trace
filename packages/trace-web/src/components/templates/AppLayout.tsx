@@ -4,15 +4,21 @@ import { SideMenu } from "../organisms/SideMenu/SideMenu";
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}
-    >
-      <NavigationBar />
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <SideMenu />
-        <div style={{ flexGrow: 1 }}>{children}</div>
+    <>
+      {/** Temporary measure to access the webpage body */}
+      <head>
+        <link rel="stylesheet" href="/global.css" />
+      </head>
+      <div
+        style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}
+      >
+        <NavigationBar />
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <SideMenu />
+          <div style={{ flexGrow: 1 }}>{children}</div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
