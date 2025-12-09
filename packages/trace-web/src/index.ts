@@ -1,6 +1,9 @@
+// biome-ignore assist/source/organizeImports: These are organised but biome is still not happy.
 import { renderToReadableStream } from "react-dom/server";
 import { Router } from "trace-router";
+
 import { LoginPage } from "./pages/LoginPage/index.tsx";
+import { Dashboard } from "./pages/Dashboard/index.tsx";
 
 const serveJs = (filename: string) => async (): Promise<Response> => {
   const buildRes = await Bun.build({
@@ -27,7 +30,10 @@ const router: Router<Record<string, never>> = new Router();
 router.get("/config.js", serveJs("./config.ts"));
 router.get(
   "/oidc-callback",
-  () => new Response(Bun.file("./src/oidc-callback.html"), { headers: { "Content-Type": "text/html" } }),
+  () =>
+    new Response(Bun.file("./src/oidc-callback.html"), {
+      headers: { "Content-Type": "text/html" },
+    })
 );
 router.get("/login/hydrate.js", serveJs("./pages/LoginPage/hydrate.tsx"));
 router.get("/login", async () => {
@@ -70,7 +76,8 @@ router.middleware((req) => {
 });
 
 router.get("/", (req) => {
-  const username = JSON.parse(req.cookies.get("Authorization") ?? "{}").user.username;
+  const username = JSON.parse(req.cookies.get("Authorization") ?? "{}").user
+    .username;
   const contents = `
 <!DOCTYPE html>
 <html>
@@ -80,6 +87,25 @@ Welcome ${username}
 </html>
 	`;
   return new Response(contents, { headers: { "Content-Type": "text/html" } });
+});
+
+router.get("/trace-logo.png", async () => {
+  const logoPath = new URL("./assets/trace-icon.png", import.meta.url);
+  const file = Bun.file(logoPath);
+  return new Response(await file.bytes(), {
+    headers: { "Content-Type": file.type },
+  });
+});
+
+router.get("/global.css", async () => {
+  const path = new URL("./global.css", import.meta.url);
+  const css = await Bun.file(path).text();
+  return new Response(css, { headers: { "Content-Type": "text/css" } });
+});
+
+router.get("/dashboard", async () => {
+  const stream = await renderToReadableStream(Dashboard());
+  return new Response(stream, { headers: { "Content-Type": "text/html" } });
 });
 
 Bun.serve({

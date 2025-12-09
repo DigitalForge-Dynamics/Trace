@@ -235,7 +235,8 @@
         "packages/trace-db/src/index.test.ts",
         "packages/trace-router/src/index.test.ts",
         "packages/trace-router/src/index.ts",
-        "packages/trace-sdk/src/client.test.ts"
+        "packages/trace-sdk/src/client.test.ts",
+        "packages/trace-web/src/testing/*"
       ],
       "linter": {
         "rules": {
@@ -360,6 +361,18 @@
         "rules": {
           "style": {
             "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-web/src/testing/matchers.d.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
           }
         }
       }

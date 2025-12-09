@@ -1,11 +1,10 @@
-/** biome-ignore-all lint/performance/noNamespaceImport: <explanation> */
-import * as matchers from "@testing-library/jest-dom/matchers"
-import { cleanup } from "@testing-library/react"
-// biome-ignore lint/nursery/noUnresolvedImports: <explanation>
-import { afterEach, expect } from "bun:test"
+/** biome-ignore-all lint/performance/noNamespaceImport: Bun documentation highlights this approach is needed for all matchers to work*/
+import { afterEach, expect } from "bun:test";
+import * as matchers from "@testing-library/jest-dom/matchers";
+import { cleanup } from "@testing-library/react";
 
-expect.extend(matchers)
+expect.extend(matchers);
 
 afterEach(() => {
-  cleanup()
-})
+  cleanup();
+});
