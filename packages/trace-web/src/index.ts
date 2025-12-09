@@ -3,7 +3,7 @@ import { renderToReadableStream } from "react-dom/server";
 import { Router } from "trace-router";
 import type { APIClient } from "trace-sdk";
 import { API_URL } from "./config.ts";
-import { Dashboard } from "./pages/Dashboard/index.tsx";
+import { Dashboard } from "./pages/dashboard/index.tsx";
 import { LoginPage } from "./pages/LoginPage/index.tsx";
 
 type OIDCResponseUser = Pick<Awaited<ReturnType<typeof APIClient.prototype.authenticateOidc>>, "user">;
