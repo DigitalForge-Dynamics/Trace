@@ -9,15 +9,18 @@ type MenuItemGroupProps = {
 const MenuItemGroup: FC<MenuItemGroupProps> = ({ group, routes }) => {
   return (
     <div>
-      <h3
-        style={{ color: "#6B7280", fontSize: "12px" }}
-      >
-        {group}
-      </h3>
+      <h3 style={{ color: "#6B7280", fontSize: "12px" }}>{group}</h3>
       <div>
         {routes.map((item, key) => {
           const { link, name, active } = item;
-          return <MenuItem key={key + 1} link={link} active={active} name={name} />;
+          return (
+            <MenuItem
+              key={key + name}
+              link={link}
+              active={active}
+              name={name}
+            />
+          );
         })}
       </div>
     </div>

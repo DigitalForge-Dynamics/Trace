@@ -6,7 +6,11 @@ type StatusIconProps = {
 };
 
 const StatusIcon: FC<StatusIconProps> = ({ colour, size }) => {
-  const sizing: string = size === "medium" ? "18px" : "12px";
+  const sizing: string = {
+    medium: "18px",
+    small: "12px",
+  }[size];
+
   return (
     <div
       style={{

@@ -13,7 +13,7 @@ const MenuItem: FC<MenuItemProps> = ({ name, link, active }) => {
       style={{
         minHeight: "40px",
         minWidth: "228px",
-        backgroundColor: active ? "#1F242B" : "",
+        backgroundColor: active ? "#1F242B" : undefined,
         borderRadius: "6px",
         paddingLeft: "16px",
         paddingTop: "4px",
