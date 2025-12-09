@@ -376,11 +376,12 @@
       "linter": {
         "rules": {
           "style": {
-            "useImportType": "off",
+            "useImportType": "off"
           }
         }
       }
     },
+    {
     "includes": [
         "index.ts"
       ],
