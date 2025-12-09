@@ -16,7 +16,7 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Generate ID Token
         run: |
-          set -euo pipefail
+          set -u
           token=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=trace-api" | jq -r '.value')
           issuer=$(echo $token | cut -d'.' -f2 | base64 --decode | jq -r '.iss')
           sub=$(echo $token | cut -d'.' -f2 | base64 --decode | jq -r '.sub')

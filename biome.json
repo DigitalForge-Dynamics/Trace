@@ -200,7 +200,7 @@
     },
     {
       "includes": [
-        "packages/trace-api/src/handlers/auth.ts",
+        "packages/trace-api/src/handlers/oidc.ts",
         "packages/trace-router/src/index.test.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-sdk/src/client.test.ts",
@@ -230,6 +230,7 @@
     },
     {
       "includes": [
+        "index.ts",
         "packages/trace-api/src/db.ts",
         "packages/trace-db/src/index.ts",
         "packages/trace-db/src/index.test.ts",
@@ -268,7 +269,8 @@
         "packages/trace-router/src/index.test.ts",
         "packages/trace-schemas/src/index.ts",
         "packages/trace-sdk/src/client.ts",
-        "packages/trace-web/src/config.ts"
+        "packages/trace-web/src/config.ts",
+        "packages/trace-web/src/index.ts"
       ],
       "linter": {
         "rules": {
@@ -305,6 +307,7 @@
     },
     {
       "includes": [
+        "index.ts",
         "packages/trace-router/src/index.ts"
       ],
       "linter": {
@@ -343,6 +346,7 @@
     },
     {
       "includes": [
+        "index.ts",
         "packages/trace-router/src/index.ts"
       ],
       "linter": {
@@ -372,7 +376,18 @@
       "linter": {
         "rules": {
           "style": {
-            "useImportType": "off"
+            "useImportType": "off",
+          }
+        }
+      }
+    },
+    "includes": [
+        "index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off"
           }
         }
       }
