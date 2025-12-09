@@ -3,8 +3,8 @@ import { renderToReadableStream } from "react-dom/server";
 import { Router } from "trace-router";
 import type { APIClient } from "trace-sdk";
 import { API_URL } from "./config.ts";
-import { LoginPage } from "./pages/LoginPage/index.tsx";
 import { Dashboard } from "./pages/Dashboard/index.tsx";
+import { LoginPage } from "./pages/LoginPage/index.tsx";
 
 type OIDCResponseUser = Pick<Awaited<ReturnType<typeof APIClient.prototype.authenticateOidc>>, "user">;
 const jwks: ReturnType<typeof createRemoteJWKSet> = createRemoteJWKSet(
@@ -59,7 +59,7 @@ router.get(
   () =>
     new Response(Bun.file("./src/oidc-callback.html"), {
       headers: { "Content-Type": "text/html" },
-    })
+    }),
 );
 router.get("/login/hydrate.js", serveJs("./pages/LoginPage/hydrate.tsx"));
 router.get("/login", async (req) => {
