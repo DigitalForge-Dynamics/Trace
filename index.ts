@@ -87,6 +87,12 @@ const setupEnvFiles = async (): Promise<void> => {
         await appendFile(`packages/${pkgName}/.env`, `#${env.name}=""\n`);
       }
     }
+    for (const env of existing) {
+      const isUsed = envVars.find((envVar) => envVar.name === env) !== undefined;
+      if (!isUsed) {
+        console.log(`[INFO]: Env Var ${env} in ${pkgName} is defined, but not used.`);
+      }
+    }
   }
 };
 
