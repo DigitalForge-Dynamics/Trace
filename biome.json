@@ -230,6 +230,7 @@
     },
     {
       "includes": [
+        "index.ts",
         "packages/trace-api/src/db.ts",
         "packages/trace-db/src/index.ts",
         "packages/trace-db/src/index.test.ts",
@@ -305,6 +306,7 @@
     },
     {
       "includes": [
+        "index.ts",
         "packages/trace-router/src/index.ts"
       ],
       "linter": {
@@ -343,6 +345,7 @@
     },
     {
       "includes": [
+        "index.ts",
         "packages/trace-router/src/index.ts"
       ],
       "linter": {
@@ -361,6 +364,18 @@
         "rules": {
           "style": {
             "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off"
           }
         }
       }
