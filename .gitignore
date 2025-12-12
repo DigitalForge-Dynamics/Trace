@@ -5,3 +5,9 @@ tls
 packages/trace-web/src/.config.ts
 assets
 test-results
+
+# Local Dev Setup
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+.terraform.lock.hcl
