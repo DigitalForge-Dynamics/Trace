@@ -24,3 +24,5 @@ jobs:
           echo "TRACE_ADMIN_ISSUER=$issuer" >> $GITHUB_ENV
           echo "TRACE_ADMIN_SUB=$sub" >> $GITHUB_ENV
       - run: bun test
+      - run: bun test
+        working-directory: packages/trace-web
