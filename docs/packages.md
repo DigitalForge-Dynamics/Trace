@@ -56,7 +56,6 @@ graph
 	trace-web --> trace-sdk
     trace-web --> trace-router
     trace-web -.-> happy-dom["@happy-dom/global-registrator"]
-    trace-web -.-> testing-library-dom["@testing-library/dom"]
     trace-web -.-> testing-library-jest-dom["@testing-library/jest-dom"]
     trace-web -.-> testing-library-react["@testing-library/react"]
 ```
