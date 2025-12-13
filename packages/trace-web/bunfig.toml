@@ -1,0 +1,3 @@
+[test]
+preload = ["./src/testing/happydom.ts", "./src/testing/testing-library.ts"]
+coveragePathIgnorePatterns = ["src/**/*.test.tsx", "src/testing/**"]
