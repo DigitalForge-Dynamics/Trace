@@ -5,7 +5,6 @@ node_modules
 .certs
 tls
 packages/trace-web/src/.config.ts
-assets
 test-results
 
 # Local Dev Setup
