@@ -1,21 +1,35 @@
-version: "3.2"
-
 services:
-  postgres:
-    image: postgres:latest
-    volumes:
-      - db:/opt/trace
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    container_name: keycloak
+    depends_on:
+      - postgres-keycloak
+    restart: unless-stopped
+    command: >
+      start
+      --hostname-strict=false
+      --https-key-store-file=/opt/keycloak/certs/keycloak.p12
+      --https-key-store-password=${KEYCLOAK_TLS_PASSWORD}
+    ports:
+      - "8443:8443"
     env_file:
-      - ./.env.docker.development
-    ports:
-      - 5432:5432
-  redis:
-    image:  redis:latest
+      - .env.development
+    environment:
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/certs/tls.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/tls.key
     volumes:
-      - redis:/opt/trace
-    command: redis-server --requirepass test123
+      - ./.certs:/opt/keycloak/certs:ro
+  
+  postgres-keycloak:
+    image: postgres:15
+    container_name: keycloak-postgres
+    restart: unless-stopped
     ports:
-      - 6379:6379
+      - "5432:5432"
+    env_file:
+      - .env.development
+    volumes:
+      - keycloak-db:/var/lib/postgresql/data
+
 volumes:
-  db: {}
-  redis: {}
+  keycloak-db:

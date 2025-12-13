@@ -1,0 +1,20 @@
+`expect(Boolean($val)).$fn($args)` where {
+    or {
+        $fn <: `toBeTrue`,
+        $fn <: `toBeFalse`,
+        and {
+            or {
+                $fn <: `toBe`,
+                $fn <: `toEqual`,
+            },
+            or {
+                $args <: `true`,
+                $args <: `false`,
+            }
+        }
+    },
+    register_diagnostic(
+        span = $val,
+        message = "Prefer `expect($val).toBeTruthy()` over `expect(Boolean($val)).toBeTrue()`.",
+    )
+}

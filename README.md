@@ -4,38 +4,26 @@
 ## Documentation
 https://docs.traceassets.com
 
-## Database Development
-To start development on the database, please configure the following ``` .env.docker.development ``` environment file with any credentials to configure the hosted Database.
+## Development Environment Variables
+These are the developent environment variables needs to develop on Trace
 
-Once this is done, you'll need to configure the API environment variables with the same credentials to allow it to connect to the database. You can find the structure below.
-
-
-## API Environment Variables
-These are the needed environment variables to run up the API service for trace.
-```
-## Database Credentials
-API_DATABASE_NAME=""
-API_DATABASE_USERNAME=""
-API_DATABASE_PASSWORD=""
-API_DATABASE_HOST=""
-
-## Redis Credentials
-API_REDIS_HOST=""
-API_REDIS_PASSWORD=""
-
-## Application Variables
-API_PORT=
-API_SEED_DATABASE="true" # Only to be set if in a trusted environment. Has security implications.
-```
-
-## API Integration Tests
 ```sh
-API_SEED_DATABASE=true npm start
-npm run test:integration
-```
+# Keycloak admin user
+KEYCLOAK_ADMIN=""
+KEYCLOAK_ADMIN_PASSWORD=""
 
-## Git Hooks
-In order to configure the running of existing `pre-commit` and `pre-push` hooks, run within the Git Repository
-```sh
-git config core.hooksPath hooks
+# DB settings
+KC_DB=""
+KC_DB_URL=jdbc:username://host:port/database
+KC_DB_USERNAME=""
+KC_DB_PASSWORD=""
+
+# Postgres
+POSTGRES_DB=""
+POSTGRES_USER=""
+POSTGRES_PASSWORD=""
+
+# TLS keystore password (choose a strong one)
+KEYCLOAK_TLS_PASSWORD=""
+
 ```

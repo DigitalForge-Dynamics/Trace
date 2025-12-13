@@ -1,0 +1,6 @@
+`expect(await $expr)` where {
+    register_diagnostic(
+        span = $expr,
+        message = "Prefer `await expect($expr).resolves.` over `expect(await $expr)`."
+    )
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OIDC Callback</title>
+</head>
+<body>
+You have reached an OIDC Callback page.
+<a href="/">Home</a>
+<script type="module">
+const { apiClient, netClient, genUserManager } = await import("/config.js");
+
+// Load current state
+const url = new URL(window.location);
+const iss = new URL(url.searchParams.get("iss"));
+
+// API Config. IdP Authentication. API Authentication.
+const idpConfigs = await apiClient.getOidcConfig();
+const idp = idpConfigs.config.find((idp) => idp.issuer.toString() === iss.toString());
+if (!idp) {
+	throw new Error("Unable to identify IdP in callback");
+}
+const userManager = genUserManager(idp);
+const user = await userManager.signinCallback();
+const { id_token } = user;
+const traceUser = await apiClient.authenticateOidc(id_token);
+netClient.setAuthorisation(traceUser.token);
+
+// Navigate to authenticated homepage.
+await fetch("/login/cookie", {
+	headers: {
+		Authorization: traceUser.token,
+	}
+});
+window.location.href = "/";
+
+</script>
+</body>
+</html>

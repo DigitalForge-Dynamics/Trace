@@ -1,0 +1,6 @@
+`expect($expr).toEqual($arg)` where {
+    register_diagnostic(
+        span = $arg,
+        message = "Prefer `expect($expr).toStrictEqual($arg)` over `expect($expr).toEqual($arg)`.",
+    )
+}

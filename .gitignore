@@ -1,1 +1,14 @@
 .vscode
+node_modules
+.env
+.env.*
+.certs
+tls
+packages/trace-web/src/.config.ts
+test-results
+
+# Local Dev Setup
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
+.terraform.lock.hcl

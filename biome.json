@@ -1,0 +1,397 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.0/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "bunjs"
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "packages/**/*.ts",
+      "packages/**/package.json",
+      "index.ts",
+      "package.json",
+      "tsconfig.json"
+    ]
+  },
+  "plugins": [
+    "./lints/zod-strict-object.grit",
+    "./lints/regex-full-search.grit",
+    "./lints/response-json.grit",
+    "./lints/expect-await.grit",
+    "./lints/expect-length.grit",
+    "./lints/expect-boolean.grit",
+    "./lints/expect-strict-equal.grit",
+    "./lints/localhost.grit"
+  ],
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "formatWithErrors": false,
+    "lineEnding": "lf",
+    "lineWidth": 120,
+    "attributePosition": "auto",
+    "bracketSpacing": true,
+    "expand": "auto"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": "error",
+      "complexity": "error",
+      "correctness": "error",
+      "nursery": "error",
+      "performance": "error",
+      "security": "error",
+      "style": "error",
+      "suspicious": "error"
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "operatorLinebreak": "after"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": false,
+      "jsxEverywhere": false
+    },
+    "jsxRuntime": "transparent",
+    "globals": [
+      "Bun"
+    ]
+  },
+  "json": {
+    "parser": {
+      "allowComments": false,
+      "allowTrailingCommas": false
+    },
+    "formatter": {
+      "enabled": false,
+      "trailingCommas": "none"
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "css": {
+    "parser": {
+      "cssModules": true
+    },
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    },
+    "assist": {
+      "enabled": true
+    }
+  },
+  "grit": {
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    },
+    "assist": {
+      "enabled": true
+    }
+  },
+  "html": {
+    "parser": {
+      "interpolation": false
+    },
+    "formatter": {
+      "enabled": true,
+      "whitespaceSensitivity": "strict",
+      "indentScriptAndStyle": true,
+      "selfCloseVoidElements": "always"
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "recommended": true,
+      "source": {
+        "recommended": true,
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.playwright.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noEmptyBlockStatements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-playwright/**/*"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noProcessEnv": "off"
+          },
+          "correctness": {
+            "noProcessGlobal": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useConsistentTypeDefinitions": "off"
+          },
+          "nursery": {
+            "useQwikValidLexicalScope": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "tsconfig.json"
+      ],
+      "json": {
+        "parser": {
+          "allowComments": true
+        }
+      }
+    },
+    {
+      "includes": [
+        "index.ts",
+        "packages/trace-api/src/index.ts",
+        "packages/trace-router/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/handlers/oidc.ts",
+        "packages/trace-router/src/index.test.ts",
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-sdk/src/client.test.ts",
+        "packages/trace-sdk/src/client.ts",
+        "packages/trace-web/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "security": {
+            "noSecrets": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/env.ts",
+        "packages/trace-schemas/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "useExplicitType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "index.ts",
+        "packages/trace-api/src/db.ts",
+        "packages/trace-db/src/index.ts",
+        "packages/trace-db/src/index.test.ts",
+        "packages/trace-router/src/index.test.ts",
+        "packages/trace-router/src/index.ts",
+        "packages/trace-sdk/src/client.test.ts",
+        "packages/trace-web/src/testing/*"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noUnresolvedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/index.ts",
+        "packages/trace-schemas/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noMagicNumbers": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-api/src/config.ts",
+        "packages/trace-api/src/env.ts",
+        "packages/trace-playwright/playwright.config.ts",
+        "packages/trace-router/src/index.ts",
+        "packages/trace-router/src/index.test.ts",
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-sdk/src/client.ts",
+        "packages/trace-web/src/config.ts",
+        "packages/trace-web/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-sdk/src/client.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useConsistentMemberAccessibility": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-router/src/index.ts",
+        "packages/trace-router/src/index.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noUnusedExpressions": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "index.ts",
+        "packages/trace-router/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noAwaitInLoops": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-router/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-db/src/index.test.ts",
+        "packages/trace-router/src/index.test.ts",
+        "packages/trace-sdk/src/client.test.ts"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "index.ts",
+        "packages/trace-router/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-playwright/playwright.config.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-web/src/testing/matchers.d.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
+    "includes": [
+        "index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off"
+          }
+        }
+      }
+    }
+  ]
+}
