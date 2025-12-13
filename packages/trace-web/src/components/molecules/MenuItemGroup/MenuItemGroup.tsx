@@ -11,11 +11,11 @@ const MenuItemGroup: FC<MenuItemGroupProps> = ({ group, routes }) => {
     <div>
       <h3 style={{ color: "#6B7280", fontSize: "12px" }}>{group}</h3>
       <div>
-        {routes.map((item, key) => {
+        {routes.map((item) => {
           const { link, name, active } = item;
           return (
             <MenuItem
-              key={key + name}
+              key={name}
               link={link}
               active={active}
               name={name}
