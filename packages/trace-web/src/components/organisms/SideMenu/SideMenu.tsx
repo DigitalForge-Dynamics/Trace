@@ -21,14 +21,14 @@ const SideMenu: FC = () => {
           group="Operations"
           routes={[
             { name: "Dashboard", link: "/dashboard", active: true },
-            { name: "Assets", link: "/dashboard", active: false },
+            { name: "Assets", link: "/assets", active: false },
           ]}
         />
         <MenuItemGroup
           group="Admin"
           routes={[
-            { name: "Users & Roles", link: "/dashboard", active: false },
-            { name: "Settings", link: "/dashboard", active: false },
+            { name: "Users & Roles", link: "/users", active: false },
+            { name: "Settings", link: "/settings", active: false },
           ]}
         />
       </div>

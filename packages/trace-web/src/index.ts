@@ -5,6 +5,9 @@ import type { APIClient } from "trace-sdk";
 import { API_URL } from "./config.ts";
 import { Dashboard } from "./pages/dashboard/index.tsx";
 import { LoginPage } from "./pages/LoginPage/index.tsx";
+import { Assets } from "./pages/Assets/index.tsx";
+import { Users } from "./pages/Users/index.tsx";
+import { Settings } from "./pages/Settings/index.tsx";
 
 type OIDCResponseUser = Pick<Awaited<ReturnType<typeof APIClient.prototype.authenticateOidc>>, "user">;
 const jwks: ReturnType<typeof createRemoteJWKSet> = createRemoteJWKSet(
@@ -151,6 +154,21 @@ router.get("/dashboard", async () => {
   const stream = await renderToReadableStream(Dashboard());
   return new Response(stream, { headers: { "Content-Type": "text/html" } });
 });
+
+router.get("/assets", async () => {
+  const stream = await renderToReadableStream(Assets());
+  return new Response(stream, { headers: { "Content-Type": "text/html" } })
+})
+
+router.get("/users", async () => {
+  const stream = await renderToReadableStream(Users());
+  return new Response(stream, { headers: { "Content-Type": "text/html" } })
+})
+
+router.get("/settings", async () => {
+  const stream = await renderToReadableStream(Settings());
+  return new Response(stream, { headers: { "Content-Type": "text/html" } })
+})
 
 Bun.serve({
   port: 5173,
