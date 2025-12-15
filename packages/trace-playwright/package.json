@@ -15,6 +15,6 @@
     "trace-web": "workspace:"
   },
   "dependencies": {
-    "@playwright/test": "^1.56.1"
+    "@playwright/test": "catalog:"
   }
 }
