@@ -7,7 +7,7 @@
         "@types/bun": "latest",
       },
       "peerDependencies": {
-        "@biomejs/biome": "^2.3.9",
+        "@biomejs/biome": "^2.3.10",
         "typescript": "^5.9.3",
       },
     },
