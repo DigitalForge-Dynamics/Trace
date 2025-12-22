@@ -1,5 +1,5 @@
 {
-  "name": "trace-schemas",
+  "name": "@DigitalForge-Dynamics/trace-schemas",
   "module": "src/index.ts",
   "types": "src/index.ts",
   "type": "module",

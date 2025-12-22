@@ -1,4 +1,4 @@
-import { type CreateUserResponse, createUserRequest, linkUserIdpRequest } from "trace-schemas";
+import { type CreateUserResponse, createUserRequest, linkUserIdpRequest } from "@DigitalForge-Dynamics/trace-schemas";
 import { db } from "../db.ts";
 
 const createUser = async (req: Request): Promise<Response> => {

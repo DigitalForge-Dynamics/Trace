@@ -1,5 +1,5 @@
+import { APIClient, NetClient } from "@DigitalForge-Dynamics/trace-sdk";
 import { UserManager } from "oidc-client-ts";
-import { APIClient, NetClient } from "trace-sdk";
 
 const API_URL: URL = new URL("http://localhost:3000");
 const netClient: NetClient = new NetClient(API_URL);

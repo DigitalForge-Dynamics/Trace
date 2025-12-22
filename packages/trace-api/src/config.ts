@@ -1,4 +1,4 @@
-import type { Database } from "trace-db";
+import type { Database } from "@DigitalForge-Dynamics/trace-db";
 import { env } from "./env.ts";
 
 const regexAny: RegExp = /^.*$/;

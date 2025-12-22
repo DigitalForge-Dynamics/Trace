@@ -1,15 +1,15 @@
 {
-  "name": "trace-sdk",
+  "name": "@DigitalForge-Dynamics/trace-sdk",
   "module": "src/client.ts",
   "types": "src/client.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
     "@types/bun": "latest",
-    "trace-api": "workspace:"
+    "@DigitalForge-Dynamics/trace-api": "workspace:"
   },
   "peerDependencies": {
     "typescript": "catalog:",
-	"trace-schemas": "workspace:"
+	"@DigitalForge-Dynamics/trace-schemas": "workspace:"
   }
 }

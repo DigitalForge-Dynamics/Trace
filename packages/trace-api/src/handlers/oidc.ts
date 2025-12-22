@@ -1,6 +1,6 @@
+import type { oidcConfigResponse } from "@DigitalForge-Dynamics/trace-schemas";
 import { createRemoteJWKSet, decodeJwt, type GenerateKeyPairResult, type JWTPayload, jwtVerify, SignJWT } from "jose";
 import { JWTClaimValidationFailed, JWTExpired } from "jose/errors";
-import type { oidcConfigResponse } from "trace-schemas";
 import type { z } from "zod";
 import { db } from "../db.ts";
 
