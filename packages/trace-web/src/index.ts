@@ -1,7 +1,7 @@
+import { Router } from "@DigitalForge-Dynamics/trace-router";
+import type { APIClient } from "@DigitalForge-Dynamics/trace-sdk";
 import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose";
 import { renderToReadableStream } from "react-dom/server";
-import { Router } from "trace-router";
-import type { APIClient } from "trace-sdk";
 import { API_URL } from "./config.ts";
 import { Dashboard } from "./pages/dashboard/index.tsx";
 import { LoginPage } from "./pages/LoginPage/index.tsx";

@@ -1,7 +1,7 @@
+import { startServer } from "@DigitalForge-Dynamics/trace-api";
+import type { CreateUserRequest, LinkUserIdpRequest } from "@DigitalForge-Dynamics/trace-schemas";
 import { beforeAll, describe, expect, it } from "bun:test";
 import { randomUUIDv7 } from "bun";
-import { startServer } from "trace-api";
-import type { CreateUserRequest, LinkUserIdpRequest } from "trace-schemas";
 import { APIClient, NetClient } from "./client.ts";
 
 const apiServer: ReturnType<typeof Bun.serve> = await startServer(0);

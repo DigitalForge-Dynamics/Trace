@@ -1,5 +1,5 @@
 {
-  "name": "trace-api",
+  "name": "@DigitalForge-Dynamics/trace-api",
   "module": "src/index.ts",
   "types": "src/index.ts",
   "type": "module",
@@ -15,9 +15,9 @@
   "peerDependencies": {
     "typescript": "catalog:",
     "zod": "catalog:",
-    "trace-schemas": "workspace:",
-    "trace-router": "workspace:",
-    "trace-db": "workspace:"
+    "@DigitalForge-Dynamics/trace-schemas": "workspace:",
+    "@DigitalForge-Dynamics/trace-router": "workspace:",
+    "@DigitalForge-Dynamics/trace-db": "workspace:"
   },
   "dependencies": {
     "jose": "catalog:"

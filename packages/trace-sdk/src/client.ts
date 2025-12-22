@@ -11,7 +11,7 @@ import {
   type OIDCResponse,
   oidcConfigResponse,
   oidcResponse,
-} from "trace-schemas";
+} from "@DigitalForge-Dynamics/trace-schemas";
 
 type SDKHeadersInit = Headers;
 type SDKRequestInit = Omit<RequestInit, "headers"> & { headers?: SDKHeadersInit };

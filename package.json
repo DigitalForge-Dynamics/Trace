@@ -1,5 +1,5 @@
 {
-  "name": "trace",
+  "name": "@DigitalForge-Dynamics/trace",
   "module": "index.ts",
   "type": "module",
   "private": true,

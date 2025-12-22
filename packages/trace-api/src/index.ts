@@ -1,6 +1,6 @@
+import { Router } from "@DigitalForge-Dynamics/trace-router";
+import type { HealthCheckResponse } from "@DigitalForge-Dynamics/trace-schemas";
 import { exportJWK, type GenerateKeyPairResult, generateKeyPair } from "jose";
-import { Router } from "trace-router";
-import type { HealthCheckResponse } from "trace-schemas";
 import { ZodError } from "zod";
 import { corsHeaders, setupConfiguration } from "./config.ts";
 import { db } from "./db.ts";

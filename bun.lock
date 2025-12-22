@@ -12,7 +12,7 @@
       },
     },
     "packages/trace-api": {
-      "name": "trace-api",
+      "name": "@DigitalForge-Dynamics/trace-api",
       "dependencies": {
         "jose": "catalog:",
       },
@@ -20,15 +20,15 @@
         "@types/bun": "latest",
       },
       "peerDependencies": {
-        "trace-db": "workspace:",
-        "trace-router": "workspace:",
-        "trace-schemas": "workspace:",
+        "@DigitalForge-Dynamics/trace-db": "workspace:",
+        "@DigitalForge-Dynamics/trace-router": "workspace:",
+        "@DigitalForge-Dynamics/trace-schemas": "workspace:",
         "typescript": "catalog:",
         "zod": "catalog:",
       },
     },
     "packages/trace-db": {
-      "name": "trace-db",
+      "name": "@DigitalForge-Dynamics/trace-db",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -37,19 +37,19 @@
       },
     },
     "packages/trace-playwright": {
-      "name": "trace-playwright",
+      "name": "@DigitalForge-Dynamics/trace-playwright",
       "dependencies": {
         "@playwright/test": "catalog:",
       },
       "peerDependencies": {
+        "@DigitalForge-Dynamics/trace-api": "workspace:",
+        "@DigitalForge-Dynamics/trace-web": "workspace:",
         "dotenv": "catalog:",
-        "trace-api": "workspace:",
-        "trace-web": "workspace:",
         "typescript": "catalog:",
       },
     },
     "packages/trace-router": {
-      "name": "trace-router",
+      "name": "@DigitalForge-Dynamics/trace-router",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -58,7 +58,7 @@
       },
     },
     "packages/trace-schemas": {
-      "name": "trace-schemas",
+      "name": "@DigitalForge-Dynamics/trace-schemas",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -68,18 +68,18 @@
       },
     },
     "packages/trace-sdk": {
-      "name": "trace-sdk",
+      "name": "@DigitalForge-Dynamics/trace-sdk",
       "devDependencies": {
+        "@DigitalForge-Dynamics/trace-api": "workspace:",
         "@types/bun": "latest",
-        "trace-api": "workspace:",
       },
       "peerDependencies": {
-        "trace-schemas": "workspace:",
+        "@DigitalForge-Dynamics/trace-schemas": "workspace:",
         "typescript": "catalog:",
       },
     },
     "packages/trace-web": {
-      "name": "trace-web",
+      "name": "@DigitalForge-Dynamics/trace-web",
       "dependencies": {
         "oidc-client-ts": "catalog:",
         "react": "catalog:",
@@ -94,9 +94,9 @@
         "@types/react-dom": "catalog:",
       },
       "peerDependencies": {
+        "@DigitalForge-Dynamics/trace-router": "workspace:",
+        "@DigitalForge-Dynamics/trace-sdk": "workspace:",
         "jose": "catalog:",
-        "trace-router": "workspace:",
-        "trace-sdk": "workspace:",
         "typescript": "catalog:",
       },
     },
@@ -118,6 +118,20 @@
     "zod": "^4.2.0",
   },
   "packages": {
+    "@DigitalForge-Dynamics/trace-api": ["@DigitalForge-Dynamics/trace-api@workspace:packages/trace-api"],
+
+    "@DigitalForge-Dynamics/trace-db": ["@DigitalForge-Dynamics/trace-db@workspace:packages/trace-db"],
+
+    "@DigitalForge-Dynamics/trace-playwright": ["@DigitalForge-Dynamics/trace-playwright@workspace:packages/trace-playwright"],
+
+    "@DigitalForge-Dynamics/trace-router": ["@DigitalForge-Dynamics/trace-router@workspace:packages/trace-router"],
+
+    "@DigitalForge-Dynamics/trace-schemas": ["@DigitalForge-Dynamics/trace-schemas@workspace:packages/trace-schemas"],
+
+    "@DigitalForge-Dynamics/trace-sdk": ["@DigitalForge-Dynamics/trace-sdk@workspace:packages/trace-sdk"],
+
+    "@DigitalForge-Dynamics/trace-web": ["@DigitalForge-Dynamics/trace-web@workspace:packages/trace-web"],
+
     "@adobe/css-tools": ["@adobe/css-tools@4.4.4", "", {}, "sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg=="],
 
     "@babel/code-frame": ["@babel/code-frame@7.27.1", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.27.1", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg=="],
@@ -221,20 +235,6 @@
     "scheduler": ["scheduler@0.27.0", "", {}, "sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q=="],
 
     "strip-indent": ["strip-indent@3.0.0", "", { "dependencies": { "min-indent": "^1.0.0" } }, "sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ=="],
-
-    "trace-api": ["trace-api@workspace:packages/trace-api"],
-
-    "trace-db": ["trace-db@workspace:packages/trace-db"],
-
-    "trace-playwright": ["trace-playwright@workspace:packages/trace-playwright"],
-
-    "trace-router": ["trace-router@workspace:packages/trace-router"],
-
-    "trace-schemas": ["trace-schemas@workspace:packages/trace-schemas"],
-
-    "trace-sdk": ["trace-sdk@workspace:packages/trace-sdk"],
-
-    "trace-web": ["trace-web@workspace:packages/trace-web"],
 
     "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 
