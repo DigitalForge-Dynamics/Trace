@@ -143,7 +143,7 @@ router.get("/trace-logo.png", async () => {
 
 router.get("/global.css", async () => {
   const path = new URL("./global.css", import.meta.url);
-  const css = await Bun.file(path).text();
+  const css: string = await Bun.file(path).text();
   return new Response(css, { headers: { "Content-Type": "text/css" } });
 });
 

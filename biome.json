@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.9/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -169,7 +169,11 @@
             "useConsistentTypeDefinitions": "off"
           },
           "nursery": {
-            "useQwikValidLexicalScope": "off"
+            "useQwikValidLexicalScope": "off",
+            "useAwaitThenable": "off",
+            "noTernary": "off",
+            "noContinue": "off",
+            "useDestructuring": "off"
           }
         }
       }
@@ -382,7 +386,7 @@
       }
     },
     {
-    "includes": [
+      "includes": [
         "index.ts"
       ],
       "linter": {
