@@ -1,0 +1,24 @@
+name: Software Bill Of Materials
+
+on:
+  workflow_call:
+
+permissions:
+  contents: "read"
+
+jobs:
+  Cdxgen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+      - run: bun install --frozen-lockfile
+      - run: |
+          bun install --global @cyclonedx/cdxgen
+          cdxgen -t universal -o bom.json
+      - run: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: "SBOM"
+          path: "bom.json"
+          if-no-files-found: "error"
+          include-hidden-files: false
