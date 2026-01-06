@@ -49,10 +49,6 @@ describe("Database", () => {
 
       mock.restore();
     });
-
-    it.todo("Runs new migrations for an existing database", async () => {});
-
-    it.todo("Requires migrations to be wrapped in a transaction", async () => {});
   });
 
   describe("Users", () => {

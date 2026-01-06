@@ -51,6 +51,7 @@ class Database {
     const migrations = await readdir(dir);
     migrations.sort();
 
+    // biome-ignore: lint/performance/noAwaitInLoops: Sequential nature is desired.
     for (const migrationName of migrations) {
       const file = Bun.file(path.join(dir, migrationName));
       await this.driver.transaction(async (tx) => {

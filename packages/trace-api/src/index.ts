@@ -41,7 +41,7 @@ router.post("/user", createUser);
 router.post("/user/link", linkUserIdp);
 
 const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> => {
-  await db.baseline();
+  await db.migrate();
   await setupConfiguration(db);
   const server = Bun.serve({
     port,
