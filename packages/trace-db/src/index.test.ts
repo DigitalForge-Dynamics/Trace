@@ -10,13 +10,13 @@ describe("Database", () => {
   beforeEach(async () => {
     const sql = new SQL("sqlite://:memory:");
     db = new Database(sql);
-    await db.baseline();
+    await db.migrate();
   });
 
-  it("Is able to baseline an SQLITE database", async () => {
+  it("Is able to migrate an SQLITE database", async () => {
     const sqlite = new SQL("sqlite://:memory:");
     const sqliteDb = new Database(sqlite);
-    await sqliteDb.baseline();
+    await sqliteDb.migrate();
   });
 
   describe("Users", () => {

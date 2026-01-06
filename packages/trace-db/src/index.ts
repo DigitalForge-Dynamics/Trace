@@ -1,4 +1,6 @@
 import { randomUUIDv7, type SQL } from "bun";
+import { readdir } from "node:fs/promises";
+import path from "node:path";
 
 // Conventions:
 // - createXXX - Created a new DB entry, returning the newly created entry.
@@ -34,68 +36,14 @@ class Database {
     this.driver = driver;
   }
 
-  async baseline(): Promise<void> {
-    await this.driver`
-        CREATE TABLE users (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            username STRING NOT NULL
-        )
-    `;
-    await this.driver`
-        CREATE TABLE idps (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            issuer URL NOT NULL,
-            label STRING NOT NULL,
-            audience STRING NOT NULL,
-            subject STRING NOT NULL,
-            UNIQUE (issuer)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE user_idps (
-            idp BINARY(16) NOT NULL,
-            sub STRING NOT NULL,
-            user BINARY(16) NOT NULL,
-            PRIMARY KEY (idp, sub),
-            FOREIGN KEY (idp) REFERENCES idps(uid),
-            FOREIGN KEY (user) REFERENCES users(uid)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE locations (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            name STRING NOT NULL
-        )
-    `;
-    await this.driver`
-        CREATE TABLE assets (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            location BINARY(16) NOT NULL,
-            user BINARY(16) DEFAULT NULL,
-            FOREIGN KEY (location) REFERENCES locations(uid),
-            FOREIGN KEY (user) REFERENCES users(uid)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE asset_movements (
-            asset BINARY(16) NOT NULL,
-            location BINARY(16) NOT NULL,
-            timestamp INT(32) NOT NULL,
-            PRIMARY KEY (asset, location, timestamp),
-            FOREIGN KEY (asset) REFERENCES assets(uid),
-            FOREIGN KEY (location) REFERENCES locations(uid)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE asset_assignments (
-            asset BINARY(16) NOT NULL,
-            user BINARY(16) NOT NULL,
-            timestamp INT(32) NOT NULL,
-            PRIMARY KEY (asset, user, timestamp),
-            FOREIGN KEY (asset) REFERENCES assets(uid),
-            FOREIGN KEY (user) REFERENCES users(uid)
-        )
-    `;
+  async migrate(): Promise<void> {
+    const dir = path.join(import.meta.dirname, "..", "migrations");
+    let migrations = await readdir(dir);
+    for (const migration of migrations) {
+      //console.log(`Applying migration: ${migration}`);
+      await this.driver.file(path.join(dir, migration));
+      //console.log(`Applied migration: ${migration}`);
+    }
   }
 
   async createUser(user: CreateUser): Promise<User> {
