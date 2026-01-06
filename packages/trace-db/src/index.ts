@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { randomUUIDv7, type SQL } from "bun";
@@ -29,6 +30,8 @@ type AssetMoveModel = Omit<AssetMove, "time" | "locationId"> & { timestamp: numb
 type AssetAssignment = { userId: string; time: Date };
 type AssetAssignmentModel = Omit<AssetAssignment, "userId" | "time"> & { user: string; timestamp: number };
 
+type MigrationModel = { name: string; md5sum: Uint8Array };
+
 class Database {
   private readonly driver: SQL;
 
@@ -51,8 +54,13 @@ class Database {
     for (const migrationName of migrations) {
       const file = Bun.file(path.join(dir, migrationName));
       await this.driver.transaction(async (tx) => {
-        const applied: unknown[] = await tx`SELECT * FROM _trace_migrations WHERE name = ${migrationName};`;
+        const applied: [] | [MigrationModel] = await tx`SELECT * FROM _trace_migrations WHERE name = ${migrationName};`;
+        const md5sum = Bun.MD5.hash(await file.arrayBuffer(), "hex");
         if (applied.length !== 0) {
+          const previous = new Buffer(applied[0].md5sum).toHex();
+          if (previous !== md5sum) {
+            throw new Error(`Migration file modified. Previously applied: ${previous}. Found: ${md5sum}.`);
+          }
           console.log(`Already applied: ${migrationName}`);
           return;
         }

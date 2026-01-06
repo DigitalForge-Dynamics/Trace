@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "bun:test";
+import { beforeEach, describe, expect, it, mock, spyOn } from "bun:test";
 import { SQL } from "bun";
 import { Database } from "./index.ts";
 
@@ -26,11 +26,28 @@ describe("Database", () => {
       await sqliteDb.migrate();
     });
 
-    it.only("Does not re-run migrations for an existing database", async () => {
+    it("Does not re-run migrations for an existing database", async () => {
       const sqlite = new SQL("sqlite://:memory:");
       const sqliteDb = new Database(sqlite);
       await sqliteDb.migrate();
+      spyOn(console, "log").mockImplementation(() => undefined);
       await sqliteDb.migrate();
+      mock.restore();
+    });
+
+    it("Throws an error if a migration file is changed after being applied", async () => {
+      const sqlite = new SQL("sqlite://:memory:");
+      const sqliteDb = new Database(sqlite);
+      await sqliteDb.migrate();
+
+      const spy = spyOn(Bun.MD5, "hash");
+      spy.mockReturnValue("");
+
+      expect(spy).not.toHaveBeenCalled();
+      await expect(sqliteDb.migrate()).rejects.toThrowError(/Migration file modified/);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      mock.restore();
     });
 
     it.todo("Runs new migrations for an existing database", async () => {});
