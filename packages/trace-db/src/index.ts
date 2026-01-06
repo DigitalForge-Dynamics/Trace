@@ -1,6 +1,6 @@
-import { randomUUIDv7, type SQL } from "bun";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
+import { randomUUIDv7, type SQL } from "bun";
 
 // Conventions:
 // - createXXX - Created a new DB entry, returning the newly created entry.
@@ -37,12 +37,31 @@ class Database {
   }
 
   async migrate(): Promise<void> {
+    await this.driver`
+      CREATE TABLE IF NOT EXISTS _trace_migrations (
+        name STRING PRIMARY KEY NOT NULL,
+        md5sum BYTES(32) NOT NULL
+      );
+    `;
+
     const dir = path.join(import.meta.dirname, "..", "migrations");
-    let migrations = await readdir(dir);
-    for (const migration of migrations) {
-      //console.log(`Applying migration: ${migration}`);
-      await this.driver.file(path.join(dir, migration));
-      //console.log(`Applied migration: ${migration}`);
+    const migrations = await readdir(dir);
+    migrations.sort();
+
+    for (const migrationName of migrations) {
+      const file = Bun.file(path.join(dir, migrationName));
+      await this.driver.transaction(async (tx) => {
+        const applied: unknown[] = await tx`SELECT * FROM _trace_migrations WHERE name = ${migrationName};`;
+        if (applied.length !== 0) {
+          console.log(`Already applied: ${migrationName}`);
+          return;
+        }
+        await tx.file(path.join(dir, migrationName));
+        await tx`
+          INSERT INTO _trace_migrations (name, md5sum)
+          VALUES (${migrationName}, ${Bun.MD5.hash(await file.arrayBuffer())})
+        `;
+      });
     }
   }
 

@@ -1,5 +1,3 @@
-BEGIN TRANSACTION;
-
 CREATE TABLE users (
     uid BINARY(16) PRIMARY KEY NOT NULL,
     username STRING NOT NULL
@@ -53,5 +51,3 @@ CREATE TABLE asset_assignments (
     FOREIGN KEY (asset) REFERENCES assets(uid),
     FOREIGN KEY (user) REFERENCES users(uid)
 );
-
-COMMIT TRANSACTION;

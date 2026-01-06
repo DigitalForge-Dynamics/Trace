@@ -19,6 +19,25 @@ describe("Database", () => {
     await sqliteDb.migrate();
   });
 
+  describe("Migrations", () => {
+    it("Is able to migrate from an empty database", async () => {
+      const sqlite = new SQL("sqlite://:memory:");
+      const sqliteDb = new Database(sqlite);
+      await sqliteDb.migrate();
+    });
+
+    it.only("Does not re-run migrations for an existing database", async () => {
+      const sqlite = new SQL("sqlite://:memory:");
+      const sqliteDb = new Database(sqlite);
+      await sqliteDb.migrate();
+      await sqliteDb.migrate();
+    });
+
+    it.todo("Runs new migrations for an existing database", async () => {});
+
+    it.todo("Requires migrations to be wrapped in a transaction", async () => {});
+  });
+
   describe("Users", () => {
     it("Is able to create a user", async () => {
       const user = await db.createUser({ username: "test" });
