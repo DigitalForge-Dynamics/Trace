@@ -2,6 +2,7 @@ import { Buffer } from "node:buffer";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { randomUUIDv7, type SQL } from "bun";
+import { MigrationModificationError } from "./errors.ts";
 
 // Conventions:
 // - createXXX - Created a new DB entry, returning the newly created entry.
@@ -51,16 +52,17 @@ class Database {
     const migrations = await readdir(dir);
     migrations.sort();
 
-    // biome-ignore: lint/performance/noAwaitInLoops: Sequential nature is desired.
     for (const migrationName of migrations) {
       const file = Bun.file(path.join(dir, migrationName));
+      // biome-ignore lint/performance/noAwaitInLoops: Sequential nature is desired.
       await this.driver.transaction(async (tx) => {
         const applied: [] | [MigrationModel] = await tx`SELECT * FROM _trace_migrations WHERE name = ${migrationName};`;
         const md5sum = Bun.MD5.hash(await file.arrayBuffer(), "hex");
+        // biome-ignore lint/style/useExplicitLengthCheck: `> 0` does not result in type narrowing on `applied[0]`.
         if (applied.length !== 0) {
           const previous = new Buffer(applied[0].md5sum).toHex();
           if (previous !== md5sum) {
-            throw new Error(`Migration file modified. Previously applied: ${previous}. Found: ${md5sum}.`);
+            throw new MigrationModificationError(migrationName, previous, md5sum);
           }
           console.log(`Already applied: ${migrationName}`);
           return;

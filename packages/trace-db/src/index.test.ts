@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, mock, spyOn } from "bun:test";
 import { SQL } from "bun";
+import { MigrationModificationError } from "./errors.ts";
 import { Database } from "./index.ts";
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -44,7 +45,7 @@ describe("Database", () => {
       spy.mockReturnValue("");
 
       expect(spy).not.toHaveBeenCalled();
-      await expect(sqliteDb.migrate()).rejects.toThrowError(/Migration file modified/);
+      await expect(sqliteDb.migrate()).rejects.toThrowError(MigrationModificationError);
       expect(spy).toHaveBeenCalledTimes(1);
 
       mock.restore();
