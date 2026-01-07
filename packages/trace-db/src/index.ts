@@ -1,4 +1,8 @@
+import { Buffer } from "node:buffer";
+import { readdir } from "node:fs/promises";
+import path from "node:path";
 import { randomUUIDv7, type SQL } from "bun";
+import { MigrationModificationError } from "./errors.ts";
 
 // Conventions:
 // - createXXX - Created a new DB entry, returning the newly created entry.
@@ -27,6 +31,10 @@ type AssetMoveModel = Omit<AssetMove, "time" | "locationId"> & { timestamp: numb
 type AssetAssignment = { userId: string; time: Date };
 type AssetAssignmentModel = Omit<AssetAssignment, "userId" | "time"> & { user: string; timestamp: number };
 
+type MigrationModel = { name: string; md5sum: Uint8Array };
+
+const MD5SUM_BYTES = 16;
+
 class Database {
   private readonly driver: SQL;
 
@@ -34,68 +42,45 @@ class Database {
     this.driver = driver;
   }
 
-  async baseline(): Promise<void> {
+  async migrate(): Promise<void> {
     await this.driver`
-        CREATE TABLE users (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            username STRING NOT NULL
-        )
+      CREATE TABLE IF NOT EXISTS _trace_migrations (
+        name STRING PRIMARY KEY NOT NULL,
+        md5sum BYTES(16) NOT NULL
+      );
     `;
-    await this.driver`
-        CREATE TABLE idps (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            issuer URL NOT NULL,
-            label STRING NOT NULL,
-            audience STRING NOT NULL,
-            subject STRING NOT NULL,
-            UNIQUE (issuer)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE user_idps (
-            idp BINARY(16) NOT NULL,
-            sub STRING NOT NULL,
-            user BINARY(16) NOT NULL,
-            PRIMARY KEY (idp, sub),
-            FOREIGN KEY (idp) REFERENCES idps(uid),
-            FOREIGN KEY (user) REFERENCES users(uid)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE locations (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            name STRING NOT NULL
-        )
-    `;
-    await this.driver`
-        CREATE TABLE assets (
-            uid BINARY(16) PRIMARY KEY NOT NULL,
-            location BINARY(16) NOT NULL,
-            user BINARY(16) DEFAULT NULL,
-            FOREIGN KEY (location) REFERENCES locations(uid),
-            FOREIGN KEY (user) REFERENCES users(uid)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE asset_movements (
-            asset BINARY(16) NOT NULL,
-            location BINARY(16) NOT NULL,
-            timestamp INT(32) NOT NULL,
-            PRIMARY KEY (asset, location, timestamp),
-            FOREIGN KEY (asset) REFERENCES assets(uid),
-            FOREIGN KEY (location) REFERENCES locations(uid)
-        )
-    `;
-    await this.driver`
-        CREATE TABLE asset_assignments (
-            asset BINARY(16) NOT NULL,
-            user BINARY(16) NOT NULL,
-            timestamp INT(32) NOT NULL,
-            PRIMARY KEY (asset, user, timestamp),
-            FOREIGN KEY (asset) REFERENCES assets(uid),
-            FOREIGN KEY (user) REFERENCES users(uid)
-        )
-    `;
+
+    const dir = path.join(import.meta.dirname, "..", "migrations");
+    const migrations = await readdir(dir);
+    migrations.sort();
+    const md5sum = new Uint8Array(MD5SUM_BYTES);
+
+    for (const migrationName of migrations) {
+      const file = Bun.file(path.join(dir, migrationName));
+      // biome-ignore lint/performance/noAwaitInLoops: Sequential nature is desired.
+      await this.driver.transaction(async (tx) => {
+        const applied: [] | [MigrationModel] = await tx`SELECT * FROM _trace_migrations WHERE name = ${migrationName};`;
+        const arrayBuffer = await file.arrayBuffer();
+        Bun.MD5.hash(arrayBuffer, md5sum);
+
+        // biome-ignore lint/style/useExplicitLengthCheck: `> 0` does not result in type narrowing on `applied[0]`.
+        if (applied.length !== 0) {
+          const previous = new Buffer(applied[0].md5sum).toHex();
+          const found = new Buffer(md5sum.buffer).toHex();
+          if (previous !== found) {
+            throw new MigrationModificationError(migrationName, previous, found);
+          }
+          console.log(`Already applied: ${migrationName}`);
+          return;
+        }
+
+        await tx.file(path.join(dir, migrationName));
+        await tx`
+          INSERT INTO _trace_migrations (name, md5sum)
+          VALUES (${migrationName}, ${md5sum})
+        `;
+      });
+    }
   }
 
   async createUser(user: CreateUser): Promise<User> {

@@ -192,6 +192,7 @@
       "includes": [
         "index.ts",
         "packages/trace-api/src/index.ts",
+        "packages/trace-db/src/index.ts",
         "packages/trace-router/src/index.ts"
       ],
       "linter": {
@@ -387,7 +388,8 @@
     },
     {
       "includes": [
-        "index.ts"
+        "index.ts",
+        "packages/trace-db/src/index.ts"
       ],
       "linter": {
         "rules": {

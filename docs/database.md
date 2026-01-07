@@ -37,7 +37,7 @@ erDiagram
 		DateTime timestamp PK
 	}
 
-	
+
 	User_IDP many to one IDP : "(idp, uid)"
 	User_IDP many to one User : "(user, uid)"
 
