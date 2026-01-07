@@ -6,53 +6,55 @@ import { Database } from "./index.ts";
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const alreadyAppliedRegex = /^Already applied: .*$/;
 
-describe("Database", () => {
+describe("Database Support", () => {
+  it("Is able to migrate an SQLITE database", async () => {
+    const sql = new SQL("sqlite://:memory:");
+    const db = new Database(sql);
+    await db.migrate();
+  });
+});
+
+describe("Database Migrations", () => {
+  it("Is able to migrate from an empty database", async () => {
+    const sqlite = new SQL("sqlite://:memory:");
+    const sqliteDb = new Database(sqlite);
+    await sqliteDb.migrate();
+  });
+
+  it("Does not re-run migrations for an existing database", async () => {
+    const sqlite = new SQL("sqlite://:memory:");
+    const sqliteDb = new Database(sqlite);
+    await sqliteDb.migrate();
+    const spy = spyOn(console, "log");
+    spy.mockImplementation(() => undefined);
+    await sqliteDb.migrate();
+    expect(spy).toHaveBeenCalledWith(expect.stringMatching(alreadyAppliedRegex));
+    mock.restore();
+  });
+
+  it("Throws a MigrationModificationError if a migration file is changed after being applied", async () => {
+    const sqlite = new SQL("sqlite://:memory:");
+    const sqliteDb = new Database(sqlite);
+    await sqliteDb.migrate();
+
+    const spy = spyOn(Bun.MD5, "hash");
+    spy.mockReturnValue("");
+
+    expect(spy).not.toHaveBeenCalled();
+    await expect(sqliteDb.migrate()).rejects.toThrowError(MigrationModificationError);
+    expect(spy).toHaveBeenCalled();
+
+    mock.restore();
+  });
+});
+
+describe("Database Tables", () => {
   let db: Database;
 
   beforeEach(async () => {
     const sql = new SQL("sqlite://:memory:");
     db = new Database(sql);
     await db.migrate();
-  });
-
-  it("Is able to migrate an SQLITE database", async () => {
-    const sqlite = new SQL("sqlite://:memory:");
-    const sqliteDb = new Database(sqlite);
-    await sqliteDb.migrate();
-  });
-
-  describe("Migrations", () => {
-    it("Is able to migrate from an empty database", async () => {
-      const sqlite = new SQL("sqlite://:memory:");
-      const sqliteDb = new Database(sqlite);
-      await sqliteDb.migrate();
-    });
-
-    it("Does not re-run migrations for an existing database", async () => {
-      const sqlite = new SQL("sqlite://:memory:");
-      const sqliteDb = new Database(sqlite);
-      await sqliteDb.migrate();
-      const spy = spyOn(console, "log");
-      spy.mockImplementation(() => undefined);
-      await sqliteDb.migrate();
-      expect(spy).toHaveBeenCalledWith(expect.stringMatching(alreadyAppliedRegex));
-      mock.restore();
-    });
-
-    it("Throws a MigrationModificationError if a migration file is changed after being applied", async () => {
-      const sqlite = new SQL("sqlite://:memory:");
-      const sqliteDb = new Database(sqlite);
-      await sqliteDb.migrate();
-
-      const spy = spyOn(Bun.MD5, "hash");
-      spy.mockReturnValue("");
-
-      expect(spy).not.toHaveBeenCalled();
-      await expect(sqliteDb.migrate()).rejects.toThrowError(MigrationModificationError);
-      expect(spy).toHaveBeenCalled();
-
-      mock.restore();
-    });
   });
 
   describe("Users", () => {
