@@ -33,6 +33,8 @@ type AssetAssignmentModel = Omit<AssetAssignment, "userId" | "time"> & { user: s
 
 type MigrationModel = { name: string; md5sum: Uint8Array };
 
+const MD5SUM_BYTES = 16;
+
 class Database {
   private readonly driver: SQL;
 
@@ -44,33 +46,38 @@ class Database {
     await this.driver`
       CREATE TABLE IF NOT EXISTS _trace_migrations (
         name STRING PRIMARY KEY NOT NULL,
-        md5sum BYTES(32) NOT NULL
+        md5sum BYTES(16) NOT NULL
       );
     `;
 
     const dir = path.join(import.meta.dirname, "..", "migrations");
     const migrations = await readdir(dir);
     migrations.sort();
+    const md5sum = new Uint8Array(MD5SUM_BYTES);
 
     for (const migrationName of migrations) {
       const file = Bun.file(path.join(dir, migrationName));
       // biome-ignore lint/performance/noAwaitInLoops: Sequential nature is desired.
       await this.driver.transaction(async (tx) => {
         const applied: [] | [MigrationModel] = await tx`SELECT * FROM _trace_migrations WHERE name = ${migrationName};`;
-        const md5sum = Bun.MD5.hash(await file.arrayBuffer(), "hex");
+        const arrayBuffer = await file.arrayBuffer();
+        Bun.MD5.hash(arrayBuffer, md5sum);
+
         // biome-ignore lint/style/useExplicitLengthCheck: `> 0` does not result in type narrowing on `applied[0]`.
         if (applied.length !== 0) {
           const previous = new Buffer(applied[0].md5sum).toHex();
-          if (previous !== md5sum) {
-            throw new MigrationModificationError(migrationName, previous, md5sum);
+          const found = new Buffer(md5sum.buffer).toHex();
+          if (previous !== found) {
+            throw new MigrationModificationError(migrationName, previous, found);
           }
           console.log(`Already applied: ${migrationName}`);
           return;
         }
+
         await tx.file(path.join(dir, migrationName));
         await tx`
           INSERT INTO _trace_migrations (name, md5sum)
-          VALUES (${migrationName}, ${Bun.MD5.hash(await file.arrayBuffer())})
+          VALUES (${migrationName}, ${md5sum})
         `;
       });
     }

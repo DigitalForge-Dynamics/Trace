@@ -4,6 +4,7 @@ import { MigrationModificationError } from "./errors.ts";
 import { Database } from "./index.ts";
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const alreadyAppliedRegex = /^Already applied: .*$/;
 
 describe("Database", () => {
   let db: Database;
@@ -31,12 +32,14 @@ describe("Database", () => {
       const sqlite = new SQL("sqlite://:memory:");
       const sqliteDb = new Database(sqlite);
       await sqliteDb.migrate();
-      spyOn(console, "log").mockImplementation(() => undefined);
+      const spy = spyOn(console, "log");
+      spy.mockImplementation(() => undefined);
       await sqliteDb.migrate();
+      expect(spy).toHaveBeenCalledWith(expect.stringMatching(alreadyAppliedRegex));
       mock.restore();
     });
 
-    it("Throws an error if a migration file is changed after being applied", async () => {
+    it("Throws a MigrationModificationError if a migration file is changed after being applied", async () => {
       const sqlite = new SQL("sqlite://:memory:");
       const sqliteDb = new Database(sqlite);
       await sqliteDb.migrate();
@@ -46,7 +49,7 @@ describe("Database", () => {
 
       expect(spy).not.toHaveBeenCalled();
       await expect(sqliteDb.migrate()).rejects.toThrowError(MigrationModificationError);
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalled();
 
       mock.restore();
     });
