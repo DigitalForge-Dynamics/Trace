@@ -1,5 +1,6 @@
 import { Router } from "@DigitalForge-Dynamics/trace-router";
 import type { HealthCheckResponse } from "@DigitalForge-Dynamics/trace-schemas";
+import { Database as SqLite } from "bun:sqlite";
 import { exportJWK, type GenerateKeyPairResult, generateKeyPair } from "jose";
 import { ZodError } from "zod";
 import { corsHeaders, setupConfiguration } from "./config.ts";
@@ -7,6 +8,7 @@ import { db } from "./db.ts";
 import { authenticateOidc, getOidcConfig } from "./handlers/oidc.ts";
 import { createUser, linkUserIdp } from "./handlers/users.ts";
 import { authenticateRequest } from "./middleware/authentication.ts";
+import { RateLimiter, rateLimitRequest } from "./middleware/rate-limit.ts";
 
 const jwks: GenerateKeyPairResult = await generateKeyPair("ES512");
 const router: Router<Record<string, never>> = new Router();
@@ -43,10 +45,12 @@ router.post("/user/link", linkUserIdp);
 const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> => {
   await db.migrate();
   await setupConfiguration(db);
+  const store = new SqLite(":memory:");
+  const limiter = new RateLimiter(store);
+  await limiter.init();
   const server = Bun.serve({
     port,
     hostname: "localhost",
-    routes: router.toNative(corsHeaders),
     fetch: async (req: Request) => {
       const res = await authenticateRequest(req, jwks.publicKey);
       if (res === null) {
@@ -55,6 +59,13 @@ const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> 
       return res;
     },
   });
+  const _routes = new Router();
+  _routes.middleware((req) => rateLimitRequest(req, server, limiter));
+  _routes.mount("/", router);
+  // TODO: This middleware prefixing is impractical, since it does not seem to be copying across `errorHandler`.
+  //	to be confirmed reasoning for seemingly not.
+  _routes.errorHandler(() => new Response("", { status: 500 }));
+  server.reload({ routes: _routes.toNative(corsHeaders) });
   console.log(`Server running at ${server.url}`);
   return server;
 };
