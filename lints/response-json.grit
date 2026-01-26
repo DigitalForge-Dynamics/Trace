@@ -3,6 +3,7 @@
         or {
             $args <: contains `"Content-Type"`,
             $args <: contains `{ status: 204 }`,
+            $args <: contains `{ status: 404 }`,
         },
     },
     register_diagnostic(
