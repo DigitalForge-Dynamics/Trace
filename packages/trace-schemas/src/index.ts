@@ -103,6 +103,7 @@ export {
   createAssetResponse,
   getAssetRequest,
   getAssetResponse,
+  listAssetsResponse,
 } from "./asset.schema.ts";
 
 export type {

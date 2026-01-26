@@ -11,7 +11,7 @@ import { createUser, linkUserIdp } from "./handlers/users.ts";
 import { authenticateRequest } from "./middleware/authentication.ts";
 
 const jwks: GenerateKeyPairResult = await generateKeyPair("ES512");
-const router: Router<Record<string, never>> = new Router();
+const router: Router<Record<never, string>> = new Router();
 
 router.errorHandler((req, error) => {
   if (error instanceof ZodError) {
@@ -42,8 +42,8 @@ router.middleware((req) => authenticateRequest(req, jwks.publicKey));
 router.post("/user", createUser);
 router.post("/user/link", linkUserIdp);
 router.post("/asset", createAsset);
-router.get("/asset", getAsset);
-router.get("/asset/all", listAssets);
+router.get("/asset/:id", getAsset);
+router.get("/asset", listAssets);
 router.post("/location", createLocation);
 
 const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> => {

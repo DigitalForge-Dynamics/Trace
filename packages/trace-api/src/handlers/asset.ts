@@ -5,6 +5,7 @@ import {
   getAssetRequest,
   type ListAssetsResponse,
 } from "@DigitalForge-Dynamics/trace-schemas";
+import type { BunRequest } from "bun";
 import { db } from "../db.ts";
 
 const createAsset = async (req: Request): Promise<Response> => {
@@ -13,8 +14,8 @@ const createAsset = async (req: Request): Promise<Response> => {
   return Response.json({ id: asset.uid } satisfies CreateAssetResponse);
 };
 
-const getAsset = async (req: Request): Promise<Response> => {
-  const request = getAssetRequest.parse(await req.json());
+const getAsset = async (req: BunRequest & { params: { id: string } }): Promise<Response> => {
+  const request = getAssetRequest.parse(req.params);
   const asset = await db.getAsset(request.id);
   if (asset === null) {
     return new Response(null, { status: 404 });

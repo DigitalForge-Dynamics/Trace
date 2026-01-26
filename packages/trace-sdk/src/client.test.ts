@@ -145,4 +145,19 @@ describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenti
       expect(response).toBeNull();
     });
   });
+
+  describe("Tests listAssets() Method", () => {
+    it("Returns successful response", async () => {
+      const location = await apiClient.createLocation({ name: "Foo" });
+      const asset = await apiClient.createAsset({ location: location.id });
+      const response = await apiClient.listAssets();
+      expect(response).toStrictEqual([
+        {
+          id: asset.id,
+          location: location.id,
+          user: null,
+        },
+      ]);
+    });
+  });
 });

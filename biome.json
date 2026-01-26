@@ -237,6 +237,7 @@
       "includes": [
         "index.ts",
         "packages/trace-api/src/db.ts",
+        "packages/trace-api/src/handlers/asset.ts",
         "packages/trace-db/src/index.ts",
         "packages/trace-db/src/index.test.ts",
         "packages/trace-router/src/index.test.ts",

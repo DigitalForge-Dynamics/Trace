@@ -16,6 +16,8 @@ import {
   type JWKSResponse,
   jwksResponse,
   type LinkUserIdpRequest,
+  type ListAssetsResponse,
+  listAssetsResponse,
   type OIDCConfigResponse,
   type OIDCResponse,
   oidcConfigResponse,
@@ -154,11 +156,17 @@ class APIClient {
   }
 
   public async getAsset(asset: GetAssetRequest): Promise<GetAssetResponse | null> {
-    const body = await this.netClient.get("/asset", { body: JSON.stringify(asset) });
+    // biome-ignore lint/plugin/regex-full-search: False positive from lint. // TODO: Improve lint to remove this matching.
+    const body = await this.netClient.get(`/asset/${asset.id}`);
     if (body === null) {
       return null;
     }
     return getAssetResponse.parse(body);
+  }
+
+  public async listAssets(): Promise<ListAssetsResponse> {
+    const body = await this.netClient.get("/asset");
+    return listAssetsResponse.parse(body);
   }
 
   public async createLocation(location: CreateLocationRequest): Promise<CreateLocationResponse> {
