@@ -8,8 +8,8 @@ type ExtractRouteParams<T> = T extends `${string}:${infer Param}/${infer Rest}`
   : T extends `${string}:${infer Param}`
     ? { [K in Param]: string }
     : T extends `${string}*`
-      ? {}
-      : {};
+      ? Record<never, never>
+      : Record<never, never>;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
 

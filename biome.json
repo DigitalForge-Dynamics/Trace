@@ -223,7 +223,7 @@
     {
       "includes": [
         "packages/trace-api/src/env.ts",
-        "packages/trace-schemas/src/index.ts"
+        "packages/trace-schemas/src/*.ts"
       ],
       "linter": {
         "rules": {
@@ -255,7 +255,8 @@
     {
       "includes": [
         "packages/trace-api/src/index.ts",
-        "packages/trace-schemas/src/index.ts"
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-sdk/src/client.ts"
       ],
       "linter": {
         "rules": {
@@ -395,6 +396,18 @@
         "rules": {
           "correctness": {
             "noNodejsModules": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-schemas/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
           }
         }
       }
