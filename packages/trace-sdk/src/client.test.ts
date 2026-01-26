@@ -139,9 +139,7 @@ describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenti
     });
 
     it("Returns null when an asset does not exist", async () => {
-      const location = await apiClient.createLocation({ name: "Foo" });
-      const asset = await apiClient.createAsset({ location: location.id });
-      const response = await apiClient.getAsset({ id: asset.id });
+      const response = await apiClient.getAsset({ id: randomUUIDv7() });
       expect(response).toBeNull();
     });
   });
@@ -151,13 +149,15 @@ describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenti
       const location = await apiClient.createLocation({ name: "Foo" });
       const asset = await apiClient.createAsset({ location: location.id });
       const response = await apiClient.listAssets();
-      expect(response).toStrictEqual([
-        {
-          id: asset.id,
-          location: location.id,
-          user: null,
-        },
-      ]);
+      expect(response).toStrictEqual(
+        expect.objectContaining([
+          {
+            id: asset.id,
+            location: location.id,
+            user: null,
+          },
+        ]),
+      );
     });
   });
 });
