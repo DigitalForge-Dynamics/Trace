@@ -150,11 +150,13 @@ describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenti
       const asset = await apiClient.createAsset({ location: location.id });
       const response = await apiClient.listAssets();
       expect(response).toStrictEqual(
-        expect.objectContaining({
-          id: asset.id,
-          location: location.id,
-          user: null,
-        }),
+        expect.arrayContaining([
+          {
+            id: asset.id,
+            location: location.id,
+            user: null,
+          },
+        ]),
       );
     });
   });
