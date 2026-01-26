@@ -9,23 +9,33 @@ import { db } from "../db.ts";
 
 const createAsset = async (req: Request): Promise<Response> => {
   const assetRequest = createAssetRequest.parse(await req.json());
-  const asset = await db.createAsset(assetRequest);
-  return Response.json(asset satisfies CreateAssetResponse);
+  const asset = await db.createAsset({ locationId: assetRequest.location });
+  return Response.json({ id: asset.uid } satisfies CreateAssetResponse);
 };
 
 const getAsset = async (req: Request): Promise<Response> => {
   const request = getAssetRequest.parse(await req.json());
-  const asset = await db.getAsset(request.uid);
+  const asset = await db.getAsset(request.id);
   if (asset === null) {
     return new Response(null, { status: 404 });
   }
-  return Response.json(asset satisfies GetAssetResponse);
+  return Response.json({
+    id: asset.uid,
+    location: asset.location,
+    user: asset.user,
+  } satisfies GetAssetResponse);
 };
 
 // TODO: Add 'token' based pagination. Can base off times, as UUIDv7 contains a timebased component.
 const listAssets = async (_req: Request): Promise<Response> => {
   const assets = await db.listAssets();
-  return Response.json(assets satisfies ListAssetsResponse);
+  return Response.json(
+    assets.map((asset) => ({
+      id: asset.uid,
+      location: asset.location,
+      user: asset.user,
+    })) satisfies ListAssetsResponse,
+  );
 };
 
 export { createAsset, getAsset, listAssets };
