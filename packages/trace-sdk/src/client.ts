@@ -1,7 +1,16 @@
 import {
+  type CreateAssetRequest,
+  type CreateAssetResponse,
+  type CreateLocationRequest,
+  type CreateLocationResponse,
   type CreateUserRequest,
   type CreateUserResponse,
+  createAssetResponse,
+  createLocationResponse,
   createUserResponse,
+  type GetAssetRequest,
+  type GetAssetResponse,
+  getAssetResponse,
   type HealthCheckResponse,
   healthCheckResponse,
   type JWKSResponse,
@@ -82,6 +91,9 @@ class NetClient {
       mode: "cors",
       headers,
     });
+    if (response.status === 404) {
+      return null;
+    }
     if (!response.ok) {
       const body = await response.text();
       throw new Error(`Request to ${method} ${path} failed with status: ${response.status}, and body ${body}`);
@@ -134,6 +146,24 @@ class APIClient {
 
   public async linkUserIdp(info: LinkUserIdpRequest): Promise<void> {
     await this.netClient.post("/user/link", { body: JSON.stringify(info) });
+  }
+
+  public async createAsset(asset: CreateAssetRequest): Promise<CreateAssetResponse> {
+    const body = await this.netClient.post("/asset", { body: JSON.stringify(asset) });
+    return createAssetResponse.parse(body);
+  }
+
+  public async getAsset(asset: GetAssetRequest): Promise<GetAssetResponse | null> {
+    const body = await this.netClient.get("/asset", { body: JSON.stringify(asset) });
+    if (body === null) {
+      return null;
+    }
+    return getAssetResponse.parse(body);
+  }
+
+  public async createLocation(location: CreateLocationRequest): Promise<CreateLocationResponse> {
+    const body = await this.netClient.post("/location", { body: JSON.stringify(location) });
+    return createLocationResponse.parse(body);
   }
 }
 

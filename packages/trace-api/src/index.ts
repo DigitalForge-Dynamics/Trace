@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { corsHeaders, setupConfiguration } from "./config.ts";
 import { db } from "./db.ts";
 import { createAsset, getAsset, listAssets } from "./handlers/asset.ts";
+import { createLocation } from "./handlers/location.ts";
 import { authenticateOidc, getOidcConfig } from "./handlers/oidc.ts";
 import { createUser, linkUserIdp } from "./handlers/users.ts";
 import { authenticateRequest } from "./middleware/authentication.ts";
@@ -43,6 +44,7 @@ router.post("/user/link", linkUserIdp);
 router.post("/asset", createAsset);
 router.get("/asset", getAsset);
 router.get("/asset/all", listAssets);
+router.post("/location", createLocation);
 
 const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> => {
   await db.migrate();

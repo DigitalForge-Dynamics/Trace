@@ -106,4 +106,43 @@ describe.if(Bun.env.IDP_TOKEN !== undefined)("Integration > APIClient > Authenti
       expect(response).toBeUndefined();
     });
   });
+
+  describe("Tests createLocation() Method", () => {
+    it("Returns successful response", async () => {
+      const response = await apiClient.createLocation({ name: "Foo" });
+      expect(response).toStrictEqual({
+        id: expect.any(String),
+      });
+    });
+  });
+
+  describe("Tests createAsset() Method", () => {
+    it("Returns successful response", async () => {
+      const location = await apiClient.createLocation({ name: "Foo" });
+      const response = await apiClient.createAsset({ location: location.id });
+      expect(response).toStrictEqual({
+        id: expect.any(String),
+      });
+    });
+  });
+
+  describe("Tests getAsset() Method", () => {
+    it("Returns successful response when an asset exists", async () => {
+      const location = await apiClient.createLocation({ name: "Foo" });
+      const asset = await apiClient.createAsset({ location: location.id });
+      const response = await apiClient.getAsset({ id: asset.id });
+      expect(response).toStrictEqual({
+        id: asset.id,
+        location: location.id,
+        user: null,
+      });
+    });
+
+    it("Returns null when an asset does not exist", async () => {
+      const location = await apiClient.createLocation({ name: "Foo" });
+      const asset = await apiClient.createAsset({ location: location.id });
+      const response = await apiClient.getAsset({ id: asset.id });
+      expect(response).toBeNull();
+    });
+  });
 });

@@ -92,14 +92,27 @@ const linkUserIdpRequest = z.strictObject({
 type LinkUserIdpRequest = z.infer<typeof linkUserIdpRequest>;
 
 export type {
+  CreateAssetRequest,
   CreateAssetResponse,
+  GetAssetRequest,
   GetAssetResponse,
   ListAssetsResponse,
 } from "./asset.schema.ts";
 export {
   createAssetRequest,
+  createAssetResponse,
   getAssetRequest,
+  getAssetResponse,
 } from "./asset.schema.ts";
+
+export type {
+  CreateLocationRequest,
+  CreateLocationResponse,
+} from "./location.schema.ts";
+export {
+  createLocationRequest,
+  createLocationResponse,
+} from "./location.schema.ts";
 
 export type {
   HealthCheckResponse,
