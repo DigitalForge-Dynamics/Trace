@@ -1,0 +1,16 @@
+name: Typecheck
+
+on:
+  workflow_call:
+
+permissions:
+  contents: "read"
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3 # v2.1.2
+      - run: bun install --frozen-lockfile
+      - run: bunx tsc --noEmit
