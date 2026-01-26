@@ -4,7 +4,7 @@
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true,
-    "defaultBranch": "bunjs"
+    "defaultBranch": "main"
   },
   "files": {
     "ignoreUnknown": false,

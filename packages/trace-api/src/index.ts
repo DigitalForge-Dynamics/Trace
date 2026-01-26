@@ -4,6 +4,7 @@ import { exportJWK, type GenerateKeyPairResult, generateKeyPair } from "jose";
 import { ZodError } from "zod";
 import { corsHeaders, setupConfiguration } from "./config.ts";
 import { db } from "./db.ts";
+import { createAsset, getAsset, listAssets } from "./handlers/asset.ts";
 import { authenticateOidc, getOidcConfig } from "./handlers/oidc.ts";
 import { createUser, linkUserIdp } from "./handlers/users.ts";
 import { authenticateRequest } from "./middleware/authentication.ts";
@@ -39,6 +40,9 @@ router.middleware((req) => authenticateRequest(req, jwks.publicKey));
 
 router.post("/user", createUser);
 router.post("/user/link", linkUserIdp);
+router.post("/asset", createAsset);
+router.get("/asset", getAsset);
+router.get("/asset/all", listAssets);
 
 const startServer = async (port: number): Promise<ReturnType<typeof Bun.serve>> => {
   await db.migrate();

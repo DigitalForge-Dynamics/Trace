@@ -92,6 +92,16 @@ const linkUserIdpRequest = z.strictObject({
 type LinkUserIdpRequest = z.infer<typeof linkUserIdpRequest>;
 
 export type {
+  CreateAssetResponse,
+  GetAssetResponse,
+  ListAssetsResponse,
+} from "./asset.schema.ts";
+export {
+  createAssetRequest,
+  getAssetRequest,
+} from "./asset.schema.ts";
+
+export type {
   HealthCheckResponse,
   ErrorResponse,
   OIDCResponse,
