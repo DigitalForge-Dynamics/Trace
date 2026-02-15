@@ -403,7 +403,8 @@
     },
     {
       "includes": [
-        "packages/trace-schemas/src/index.ts"
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-db/src/index.ts"
       ],
       "linter": {
         "rules": {

@@ -10,4 +10,36 @@ class MigrationModificationError extends Error {
   }
 }
 
-export { MigrationModificationError };
+class ExistingEntityError extends Error {
+  readonly table: string;
+  readonly id: string;
+  constructor(table: string, id: string) {
+    super(`Existing entry in ${table} with id ${id}.`);
+    this.table = table;
+    this.id = id;
+  }
+}
+
+class MissingEntityError extends Error {
+  readonly table: string;
+  readonly id: string;
+  constructor(table: string, id: string) {
+    super(`Missing entry in ${table} with id ${id}.`);
+    this.table = table;
+    this.id = id;
+  }
+}
+
+class ConflictingConstraintError extends Error {
+  readonly table: string;
+  readonly requested: string;
+  readonly existing: string;
+  constructor(table: string, requested: string, existing: string) {
+    super(`Conflicting constraint in ${table}, with adding ${requested} to existing ${existing}.`);
+    this.table = table;
+    this.requested = requested;
+    this.existing = existing;
+  }
+}
+
+export { MigrationModificationError, ExistingEntityError, MissingEntityError, ConflictingConstraintError };

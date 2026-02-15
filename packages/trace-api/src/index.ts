@@ -1,3 +1,4 @@
+import { ConflictingConstraintError, ExistingEntityError, MissingEntityError } from "@DigitalForge-Dynamics/trace-db";
 import { Router } from "@DigitalForge-Dynamics/trace-router";
 import type { HealthCheckResponse } from "@DigitalForge-Dynamics/trace-schemas";
 import { exportJWK, type GenerateKeyPairResult, generateKeyPair } from "jose";
@@ -15,7 +16,16 @@ const router: Router<Record<never, string>> = new Router();
 
 router.errorHandler((req, error) => {
   if (error instanceof ZodError) {
-    return Response.json({ issues: error.issues });
+    return Response.json({ issues: error.issues }, { status: 400 });
+  }
+  if (error instanceof MissingEntityError) {
+    return Response.json({ table: error.table, id: error.id }, { status: 404 });
+  }
+  if (error instanceof ExistingEntityError) {
+    return Response.json({ table: error.table, id: error.id }, { status: 409 });
+  }
+  if (error instanceof ConflictingConstraintError) {
+    return Response.json({ table: error.table, requested: error.requested }, { status: 409 });
   }
   const res = Router.defaultErrorHandler(req, error);
   corsHeaders.forEach((key, value) => {
@@ -26,7 +36,10 @@ router.errorHandler((req, error) => {
 
 router.get(
   "/health-check",
-  (): Response => Response.json({ health: "OK" } satisfies HealthCheckResponse, { status: 200 }),
+  (): Response =>
+    Response.json({ health: "OK" } satisfies HealthCheckResponse, {
+      status: 200,
+    }),
 );
 // biome-ignore lint/plugin/response-json: CORS Pre-Flight Check.
 router.options("/auth/oidc", () => new Response(null));
