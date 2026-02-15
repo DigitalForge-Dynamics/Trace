@@ -1,13 +1,13 @@
 {
-	"name": "@DigitalForge-Dynamics/trace-db",
-	"module": "src/index.ts",
-	"types": "src/index.ts",
-	"type": "module",
-	"private": true,
-	"devDependencies": {
-		"@types/bun": "latest"
-	},
-	"peerDependencies": {
-		"typescript": "catalog:"
-	}
+  "name": "@DigitalForge-Dynamics/trace-db",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
 }

@@ -14,7 +14,7 @@ import {
 // - linkXXX - Create a new DB entry, in a table that links other tables. Does not create a new ID, rather using compound keys.
 // - getXXX - Retrieve an entry or null, by ID. Returns entry or null.
 // - listXXX - Retrieve an array of all entries in a table.
-// - findXXX - Retrieves an enttry or null, by linked ID's. Used where a unique constraint exists.
+// - findXXX - Retrieves an entry or null, by linked ID's. Used where a unique constraint exists.
 // - searchXXX - Retrieves an array of entries in a table, based on search criteria.
 
 type CreateUser = { username: string };
