@@ -1,14 +1,26 @@
 import type { BunRequest } from "bun";
 
 type Params = Record<never, never>;
+// NOTE: Taken from `bun-types`.
+// Change from https://github.com/oven-sh/bun/pull/24872 changed inferred type for `string` from `Record<never,string> / {}` to `Record<string,string>`.
+type ExtractRouteParams<T> = T extends `${string}:${infer Param}/${infer Rest}`
+  ? { [K in Param]: string } & ExtractRouteParams<Rest>
+  : T extends `${string}:${infer Param}`
+    ? { [K in Param]: string }
+    : T extends `${string}*`
+      ? Record<never, never>
+      : Record<never, never>;
+
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
 
-type NativeHandler<TParams extends Params> = (req: BunRequest & { params: TParams }) => Promise<Response> | Response;
+type NativeHandler<TParams extends Params> = (
+  req: Omit<BunRequest, "params"> & { params: TParams },
+) => Promise<Response> | Response;
 type ErrorHandler = (req: BunRequest, error: unknown) => Promise<Response> | Response;
 type Route<TParams extends Params, TPath extends string> = {
   readonly path: TPath;
   readonly method: HttpMethod;
-  readonly handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>;
+  readonly handler: NativeHandler<TParams & ExtractRouteParams<TPath>>;
 };
 type Middleware<TParams extends Params> = (
   req: BunRequest & { params: TParams },
@@ -40,10 +52,7 @@ class Router<in out TParams extends Params> {
    * @param handler - Strictly typed handler, for corresponding path.
    * @return Router to allow for chaining definitions.
    */
-  get<TPath extends `/${string}`>(
-    path: TPath,
-    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
-  ): this {
+  get<TPath extends `/${string}`>(path: TPath, handler: NativeHandler<TParams & ExtractRouteParams<TPath>>): this {
     return this.on("GET", path, handler);
   }
 
@@ -53,10 +62,7 @@ class Router<in out TParams extends Params> {
    * @param handler - Strictly typed handler, for corresponding path.
    * @return Router to allow for chaining definitions.
    */
-  post<TPath extends `/${string}`>(
-    path: TPath,
-    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
-  ): this {
+  post<TPath extends `/${string}`>(path: TPath, handler: NativeHandler<TParams & ExtractRouteParams<TPath>>): this {
     return this.on("POST", path, handler);
   }
 
@@ -66,10 +72,7 @@ class Router<in out TParams extends Params> {
    * @param handler - Strictly typed handler, for corresponding path.
    * @return Router to allow for chaining definitions.
    */
-  put<TPath extends `/${string}`>(
-    path: TPath,
-    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
-  ): this {
+  put<TPath extends `/${string}`>(path: TPath, handler: NativeHandler<TParams & ExtractRouteParams<TPath>>): this {
     return this.on("PUT", path, handler);
   }
 
@@ -79,10 +82,7 @@ class Router<in out TParams extends Params> {
    * @param handler - Strictly typed handler, for corresponding path.
    * @return Router to allow for chaining definitions.
    */
-  patch<TPath extends `/${string}`>(
-    path: TPath,
-    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
-  ): this {
+  patch<TPath extends `/${string}`>(path: TPath, handler: NativeHandler<TParams & ExtractRouteParams<TPath>>): this {
     return this.on("PATCH", path, handler);
   }
 
@@ -92,10 +92,7 @@ class Router<in out TParams extends Params> {
    * @param handler - Strictly typed handler, for corresponding path.
    * @return Router to allow for chaining definitions.
    */
-  delete<TPath extends `/${string}`>(
-    path: TPath,
-    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
-  ): this {
+  delete<TPath extends `/${string}`>(path: TPath, handler: NativeHandler<TParams & ExtractRouteParams<TPath>>): this {
     return this.on("DELETE", path, handler);
   }
 
@@ -105,10 +102,7 @@ class Router<in out TParams extends Params> {
    * @param hander - Strictly typed handler, for corresponding path.
    * @return Router to allow for chaining definitions.
    */
-  options<TPath extends `/${string}`>(
-    path: TPath,
-    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
-  ): this {
+  options<TPath extends `/${string}`>(path: TPath, handler: NativeHandler<TParams & ExtractRouteParams<TPath>>): this {
     return this.on("OPTIONS", path, handler);
   }
 
@@ -132,10 +126,7 @@ class Router<in out TParams extends Params> {
    * @param router - The sub router.
    * @return Router to allow for chaining definitions.
    */
-  mount<TPath extends `/${string}`>(
-    prefix: TPath,
-    router: Router<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
-  ): this {
+  mount<TPath extends `/${string}`>(prefix: TPath, router: Router<TParams & ExtractRouteParams<TPath>>): this {
     this.layers.push({
       type: "router",
       prefix,
@@ -266,7 +257,7 @@ class Router<in out TParams extends Params> {
   private on<TPath extends `/${string}`>(
     method: HttpMethod,
     path: TPath,
-    handler: NativeHandler<TParams & Bun.Serve.ExtractRouteParams<TPath>>,
+    handler: NativeHandler<TParams & ExtractRouteParams<TPath>>,
   ): this {
     this.layers.push({
       type: "route",

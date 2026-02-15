@@ -2,14 +2,19 @@ import { Buffer } from "node:buffer";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { randomUUIDv7, type SQL } from "bun";
-import { MigrationModificationError } from "./errors.ts";
+import {
+  ConflictingConstraintError,
+  ExistingEntityError,
+  MigrationModificationError,
+  MissingEntityError,
+} from "./errors.ts";
 
 // Conventions:
 // - createXXX - Created a new DB entry, returning the newly created entry.
 // - linkXXX - Create a new DB entry, in a table that links other tables. Does not create a new ID, rather using compound keys.
 // - getXXX - Retrieve an entry or null, by ID. Returns entry or null.
 // - listXXX - Retrieve an array of all entries in a table.
-// - findXXX - Retrieves an enttry or null, by linked ID's. Used where a unique constraint exists.
+// - findXXX - Retrieves an entry or null, by linked ID's. Used where a unique constraint exists.
 // - searchXXX - Retrieves an array of entries in a table, based on search criteria.
 
 type CreateUser = { username: string };
@@ -130,7 +135,7 @@ class Database {
       const db = new Database(tx);
       const idpCheck = await db.findIdp(idp.issuer);
       if (idpCheck !== null) {
-        throw new Error("IDP Issuer already exists");
+        throw new ExistingEntityError("idps", idp.issuer.toString());
       }
       return await this.driver`
             INSERT INTO idps (uid, issuer, label, audience, subject)
@@ -194,16 +199,16 @@ class Database {
       const db = new Database(tx);
       const idpCheck = await db.getIdp(idpId);
       if (idpCheck === null) {
-        throw new Error("Invalid IDP ID");
+        throw new MissingEntityError("idps", idpId);
       }
       const userCheck = await db.getUser(userId);
       if (userCheck === null) {
-        throw new Error("Invalid User ID");
+        throw new MissingEntityError("users", userId);
       }
       const linkCheck = await db.findUser(idpCheck.issuer, idpSub);
 
       if (linkCheck !== null && linkCheck.uid !== userId) {
-        throw new Error("IDP User already linked to another user");
+        throw new ConflictingConstraintError("idp_user", userId, linkCheck.uid);
       }
       if (linkCheck !== null && linkCheck.uid === userId) {
         // IDP, Sub already linked to current user
@@ -254,7 +259,7 @@ class Database {
       const db = new Database(tx);
       const locationCheck = await db.getLocation(asset.locationId);
       if (locationCheck === null) {
-        throw new Error("Invalid Location ID");
+        throw new MissingEntityError("location", asset.locationId);
       }
 
       return await tx`
@@ -294,11 +299,11 @@ class Database {
 
       const assetCheck = await db.getAsset(assetId);
       if (assetCheck === null) {
-        throw new Error("Invalid Asset ID");
+        throw new MissingEntityError("asset", assetId);
       }
       const locationCheck = await db.getLocation(locationId);
       if (locationCheck === null) {
-        throw new Error("Invalid Location ID");
+        throw new MissingEntityError("location", locationId);
       }
 
       if (assetCheck.location === locationId) {
@@ -323,11 +328,11 @@ class Database {
 
       const assetCheck = await db.getAsset(assetId);
       if (assetCheck === null) {
-        throw new Error("Invalid Asset ID");
+        throw new MissingEntityError("asset", assetId);
       }
       const userCheck = await db.getUser(userId);
       if (userCheck === null) {
-        throw new Error("Invalid User ID");
+        throw new MissingEntityError("user", userId);
       }
       if (assetCheck.user === userId) {
         // Already assigned to `userId`.
@@ -363,7 +368,7 @@ class Database {
       const db = new Database(tx);
       const assetCheck = await db.getAsset(assetId);
       if (assetCheck === null) {
-        throw new Error("Invalid Asset ID");
+        throw new MissingEntityError("asset", assetId);
       }
 
       return await tx`
@@ -379,3 +384,4 @@ class Database {
 }
 
 export { Database };
+export { ConflictingConstraintError, ExistingEntityError, MissingEntityError } from "./errors.ts";

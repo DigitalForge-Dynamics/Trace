@@ -4,7 +4,7 @@
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true,
-    "defaultBranch": "bunjs"
+    "defaultBranch": "main"
   },
   "files": {
     "ignoreUnknown": false,
@@ -223,7 +223,7 @@
     {
       "includes": [
         "packages/trace-api/src/env.ts",
-        "packages/trace-schemas/src/index.ts"
+        "packages/trace-schemas/src/*.ts"
       ],
       "linter": {
         "rules": {
@@ -237,6 +237,7 @@
       "includes": [
         "index.ts",
         "packages/trace-api/src/db.ts",
+        "packages/trace-api/src/handlers/asset.ts",
         "packages/trace-db/src/index.ts",
         "packages/trace-db/src/index.test.ts",
         "packages/trace-router/src/index.test.ts",
@@ -255,7 +256,8 @@
     {
       "includes": [
         "packages/trace-api/src/index.ts",
-        "packages/trace-schemas/src/index.ts"
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-sdk/src/client.ts"
       ],
       "linter": {
         "rules": {
@@ -395,6 +397,19 @@
         "rules": {
           "correctness": {
             "noNodejsModules": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/trace-schemas/src/index.ts",
+        "packages/trace-db/src/index.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
           }
         }
       }

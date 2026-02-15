@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, mock, spyOn } from "bun:test";
 import { SQL } from "bun";
-import { MigrationModificationError } from "./errors.ts";
+import {
+  ConflictingConstraintError,
+  ExistingEntityError,
+  MigrationModificationError,
+  MissingEntityError,
+} from "./errors.ts";
 import { Database } from "./index.ts";
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -109,7 +114,7 @@ describe("Database Tables", () => {
       await db.createIdp({ issuer: new URL("https://localhost:0"), label: "Foo", audience: "Bar" });
       await expect(
         db.createIdp({ issuer: new URL("https://localhost:0"), label: "Foo", audience: "Bar" }),
-      ).rejects.toStrictEqual(new Error("IDP Issuer already exists"));
+      ).rejects.toBeInstanceOf(ExistingEntityError);
     });
 
     it("Is able to find an IdP", async () => {
@@ -150,11 +155,11 @@ describe("Database Tables", () => {
     });
 
     it("Requires the user to exist", async () => {
-      await expect(db.linkUser("", idpId, "Foo")).rejects.toStrictEqual(new Error("Invalid User ID"));
+      await expect(db.linkUser("", idpId, "Foo")).rejects.toBeInstanceOf(MissingEntityError);
     });
 
     it("Requires the IDP to exist", async () => {
-      await expect(db.linkUser(userId, "", "Foo")).rejects.toStrictEqual(new Error("Invalid IDP ID"));
+      await expect(db.linkUser(userId, "", "Foo")).rejects.toBeInstanceOf(MissingEntityError);
     });
 
     it("Is able to link a user to multiple IDP Subs", async () => {
@@ -171,9 +176,7 @@ describe("Database Tables", () => {
     it("Does not override an existing link", async () => {
       const userTwo = await db.createUser({ username: "Bar" });
       await db.linkUser(userId, idpId, "Foo");
-      await expect(db.linkUser(userTwo.uid, idpId, "Foo")).rejects.toStrictEqual(
-        new Error("IDP User already linked to another user"),
-      );
+      await expect(db.linkUser(userTwo.uid, idpId, "Foo")).rejects.toBeInstanceOf(ConflictingConstraintError);
     });
 
     it("Does not create an already existing link", async () => {
@@ -225,7 +228,7 @@ describe("Database Tables", () => {
     });
 
     it("Requires the location to exist", async () => {
-      await expect(db.createAsset({ locationId: "" })).rejects.toStrictEqual(new Error("Invalid Location ID"));
+      await expect(db.createAsset({ locationId: "" })).rejects.toBeInstanceOf(MissingEntityError);
     });
 
     it("Is able to get an asset", async () => {
@@ -263,11 +266,11 @@ describe("Database Tables", () => {
     });
 
     it("Requires the asset to exist", async () => {
-      await expect(db.assignAsset("", userId)).rejects.toStrictEqual(new Error("Invalid Asset ID"));
+      await expect(db.assignAsset("", userId)).rejects.toBeInstanceOf(MissingEntityError);
     });
 
     it("Requires the user to exist", async () => {
-      await expect(db.assignAsset(assetId, "")).rejects.toStrictEqual(new Error("Invalid User ID"));
+      await expect(db.assignAsset(assetId, "")).rejects.toBeInstanceOf(MissingEntityError);
     });
 
     it("Creates an audit log of assignments", async () => {
@@ -315,11 +318,11 @@ describe("Database Tables", () => {
     });
 
     it("Requires the asset to exist", async () => {
-      await expect(db.moveAsset("", locationNewId)).rejects.toStrictEqual(new Error("Invalid Asset ID"));
+      await expect(db.moveAsset("", locationNewId)).rejects.toBeInstanceOf(MissingEntityError);
     });
 
     it("Requires the location to exist", async () => {
-      await expect(db.moveAsset(assetId, "")).rejects.toStrictEqual(new Error("Invalid Location ID"));
+      await expect(db.moveAsset(assetId, "")).rejects.toBeInstanceOf(MissingEntityError);
     });
 
     it("Creates an audit log of moves", async () => {
