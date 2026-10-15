@@ -17,7 +17,7 @@ const authenticateOidc = async (req: Request, signingJwks: GenerateKeyPairResult
   const jwt = header.substring(HeaderPrefix.length);
 
   // Select Issuer
-  const unverified = await decodeJwt<Required<Pick<JWTPayload, "isf">>>(jwt);
+  const unverified = await decodeJwt(jwt);
   if (!unverified.iss) {
     return Response.json({ message: "Missing issuer" }, { status: 401 });
   }

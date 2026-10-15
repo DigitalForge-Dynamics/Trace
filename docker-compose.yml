@@ -19,9 +19,9 @@ services:
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/certs/tls.key
     volumes:
       - ./.certs:/opt/keycloak/certs:ro
-  
+
   postgres-keycloak:
-    image: postgres:15
+    image: postgres:18-alpine
     container_name: keycloak-postgres
     restart: unless-stopped
     ports:
