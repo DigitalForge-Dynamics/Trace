@@ -93,7 +93,7 @@ class NetClient {
       mode: "cors",
       headers,
     });
-    if (response.status === 404) {
+    if (response.status === 204) {
       return null;
     }
     if (!response.ok) {
